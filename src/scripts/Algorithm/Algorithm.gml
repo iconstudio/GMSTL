@@ -3,36 +3,6 @@ function Algorithm() {
 	_Nth_val = 0
 	_Nth_cmp = -1
 
-	///@function erase(begin, [end])
-	function erase(ItA, ItB) {
-		if is_undefined(ItB) or ItA == ItB
-			return __erase_one(ItA)
-		else
-			return __erase_range(ItA, ItB)
-	}
-
-	///@function assign(number, value) \ assign(source, begin, end)
-  function assign() {
-		var Output = 0
-		if argument_count == 2 {
-			Output = ibegin()
-			repeat argument[0]
-				set(Output++, argument[1])
-		} else if argument_count == 3 {
-			Output = ibegin()
-			for (var It = argument[1]; It != argument[2]; ++It)
-				set(Output++, argument[0].get(It))
-		}
-		return Output
-	}
-
-	///@function swap(iterator_1, iterator_2)
-	function swap(ItA, ItB) {
-		var Temp = get(ItA)
-		set(ItA, get(ItB))
-		set(ItB, Temp)
-	}
-
 	///@function check_all(begin, end, predicate)
 	function check_all(First, Last, Pred) {
 		var pred = method(other, Pred)
@@ -122,6 +92,65 @@ function Algorithm() {
 		return result
 	}
 
+	///@function erase(begin, [end])
+	function erase(ItA, ItB) {
+		if is_undefined(ItB) or ItA == ItB
+			return __erase_one(ItA)
+		else
+			return __erase_range(ItA, ItB)
+	}
+
+	///@function assign(number, value) \ assign(source, begin, end)
+  function assign() {
+		var Output = 0
+		if argument_count == 2 {
+			Output = ibegin()
+			repeat argument[0]
+				set(Output++, argument[1])
+		} else if argument_count == 3 {
+			Output = ibegin()
+			for (var It = argument[1]; It != argument[2]; ++It)
+				set(Output++, argument[0].get(It))
+		}
+		return Output
+	}
+
+	///@function swap(iterator_1, iterator_2)
+	function swap(ItA, ItB) {
+		var Temp = get(ItA)
+		set(ItA, get(ItB))
+		set(ItB, Temp)
+	}
+
+	///@function swap_range(begin, end, output)
+	function swap_range(First, Last, Output) {
+		while First != Last {
+	    swap(First, Output)
+
+			First++
+			Output++
+	  }
+	  return Output
+	}
+
+	///@function iter_swap(iterator, destination, destination_iterator)
+	function iter_swap(It, Dst, DstIt) {
+		var Temp = get(It)
+		set(It, Dst.get(DstIt))
+		Dst.set(DstIt, Temp)
+	}
+
+	///@function swap_range_to(begin, end, destination, destination_iterator)
+	function swap_range_to(First, Last, Dst, DstIt) {
+		while First != Last {
+	    iter_swap(First, Dst, DstIt)
+
+			First++
+			DstIt++
+	  }
+	  return DstIt
+	}
+
 	///@function copy(begin, end, output)
 	function copy(First, Last, Output) {
 		while First != Last {
@@ -140,19 +169,19 @@ function Algorithm() {
 	}
 
 	///@function copy_to(begin, end, destination, destination_begin)
-	function copy_to(First, Last, Dst, DstBgn) {
+	function copy_to(First, Last, Dst, DstIt) {
 		for (var it = First; it != Last; ++it) {
-			Dst.set(DstBgn++, get(it))
+			Dst.set(DstIt++, get(it))
 		}
-		return DstBgn
+		return DstIt
 	}
 
 	///@function copy_to_n(begin, number, destination, destination_begin)
-	function copy_to_n(First, Number, Dst, DstBgn) {
+	function copy_to_n(First, Number, Dst, DstIt) {
 		repeat Number {
-			Dst.set(DstBgn++, get(First++))
+			Dst.set(DstIt++, get(First++))
 		}
-		return DstBgn
+		return DstIt
 	}
 
 	///@function copy_if(begin, end, output, predicate)
@@ -201,15 +230,15 @@ function Algorithm() {
 	}
 
 	///@function replace_copy_to(begin, end, destination, destination_begin, old_value, new_value)
-	function replace_copy_to(First, Last, Dst, DstBgn, OldVal, NewVal) {
+	function replace_copy_to(First, Last, Dst, DstIt, OldVal, NewVal) {
 		while First != Last {
 			if get(First) == OldVal
-				Dst.set(DstBgn++, NewVal)
+				Dst.set(DstIt++, NewVal)
 			else
-				Dst.set(DstBgn++, get(First))
+				Dst.set(DstIt++, get(First))
 			First++
 		}
-		return DstBgn
+		return DstIt
 	}
 
 	///@function remove(begin, end, [value])
@@ -238,17 +267,6 @@ function Algorithm() {
 		return result
 	}
 
-	///@function swap_range(begin, end, output)
-	function swap_range(First, Last, Output) {
-		while First != Last {
-	    swap(First, Output)
-
-			First++
-			Output++
-	  }
-	  return Output
-	}
-
 	///@function move(begin, end, output)
 	function move(First, Last, Output) {
 		while First != Last {
@@ -263,8 +281,8 @@ function Algorithm() {
 	}
 
 	///@function move_to(begin, end, destination, destination_begin)
-	function move_to(First, Last, Dst, DstBgn) {
-		copy_to(First, Last, Dst, DstBgn)
+	function move_to(First, Last, Dst, DstIt) {
+		copy_to(First, Last, Dst, DstIt)
 		remove(First, Last)
 	}
 
@@ -290,6 +308,14 @@ function Algorithm() {
 				Middle = Next
 		}
 		return Next
+	}
+
+	///@function reverse(begin, end)
+	function reverse(First, Last) {
+		while (First != Last) and (First != --Last) {
+	    swap(First, Last)
+	    First++
+	  }
 	}
 
 	///@function transform(begin, end, output, predicate)
@@ -442,51 +468,125 @@ function Algorithm() {
 	  inplace_merge(First, Middle, Last, comp)
 	}
 
-/*
-template <class Iter, class T>
-void nth_element(Iter first, Iter nth, Iter last) {
-  while (last - first > 3) {
-    Iter cut =
-      unguarded_partition(first, last,
-                          T(median(*first,
-                                   *(first + (last - first)/2),
-                                   *(last - 1))));
-    if (cut <= nth)
-      first = cut;
-    else 
-      last = cut;
-  }
-  insertion_sort(first, last);
-}
-*/
+	///@function IMPLEMENTED FROM VS
+	///@description sort median of three elements to middle
+	function _Med3_unchecked(First, Middle, Last, Comparator) {
+		var comp = select_argument(Comparator, comparator_less)
+		if comp(get(Middle), get(First)) {
+		  swap(Middle, First)
+		}
+
+		if comp(get(Last), get(Middle)) { // swap middle and last, then test first again
+			swap(Last, Middle)
+
+			if comp(get(Middle), get(First))
+				swap(Middle, First)
+		}
+	}
+
+	///@function IMPLEMENTED FROM VS
+	///@description sort median element to middle
+	function _Guess_median_unchecked(First, Middle, Last, Comparator) {
+		var _Count = iterator_distance(First, Last)
+		var comp = select_argument(Comparator, comparator_less)
+		if 40 < _Count { // Tukey's ninther
+			var Step     = (_Count + 1) >> 3 // +1 can't overflow because range was made inclusive in caller
+			var _Two_step = Step << 1 // note: intentionally discards low-order bit
+			_Med3_unchecked(First, First + Step, First + _Two_step, comp)
+			_Med3_unchecked(Middle - Step, Middle, Middle + Step, comp)
+			_Med3_unchecked(Last - _Two_step, Last - Step, Last, comp)
+			_Med3_unchecked(First + Step, Middle, Last - Step, comp)
+		} else {
+			_Med3_unchecked(First, Middle, Last, comp)
+		}
+	}
+
+	///@function IMPLEMENTED FROM VS
+	///@description partition [First, Last), using comp
+	function _Partition_by_median_guess_unchecked(First, Last, Comparator) {
+		var Middle = First + ((Last - First) >> 1) // shift for codegen (== * 0.5)
+		var comp = select_argument(Comparator, comparator_less)
+		_Guess_median_unchecked(First, Middle, Last - 1, comp)
+
+		var _Pfirst = Middle
+		var _Plast  = _Pfirst + 1
+		while First < _Pfirst && !comp(get(_Pfirst - 1), get(_Pfirst)) && !comp(get(_Pfirst), get(_Pfirst - 1)) {
+			--_Pfirst
+		}
+
+		while _Plast < Last && !comp(get(_Plast), get(_Pfirst)) && !comp(get(_Pfirst), get(_Plast)) {
+			++_Plast
+		}
+
+		var _Gfirst = _Plast
+		var _Glast  = _Pfirst
+		for (;;) { // partition
+			for (; _Gfirst < Last; ++_Gfirst) {
+				if comp(get(_Pfirst), get(_Gfirst)) {
+				} else if comp(get(_Gfirst), get(_Pfirst)) {
+					break
+				} else if _Plast != _Gfirst {
+					swap(_Plast, _Gfirst)
+					_Plast++
+				} else {
+					_Plast++
+				}
+			}
+
+			for (; First < _Glast; --_Glast) {
+				if comp(get(_Glast - 1), get(_Pfirst)) {
+				} else if comp(get(_Pfirst), get(_Glast - 1)) {
+					  break
+				} else if --_Pfirst != _Glast - 1 {
+					  swap(_Pfirst, _Glast - 1)
+				}
+			}
+
+			if _Glast == First and _Gfirst == Last {
+				return [_Pfirst, _Plast]
+			}
+
+			if _Glast == First { // no room at bottom, rotate pivot upward
+				if _Plast != _Gfirst {
+					  swap(_Pfirst, _Plast)
+				}
+
+				_Plast++
+				swap(_Pfirst, _Gfirst)
+				_Pfirst++
+				_Gfirst++
+			} else if _Gfirst == Last { // no room at top, rotate pivot downward
+				if --_Glast != --_Pfirst {
+					  swap(_Glast, _Pfirst)
+				}
+
+				swap(_Pfirst, --_Plast)
+			} else {
+				swap(_Gfirst, --_Glast)
+				_Gfirst++
+			}
+		}
+	}
 
 	///@function nth_element(begin, nth, end, [comparator])
 	function nth_element(First, Nth, Last, Comparator) {
 		if First == Last or Nth == Last
 			exit
 
-		_Nth_val = get(Nth)
-		_Nth_cmp = select_argument(Comparator, comparator_less)
-		var pred = function(Val) {
-			return !is_undefined(Val) and _Nth_cmp(_Nth_val, Val)
-		}
+		var comp = select_argument(Comparator, comparator_less)
+		while 32 < iterator_distance(First, Last) { // divide and conquer, ordering partition containing Nth
+			var Middle = _Partition_by_median_guess_unchecked(First, Last, comp)
 
-		while First != Last { // partition
-		  while pred(get(First)) {
-		    ++First
-		    if First == Last
-					return First
-		  }
+			if Middle <= Nth {
+				First = Middle
+			} else if Middle <= Nth {
+				exit
+			} else {
+				Last = Middle
+			}
+    }
 
-		  do {
-		    --Last
-		    if First == Last
-					return First
-		  } until pred(get(Last))
-
-		  swap(First, Last)
-		  First++
-		}
+    insertion_sort(First, Last, comp)
 	}
 
 	///@function is_sorted(begin, end, [comparator])
@@ -502,6 +602,30 @@ void nth_element(Iter first, Iter nth, Iter last) {
 		  First++
 		}
 		return true
+	}
+
+	///@function unguarded_partition(begin, end, pivot, predicate_project, [comparator])
+	function unguarded_partition(First, Last, Pivot, Pred, Comparator) {
+		var pred
+		if !is_undefined(Pred) and is_method(Pred)
+			pred = method(other, Pred)
+		else
+			pred = function(Val) { return Val }
+
+		var comp = select_argument(Comparator, comparator_less)
+	  while true {
+	    while comp(pred(get(First)), Pivot)
+				First++
+
+	    Last--
+	    while comp(Pivot, pred(get(Last)))
+				Last--
+
+	    if !(First < Last)
+				return First
+	    swap(First, Last)
+	    First++
+	  }
 	}
 
 	///@function partition(begin, end, predicate)
@@ -558,7 +682,7 @@ void nth_element(Iter first, Iter nth, Iter last) {
 				set(Output, Source_2.get(Src2_Begin++)) // left
 			else
 				set(Output, Source_1.get(Src1_Begin++))
-			//set(Output, comp(Source_2.get(Src2_Begin), Source_1.get(Src1_Begin)) ? Source_2.get(Src2_Begin++) : Source_1.get(Src1_Begin++))
+
 			Output++
 		}
 		return Output
@@ -572,18 +696,6 @@ void nth_element(Iter first, Iter nth, Iter last) {
 		Temp.merge(self, First, Middle, self, Middle, Last, First, comp)
 		Temp.copy_to(First, Last, self, First)
 		delete Temp
-
-		/*
-		var Dist = iterator_distance(First, Last)
-		var summary = duplicate()
-		var summary_begin = summary.ibegin()
-		summary.merge(self, First, Middle, self, Middle, Last, summary_begin, comp)
-
-		for (var i = 0; i < Dist; ++i) {
-			set(iterator_advance(First, i), summary.get(iterator_advance(summary_begin, i)))
-		}
-		delete summary
-		*/
 	}
 
 	///@function shuffle(begin, end, [engine])

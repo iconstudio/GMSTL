@@ -42,7 +42,7 @@ print(test_sum)
 show_debug_message("Is parted: " + string(is_parted))
 show_debug_message("Parted on: " + string(part_point))
 
-var nth = 2
+var nth = 10
 show_debug_message("\nNth Sorting (" + string(nth) + ")")
 test_sum.random_shuffle(test_sum.ibegin(), test_sum.iend())
 var nth_interator = iterator_advance(test_sum.ibegin(), nth)
