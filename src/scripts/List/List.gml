@@ -1,12 +1,19 @@
-///@function List([id] or [items...])
-function List(Items) constructor {
+/*
+	Usage:
+		List()
+		List(Arg)
+		List(Builtin-Array)
+		List(Builtin-List)
+		List(Container)
+		List(Arg0, Arg1, ...)
+
+	Initialize:
+		new List;
+		set_value_type(type);
+*/
+function List(): Container() constructor {
 	type = List
 	raw = ds_list_create()
-	Algorithm()
-
-	function data() { return raw }
-
-	function duplicate() { return new List(self) }
 
 	///@function set(iterator, value)
   function set(It, Val) { 
@@ -19,6 +26,12 @@ function List(Items) constructor {
 
 	///@function at(index)
   function at(i) { return ds_list_find_value(raw, i) }
+
+	///@function insert(iterator, value)
+  function insert(It, Val) {
+		ds_list_insert(raw, It, Val)
+		return It
+	}
 
 	///@function mark_list(index)
   function mark_list(i) { ds_list_mark_as_list(raw, i) }
@@ -47,24 +60,17 @@ function List(Items) constructor {
 	///@function push_front(value)
 	function push_front(Val) { insert(ibegin(), Val) }
 
-	///@function insert(iterator, value)
-  function insert(It, Val) {
-		ds_list_insert(raw, It, Val)
-		return It
-	}
-
-	///@function erase(iterator)
-	function erase(It) { 
-		var temp = get(It)
-		ds_list_delete(raw, It)
-		return temp
-	}
-
 	///@function pop_front()
 	function pop_front() { return erase(ibegin()) }
 
 	///@function pop_back()
 	function pop_back() { return erase(iend() - 1) }
+
+	///@function emplace_back(tuple)
+	function emplace_back(Params) { push_back(construct(Params)) }
+
+	///@function emplace_front(tuple)
+	function emplace_front(Params) { push_front(construct(Params)) }
 
 	///@function front()
   function front() { 
@@ -91,7 +97,7 @@ function List(Items) constructor {
 				while size() != Size
 					pop_back()
 			} else {
-				var fv = select_argument(Fv, 0)
+				var fv = select_argument(Fv, (is_undefined(value_type) ? 0 : undefined))
 				while size() != Size
 					push_back(fv)
 			}
@@ -108,13 +114,12 @@ function List(Items) constructor {
 	///@description Fast
   function sort_builtin(Ascending) { ds_list_sort(raw, Ascending) }
 
-	if 0 < argument_count and !is_undefined(argument[0]) {
-		if argument_count == 1 and is_numeric(argument[0]) {
+	if 0 < argument_count {
+		if argument_count == 1 {
 			var Item = argument[0]
 
-			if ds_exists(Item, ds_type_list) {
-				ds_list_copy(raw, Item)
-			} else if is_struct(Item) {
+			if is_struct(Item) {
+				 // (*) Container
 				var First = ibegin()
 				for (var It = Item.ibegin(); It != Item.iend(); ++It) {
 					if It == iend()
@@ -122,19 +127,44 @@ function List(Items) constructor {
 					set(First++, Item.get(It))
 				}
 			} else if is_array(Item) {
+				// (*) Built-in Array
 				var First = ibegin()
 				for (var i = 0; i < array_length(Item); ++i) {
 					if i == iend()
 						break
 					set(First++, Item[i])
 				}
+			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
+				// (*) Built-in List
+				ds_list_copy(raw, Item)
 			} else {
+				// (*) Arg
 				push_back(Item)
 			}
 		} else {
+			// (*) Arg0, Arg1, ...
 			for (var i = 0; i < argument_count; ++i) {
 				push_back(argument[i])
 			}
 		}
+	}
+
+	///@function __erase_one(iterator)
+	function __erase_one(It) {
+		var Temp = get(It)
+		ds_list_delete(raw, It)
+		return Temp
+	}
+
+	///@function __erase_range(begin, end)
+	function __erase_range(First, Last) {
+		var Dist = iterator_distance(First, Last)
+		var Temp = array_create(Dist, undefined)
+		var It = 0
+		repeat Dist {
+			Dist[It++] = get(First)
+			ds_list_delete(raw, First)
+		}
+		return Temp
 	}
 }

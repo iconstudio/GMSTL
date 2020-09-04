@@ -3,32 +3,42 @@ function Algorithm() {
 	_Nth_val = 0
 	_Nth_cmp = -1
 
-	///@function assign(source, begin, end) | assign(number, value)
-  function assign(Arg0, Arg1, Arg2) {
+	///@function erase(begin, [end])
+	function erase(ItA, ItB) {
+		if is_undefined(ItB) or ItA == ItB
+			return __erase_one(ItA)
+		else
+			return __erase_range(ItA, ItB)
+	}
+
+	///@function assign(number, value) \ assign(source, begin, end)
+  function assign() {
+		var Output = 0
 		if argument_count == 2 {
-			var Begin = ibegin()
-			var End = iterator_advance(Begin, Arg0)
-			for (var It = Begin; It != End; ++It)
-				set(It, Arg1)
-		} else {
-			var Output = ibegin()
-			for (var It = Arg1; It != Arg2; ++It)
-				set(It, Arg0.get(It))
+			Output = ibegin()
+			repeat argument[0]
+				set(Output++, argument[1])
+		} else if argument_count == 3 {
+			Output = ibegin()
+			for (var It = argument[1]; It != argument[2]; ++It)
+				set(Output++, argument[0].get(It))
 		}
+		return Output
 	}
 
 	///@function swap(iterator_1, iterator_2)
 	function swap(ItA, ItB) {
-		var temp = get(ItA)
+		var Temp = get(ItA)
 		set(ItA, get(ItB))
-		set(ItB, temp)
+		set(ItB, Temp)
 	}
 
 	///@function check_all(begin, end, predicate)
 	function check_all(First, Last, Pred) {
 		var pred = method(other, Pred)
 		while First != Last {
-			if !pred(get(First))
+			var Val = get(First)
+			if !is_undefined(Val) and !pred(Val)
 				return false
 			First++
 		}
@@ -39,7 +49,8 @@ function Algorithm() {
 	function check_any(First, Last, Pred) {
 		var pred = method(other, Pred)
 		while First != Last {
-			if pred(get(First))
+			var Val = get(First)
+			if !is_undefined(Val) and pred(Val)
 				return true
 			First++
 		}
@@ -50,7 +61,8 @@ function Algorithm() {
 	function check_none(First, Last, Pred) {
 		var pred = method(other, Pred)
 		while First != Last {
-			if pred(get(First))
+			var Val = get(First)
+			if !is_undefined(Val) and pred(Val)
 				return false
 			First++
 		}
@@ -82,7 +94,8 @@ function Algorithm() {
 	function find_if(First, Last, Pred) {
 		var pred = method(other, Pred)
 		while First != Last {
-			if pred(get(First))
+			var Val = get(First)
+			if !is_undefined(Val) and pred(Val)
 				return First
 			First++
 		}
@@ -102,7 +115,8 @@ function Algorithm() {
 	function count_if(First, Last, Pred) {
 		var pred = method(other, Pred)
 		for (var it = First, result = 0; it != Last; ++it) {
-			if pred(get(it))
+			var Val = get(it)
+			if !is_undefined(Val) and pred(Val)
 				result++
 		}
 		return result
@@ -129,9 +143,6 @@ function Algorithm() {
 	function copy_to(First, Last, Dst, DstBgn) {
 		for (var it = First; it != Last; ++it) {
 			Dst.set(DstBgn++, get(it))
-			if DstBgn == Dst.iend() {
-				break
-			}
 		}
 		return DstBgn
 	}
@@ -140,20 +151,17 @@ function Algorithm() {
 	function copy_to_n(First, Number, Dst, DstBgn) {
 		repeat Number {
 			Dst.set(DstBgn++, get(First++))
-			if DstBgn == Dst.iend() {
-				break
-			}
 		}
 		return DstBgn
 	}
 
 	///@function copy_if(begin, end, output, predicate)
 	function copy_if(First, Last, Output, Pred) {
-		var pred = method(other, Pred), val = 0
+		var pred = method(other, Pred), Val = 0
 		while First != Last {
-			val = get(First)
-			if pred(val)
-				set(Output++, val)
+			Val = get(First)
+			if !is_undefined(Val) and pred(Val)
+				set(Output++, Val)
 			First++
 		}
 		return Output
@@ -172,7 +180,8 @@ function Algorithm() {
 	function replace_if(First, Last, Pred, NewVal) {
 		var pred = method(other, Pred)
 		while First != Last {
-			if pred(get(First))
+			var Val = get(First)
+			if !is_undefined(Val) and pred(Val)
 				set(First, NewVal)
 			First++
 		}
@@ -206,7 +215,7 @@ function Algorithm() {
 	///@function remove(begin, end, [value])
 	function remove(First, Last, Val) {
 		for (var it = First, result = First; it != Last; ++it) {
-			if is_undefined(Val) or get(it) == Val {
+			if get(it) == Val {
 				erase(result)
 			} else {
 				result++
@@ -218,8 +227,9 @@ function Algorithm() {
 	///@function remove_if(begin, end, predicate)
 	function remove_if(First, Last, Pred) {
 		var pred = method(other, Pred)
-		for (var it = First, result = First; it != Last; ++it) {
-			if pred(get(result)) {
+		for (var it = First, result = First, Val; it != Last; ++it) {
+			Val = get(result)
+			if !is_undefined(Val) and pred(get(result)) {
 				erase(result)
 			} else {
 				result++
@@ -241,8 +251,15 @@ function Algorithm() {
 
 	///@function move(begin, end, output)
 	function move(First, Last, Output) {
-		copy(First, Last, Output)
-		remove(First, Last)
+		while First != Last {
+			//erase()
+			set(Output, First)
+			set(First, undefined)
+
+			First++
+			Output++
+	  }
+		return Output
 	}
 
 	///@function move_to(begin, end, destination, destination_begin)
@@ -425,6 +442,53 @@ function Algorithm() {
 	  inplace_merge(First, Middle, Last, comp)
 	}
 
+/*
+template <class Iter, class T>
+void nth_element(Iter first, Iter nth, Iter last) {
+  while (last - first > 3) {
+    Iter cut =
+      unguarded_partition(first, last,
+                          T(median(*first,
+                                   *(first + (last - first)/2),
+                                   *(last - 1))));
+    if (cut <= nth)
+      first = cut;
+    else 
+      last = cut;
+  }
+  insertion_sort(first, last);
+}
+*/
+
+	///@function nth_element(begin, nth, end, [comparator])
+	function nth_element(First, Nth, Last, Comparator) {
+		if First == Last or Nth == Last
+			exit
+
+		_Nth_val = get(Nth)
+		_Nth_cmp = select_argument(Comparator, comparator_less)
+		var pred = function(Val) {
+			return !is_undefined(Val) and _Nth_cmp(_Nth_val, Val)
+		}
+
+		while First != Last { // partition
+		  while pred(get(First)) {
+		    ++First
+		    if First == Last
+					return First
+		  }
+
+		  do {
+		    --Last
+		    if First == Last
+					return First
+		  } until pred(get(Last))
+
+		  swap(First, Last)
+		  First++
+		}
+	}
+
 	///@function is_sorted(begin, end, [comparator])
 	function is_sorted(First, Last, Comparator) {
 		var comp = select_argument(Comparator, comparator_less)
@@ -444,17 +508,20 @@ function Algorithm() {
 	function partition(First, Last, Pred) {
 		var pred = method(other, Pred)
 		while First != Last {
-		  while pred(get(First)) {
+			var Val = get(First)
+		  while !is_undefined(Val) and pred(Val) {
 		    ++First
 		    if First == Last
 					return First
+				Val = get(First)
 		  }
 
 		  do {
 		    --Last
 		    if First == Last
 					return First
-		  } until pred(get(Last))
+				Val = get(Last)
+		  } until !is_undefined(Val) and pred(Val)
 
 		  swap(First, Last)
 		  First++
@@ -463,44 +530,18 @@ function Algorithm() {
 	}
 
 	///@function is_partitioned(begin, end, predicate)
-	function is_partitioned(First, Last, Pred) {		
-		while First != Last and Pred(get(First)) {
-		  ++First
+	function is_partitioned(First, Last, Pred) {
+		var Val = get(First)
+		while First != Last and !is_undefined(Val) and Pred(Val) {
+			Val = get(++First)
 		}
 
 		while First != Last {
-		  if Pred(get(First))
+		  if !is_undefined(Val) and Pred(Val)
 				return false
-		  First++
+		  Val = get(++First)
 		}
 		return true
-	}
-
-	///@function nth_element(begin, nth, end, [comparator])
-	function nth_element(First, Nth, Last, Comparator) {
-		_Nth_val = get(Nth)
-		_Nth_cmp = select_argument(Comparator, comparator_less)
-		var pred = function(Val) {
-			return _Nth_cmp(_Nth_val, Val)
-		}
-
-		while First != Last { // partition
-		  while pred(get(First)) {
-		    ++First
-		    if First == Last
-					return First
-		  }
-
-		  do {
-		    --Last
-		    if First == Last
-					return First
-		  } until pred(get(Last))
-
-		  swap(First, Last)
-		  First++
-		}
-		return First
 	}
 
 	///@function merge(source_1, 1_begin, 1_end, source_2, 2_begin, 2_end, output, [comparator])
