@@ -25,12 +25,15 @@ function Container() {
 	}
 
 	///@function construct(data...)
-	function construct(Args) {
-		if is_undefined(value_type) or !is_struct(Args) {
-			return Args // real
+	function construct() {
+		if is_undefined(value_type) { // real
+			if argument_count == 0
+				return 0
+			else
+				return argument[0]
 		} else if argument_count == 1 {
-			if is_array(Args)
-				return make_element_from_array(Args)
+			if is_array(argument[0])
+				return make_element_from_array(argument[0])
 		} else {
 			return make_element_from_tuple(argument[0], argument[1]
 					, argument[2], argument[3], argument[4]

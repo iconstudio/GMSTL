@@ -8,7 +8,7 @@ function Algorithm() {
 		var pred = method(other, Pred)
 		while First != Last {
 			var Val = get(First)
-			if !is_undefined(Val) and !pred(Val)
+			if !pred(Val)
 				return false
 			First++
 		}
@@ -20,7 +20,7 @@ function Algorithm() {
 		var pred = method(other, Pred)
 		while First != Last {
 			var Val = get(First)
-			if !is_undefined(Val) and pred(Val)
+			if pred(Val)
 				return true
 			First++
 		}
@@ -32,7 +32,7 @@ function Algorithm() {
 		var pred = method(other, Pred)
 		while First != Last {
 			var Val = get(First)
-			if !is_undefined(Val) and pred(Val)
+			if pred(Val)
 				return false
 			First++
 		}
@@ -86,7 +86,7 @@ function Algorithm() {
 		var pred = method(other, Pred)
 		for (var it = First, result = 0; it != Last; ++it) {
 			var Val = get(it)
-			if !is_undefined(Val) and pred(Val)
+			if pred(Val)
 				result++
 		}
 		return result
@@ -360,13 +360,13 @@ function Algorithm() {
 	///@description THE ELEMENT SEQUENCE MUST HAVE BEEN SORTED OR AT LEAST GOT PARTITIONED WITH VALUE.
 	function lower_bound(First, Last, Val, Comparator) { // return the first and largest element which less than value.
 		var comp = select_argument(Comparator, comparator_less)
-		var It, Step, count = iterator_distance(First, Last)
+		var It, Rs, Step, count = iterator_distance(First, Last)
 		while 0 < count {
 		  It = First
 			Step = count * 0.5
-			iterator_advance(It, Step)
+			It = iterator_advance(It, Step)
 
-		  if comp(get(It), Val) {
+			if comp(get(It), Val) {
 		    First = ++It
 		    count -= Step + 1
 		  } else {
@@ -384,7 +384,7 @@ function Algorithm() {
 		while 0 < count {
 		  It = First
 			Step = count * 0.5
-			iterator_advance(It, Step)
+			It = iterator_advance(It, Step)
 
 		  if !comp(Val, get(It)) {
 		    First = ++It
@@ -401,7 +401,8 @@ function Algorithm() {
 	function binary_search(First, Last, Val, Comparator) {
 		var comp = select_argument(Comparator, comparator_less)
 		First = lower_bound(First, Last, Val, comp)
-		return (First != Last and !comp(Val, get(First)))
+		var FirstVal = get(First)
+		return First != Last and !comp(Val, FirstVal)
 	}
 
 	///@function sort(begin, end, [comparator])
@@ -504,7 +505,7 @@ function Algorithm() {
 	///@function IMPLEMENTED FROM VS
 	///@description partition [First, Last), using comp
 	function _Partition_by_median_guess_unchecked(First, Last, Comparator) {
-		var Middle = First + ((Last - First) >> 1) // shift for codegen (== * 0.5)
+		var Middle = First + (iterator_distance(First, Last) >> 1) // shift for codegen (== * 0.5)
 		var comp = select_argument(Comparator, comparator_less)
 		_Guess_median_unchecked(First, Middle, Last - 1, comp)
 
@@ -678,10 +679,15 @@ function Algorithm() {
 			if Src2_Begin == Src2_End
 				return Source_1.copy_to(Src1_Begin, Src1_End, self, Output)
 
-		  if comp(Source_2.get(Src2_Begin), Source_1.get(Src1_Begin))
-				set(Output, Source_2.get(Src2_Begin++)) // left
-			else
-				set(Output, Source_1.get(Src1_Begin++))
+		  var Src1_Val = Source_1.get(Src1_Begin)
+			var Src2_Val = Source_2.get(Src2_Begin)
+			if comp(Src2_Val, Src1_Val) {
+				set(Output, Src2_Val)
+				Src2_Begin++
+			} else {
+				set(Output, Src1_Val)
+				Src1_Begin++
+			}
 
 			Output++
 		}

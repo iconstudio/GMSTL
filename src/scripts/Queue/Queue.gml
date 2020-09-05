@@ -1,0 +1,3 @@
+function Queue(): Container() constructor {
+
+}

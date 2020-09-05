@@ -22,7 +22,11 @@ function List(): Container() constructor {
 	}
 
 	///@function get(iterator)
-  function get(It) { return raw[| It] }
+  function get(It) {
+		if is_nan(It)
+			throw "An error occured when trying to acquire a value from the list!"
+		return raw[| It]
+	}
 
 	///@function at(index)
   function at(i) { return ds_list_find_value(raw, i) }
