@@ -1,19 +1,29 @@
 /*
-	Usage:
+	Constructors:
 		List()
 		List(Arg)
 		List(Builtin-Array)
 		List(Builtin-List)
-		List(Container)
+		List(Iterable-Container)
 		List(Arg0, Arg1, ...)
 
 	Initialize:
 		new List;
-		set_value_type(type);
+		set_value_type(type)
+
+	Usage:
+		
 */
 function List(): Container() constructor {
+	Algorithm()
 	type = List
 	raw = ds_list_create()
+
+	///@function ibegin()
+  function ibegin() { return 0 }
+
+	///@function iend()
+  function iend() { return size() }
 
 	///@function set(iterator, value)
   function set(It, Val) { 
@@ -37,6 +47,41 @@ function List(): Container() constructor {
 		return It
 	}
 
+	///@function push_back(value)
+	function push_back(Val) { ds_list_add(raw, Val) }
+
+	///@function push_front(value)
+	function push_front(Val) { insert(ibegin(), Val) }
+
+	///@function emplace_back(tuple)
+	function emplace_back(Params) { push_back(construct(Params)) }
+
+	///@function emplace_front(tuple)
+	function emplace_front(Params) { push_front(construct(Params)) }
+
+	///@function pop_back()
+	function pop_back() { return erase(iend() - 1) }
+
+	///@function pop_front()
+	function pop_front() { return erase(ibegin()) }
+
+	///@function back()
+  function back() {
+		var sz = size()
+		if 0 < sz
+			return at(sz - 1)
+		else
+			return undefined
+	}
+
+	///@function front()
+  function front() { 
+		if 0 < size() 
+			return at(0)
+		else
+			return undefined
+	}
+
 	///@function mark_list(index)
   function mark_list(i) { ds_list_mark_as_list(raw, i) }
 
@@ -51,47 +96,6 @@ function List(): Container() constructor {
 
 	///@function clear()
 	function clear() { ds_list_clear(raw) }
-
-	///@function ibegin()
-  function ibegin() { return 0 }
-
-	///@function iend()
-  function iend() { return size() }
-
-	///@function push_back(value)
-	function push_back(Val) { ds_list_add(raw, Val) }
-
-	///@function push_front(value)
-	function push_front(Val) { insert(ibegin(), Val) }
-
-	///@function pop_front()
-	function pop_front() { return erase(ibegin()) }
-
-	///@function pop_back()
-	function pop_back() { return erase(iend() - 1) }
-
-	///@function emplace_back(tuple)
-	function emplace_back(Params) { push_back(construct(Params)) }
-
-	///@function emplace_front(tuple)
-	function emplace_front(Params) { push_front(construct(Params)) }
-
-	///@function front()
-  function front() { 
-		if 0 < size() 
-			return at(0)
-		else
-			return undefined
-	}
-
-	///@function back()
-  function back() {
-		var sz = size()
-		if 0 < sz
-			return at(sz - 1)
-		else
-			return undefined
-	}
 
 	///@function resize(size, [value_fill])
 	function resize(Size, Fv) {
@@ -118,41 +122,6 @@ function List(): Container() constructor {
 	///@description Fast
   function sort_builtin(Ascending) { ds_list_sort(raw, Ascending) }
 
-	if 0 < argument_count {
-		if argument_count == 1 {
-			var Item = argument[0]
-
-			if is_struct(Item) {
-				 // (*) Container
-				var First = ibegin()
-				for (var It = Item.ibegin(); It != Item.iend(); ++It) {
-					if It == iend()
-						break
-					set(First++, Item.get(It))
-				}
-			} else if is_array(Item) {
-				// (*) Built-in Array
-				var First = ibegin()
-				for (var i = 0; i < array_length(Item); ++i) {
-					if i == iend()
-						break
-					set(First++, Item[i])
-				}
-			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
-				// (*) Built-in List
-				ds_list_copy(raw, Item)
-			} else {
-				// (*) Arg
-				push_back(Item)
-			}
-		} else {
-			// (*) Arg0, Arg1, ...
-			for (var i = 0; i < argument_count; ++i) {
-				push_back(argument[i])
-			}
-		}
-	}
-
 	///@function __erase_one(iterator)
 	function __erase_one(It) {
 		var Temp = get(It)
@@ -170,5 +139,47 @@ function List(): Container() constructor {
 			ds_list_delete(raw, First)
 		}
 		return Temp
+	}
+
+	///@function read(data_string)
+	function read(Str) {
+		ds_list_read(raw, Str)
+	}
+
+	function write() {
+		return ds_list_write(raw)
+	}
+
+	if 0 < argument_count {
+		if argument_count == 1 {
+			var Item = argument[0]
+
+			if is_struct(Item) and is_iterable(Item) {
+				// (*) Container
+				var First = ibegin()
+				for (var It = Item.ibegin(); It != Item.iend(); ++It) {
+					if It == iend()
+						break
+					set(First++, Item.get(It))
+				}
+			} else if is_array(Item) {
+				// (*) Built-in Array
+				var First = ibegin()
+				for (var i = 0; i < array_length(Item); ++i) {
+					set(First++, Item[i])
+				}
+			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
+				// (*) Built-in List
+				ds_list_copy(raw, Item)
+			} else {
+				// (*) Arg
+				push_back(Item)
+			}
+		} else {
+			// (*) Arg0, Arg1, ...
+			for (var i = 0; i < argument_count; ++i) {
+				push_back(argument[i])
+			}
+		}
 	}
 }

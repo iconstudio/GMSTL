@@ -1,8 +1,13 @@
 function Container() {
-	Algorithm()
 	type = Container
 	value_type = undefined
 	raw = undefined
+
+	///@function is_iterable(container)
+	function is_iterable(_Container) {
+		var meta = instanceof(_Container)
+		return meta == "Array" or meta == "List"
+	}
 
 	///@function make_element_from_tuple(tuple...)
 	function make_element_from_tuple() {
@@ -16,12 +21,15 @@ function Container() {
 
 	///@function make_element_from_array(array)
 	function make_element_from_array(datas) {
-		return new value_type(datas[0], datas[1]
-					, datas[2], datas[3], datas[4]
-					, datas[5], datas[6], datas[7]
-					, datas[9], datas[9], datas[10]
-					, datas[11], datas[12], datas[13]
-					, datas[14], datas[15]) // A limit of GameMaker
+		var Data = array_create(16, undefined)
+		for (var i = 0; i < array_length(datas); ++i)
+			Data[i] = datas[i]
+		return new value_type(Data[0], Data[1]
+					, Data[2], Data[3], Data[4]
+					, Data[5], Data[6], Data[7]
+					, Data[9], Data[9], Data[10]
+					, Data[11], Data[12], Data[13]
+					, Data[14], Data[15]) // A limit of GameMaker
 	}
 
 	///@function construct(data...)
@@ -34,6 +42,8 @@ function Container() {
 		} else if argument_count == 1 {
 			if is_array(argument[0])
 				return make_element_from_array(argument[0])
+			else
+				return new value_type(argument[0])
 		} else {
 			return make_element_from_tuple(argument[0], argument[1]
 					, argument[2], argument[3], argument[4]
@@ -60,4 +70,8 @@ function Container() {
 	}
 
 	add = -1
+}
+
+function Wrapper(Val) constructor {
+	value = Val
 }

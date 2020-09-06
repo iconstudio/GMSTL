@@ -258,7 +258,7 @@ function Algorithm() {
 		var pred = method(other, Pred)
 		for (var it = First, result = First, Val; it != Last; ++it) {
 			Val = get(result)
-			if !is_undefined(Val) and pred(get(result)) {
+			if pred(get(result)) {
 				erase(result)
 			} else {
 				result++
