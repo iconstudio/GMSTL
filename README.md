@@ -20,9 +20,9 @@
   * [x] Array
 
 ### ❎ Forward Container
-  * [x] Stack #1
-  * [x] Queue #2
-  * [ ] Priority Queue #3
+  * [x] Stack iconstudio/GMContainers#1
+  * [x] Queue iconstudio/GMContainers#2
+  * [ ] Priority Queue iconstudio/GMContainers#3
 
 ### ❎ Associative Container
   * [x] Unordered Map #5
