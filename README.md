@@ -20,15 +20,15 @@
   * [x] Array
 
 ### ❎ Forward Container
-  * [x] Stack
-  * [x] Queue
-  * [ ] Priority Queue
+  * [x] Stack #1
+  * [x] Queue #2
+  * [ ] Priority Queue #3
 
 ### ❎ Associative Container
-  * [x] Unordered Map
-  * [ ] Unordered Multiple Map
-  * [ ] Ordered Multiple Map
-  * [ ] Set
+  * [x] Unordered Map #5
+  * [ ] Unordered Multiple Map #6
+  * [ ] Ordered Multiple Map #7
+  * [ ] Set #9
 
 ### ❎ Graph Container: 
   * [ ] Tree
