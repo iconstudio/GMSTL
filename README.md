@@ -20,7 +20,7 @@
   * [x] Array
 
 ### ❎ Forward Container
-  * [x] Stack iconstudio/GMContainers#1
+  * [x] Stack https://github.com/iconstudio/GMContainers/issues/3#issue-694704397
   * [x] Queue iconstudio/GMContainers#2
   * [ ] Priority Queue iconstudio/GMContainers#3
 
