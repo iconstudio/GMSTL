@@ -27,7 +27,7 @@ test_sum.merge(test1, test1.ibegin(), test1.iend(), test2, test2.ibegin(), test2
 print(test_sum)
 
 var count_dem = test2.count_if(test_sum.ibegin(), test_sum.iend(), function(Val) {
-	return frac(Val) != 0
+	return !is_undefined(Val) and frac(Val) != 0
 })
 show_debug_message("Count of Demical: " + string(count_dem))
 
