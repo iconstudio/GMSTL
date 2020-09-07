@@ -2,6 +2,7 @@
 	Constructors:
 		Multimap()
 		Multimap(Arg)
+		Multimap(Map)
 		Multimap(Multimap)
 		Multimap(Builtin-PairedArray)
 		Multimap(Builtin-PairedList)
@@ -13,14 +14,8 @@
 	Initialize:
 		new Multimap
 		set_value_type(type)
-		set_comparator(compare_function)
 
 	Usage:
-		To Iterate with keys:
-			cash_keys()
-			for (var It = ibegin(); It != iend(); ++It)
-				myfunc(at_cashed(It))
-
 		To Iterate with values:
 			cash_values()
 			for (var It = ibegin(); It != iend(); ++It)
@@ -39,7 +34,7 @@ function Multimap() {
 		if argument_count == 0
 			return 0
 		else
-			return 0 // 
+			return 0 // Logic
 	}
 
 	///@function iend(iterator)
@@ -56,32 +51,23 @@ function Multimap() {
 		throw "An error occured when getting the end of a multimap!"
 	}
 
-	///@function cash(key)
-	function cash(K) {
-		if is_undefined(ds_list_find_value(key_memory, K)) {
-			ds_list_add(key_memory, K)
-			key_memory_size++
-		}
+	///@function ibegin(iterator)
+  function ibegin() {
 	}
 
-	///@function try_decash(key)
-	function try_decash(K) {
-		if 0 < key_memory_size {
-			var It = ds_list_find_index(key_memory, K)
-			if It != -1 {
-				ds_list_delete(key_memory, It)
-				key_memory_size--
-				return true
-			}
-		}
-		return false
+	///@function ibegin(iterator)
+  function ibegin() {
+	}
+
+	///@function ibegin(iterator)
+  function ibegin() {
 	}
 
 	///@function __set(key, value)
 	function __set(K, Val) {
 		ds_map_set(raw, K, Val)
 		if !exists(K)
-			cash(K)
+			__cash(K)
 	}
 
 	///@function set(values_pair)
@@ -109,7 +95,7 @@ function Multimap() {
 	///@function change(key, value)
   function change(K, Val) { 
 		if !exists(K)
-			cash(K)
+			__cash(K)
 		return ds_map_replace(raw, K, Val)
 	}
 
@@ -144,14 +130,14 @@ function Multimap() {
   function add_list(K, Val) {
 		ds_map_add_list(raw, K, Val)
 		if !exists(K)
-			cash(K)
+			__cash(K)
 	}
 
 	///@function add_map(key, builtin_map_id)
   function add_map(K, Val) {
 		ds_map_add_map(raw, K, Val)
 		if !exists(K)
-			cash(K)
+			__cash(K)
 	}
 
 	///@function is_list(K)
@@ -269,13 +255,13 @@ function Multimap() {
 		var TempList = at(K)
 		ds_list_destroy(TempList)
 		ds_map_delete(raw, K)
-		try_decash(K)
+		__try_decash(K)
 	}
 
 	///@function __erase_one(iterator)
 	function __erase_one(It) {
 		var TempK = key_memory[| It]
-		if try_decash(TempK) {
+		if __try_decash(TempK) {
 			var TempList = at(TempK)
 			ds_list_destroy(TempList)
 			ds_map_delete(raw, TempK)
@@ -362,6 +348,27 @@ function Multimap() {
 			First++
 		}
 		return Output
+	}
+
+	///@function __cash(key)
+	function __cash(K) {
+		if is_undefined(ds_list_find_value(key_memory, K)) {
+			ds_list_add(key_memory, K)
+			key_memory_size++
+		}
+	}
+
+	///@function __try_decash(key)
+	function __try_decash(K) {
+		if 0 < key_memory_size {
+			var It = ds_list_find_index(key_memory, K)
+			if It != -1 {
+				ds_list_delete(key_memory, It)
+				key_memory_size--
+				return true
+			}
+		}
+		return false
 	}
 
 	///@function read(data_string)

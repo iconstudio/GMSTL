@@ -12,7 +12,6 @@
 	Initialize:
 		new Map
 		set_value_type(type)
-		set_comparator(compare_function)
 
 	Usage:
 		To Iterate with keys:
