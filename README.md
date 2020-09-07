@@ -1,7 +1,7 @@
 # STL Implements for GameMaker Studio 2
 
 ## Contents
-### [x] Algorithm
+### ✅ Algorithm
   * [x] Check: All, Any and None
   * [x] Iterate: Foreach
   * [x] Search: Find, Count
@@ -15,22 +15,22 @@
   * [x] Weak Sort: Merge, Inner Merge, Nth Element, Partition, Partition by a Pivot
   * [x] Random: Shuffle by Engine and Generator
 
-### [x] Iterable Container
+### ✅ Iterable Container
   * [x] List
   * [x] Array
 
-### [ ] Forward Container
+### ❎ Forward Container
   * [x] Stack
   * [x] Queue
   * [ ] Priority Queue
 
-### [ ] Associative Container
+### ❎ Associative Container
   * [x] Unordered Map
   * [ ] Unordered Multiple Map
   * [ ] Ordered Multiple Map
   * [ ] Set
 
-### [ ] Graph Container: 
+### ❎ Graph Container: 
   * [ ] Tree
   * [ ] Red-Black Tree
   * [ ] Heap
