@@ -16,24 +16,23 @@
 		set_value_type(type)
 
 	Usage:
-		To Iterate with keys:
+		To Iterate keys:
+			for (var It = ibegin(); It != iend(); ++It)
+				myfunc(bucket_get(It))
+
+		To Iterate values with a key:
 			var Bucket = bucket(Key)
 			for (var It = ibegin(Bucket); It != iend(Bucket); ++It)
-				myfunc(bucket_get(Bucket, It))
-
-		To Iterate with values:
-			for (var It = ibegin(); It != iend(); ++It)
-				myfunc(get(It))
+				myfunc(get(Bucket, It))
 		
 */
 function Multimap() {
 	type = Multimap
 	raw = ds_map_create()
-	key_memory = ds_list_create()
-	key_memory_size = 0
-	ds_list_clear(key_memory) // To avoid the 0-populate-value problem.
+	key_memory = new List()
+	key_memory.clear() // To avoid the 0-populate-value problem.
 
-	///@function ibegin(iterator)
+	///@function ibegin(bucket_iterator)
   function ibegin() {
 		if argument_count == 0
 			return 0
@@ -41,11 +40,11 @@ function Multimap() {
 			return 0 // Logic
 	}
 
-	///@function iend(iterator)
+	///@function iend(bucket_iterator)
   function iend() {
 		if argument_count == 0 {
 			return size()
-		} else if is_real(argument[0]) {
+		} else if is_real(argument[0]) and 0 <= argument[0] and argument[0] < bucket_count() {
 			return bucket_size(argument[0])
 		}
 		throw "An error occured when getting the end of a multimap!"
@@ -53,7 +52,7 @@ function Multimap() {
 
 	///@function bucket(key)
   function bucket(K) {
-		var It = ds_list_find_index(key_memory, K)
+		var It = ds_list_find_index(key_memory.data(), K)
 		if It != -1 {
 			return It
 		} else {
@@ -65,21 +64,18 @@ function Multimap() {
 	///@function bucket_get(bucket_iterator)
   function bucket_get(Index) {
 		if 0 <= Index and Index < bucket_count() // key
-			return key_memory[| Index]
+			return key_memory.get(Index)
 		return undefined
 	}
 
 	///@function bucket_count()
   function bucket_count() {
-		return key_memory_size
+		return key_memory.size()
 	}
 
 	///@function bucket_size(bucket_iterator)
   function bucket_size(Index) {
-		if Index < bucket_count()
-			return ds_list_size(key_memory[| Index])
-		else
-			return 0
+		return ds_list_size(at(bucket_get(Index)))
 	}
 
 	///@function __set(key, value)
@@ -88,11 +84,11 @@ function Multimap() {
 			__cash(K)
 			var TempList = ds_list_create()
 			ds_list_add(TempList, Val)
-			add_list(K, TempList)
+			set_list(K, TempList)
 			return TempList
 		} else {
 			var TempList = at(K)
-			ds_list_add(TempList)
+			ds_list_add(TempList, Val)
 			return TempList
 		}
 	}
@@ -123,14 +119,14 @@ function Multimap() {
 		}
 
 		if KIt != -1
-			key_memory[| KIt][It] = Val
+			get(KIt)[| It] = Val
 		else
 			__set(K, Val)
 		return self
 	}
 
 	///@function set_list(key, builtin_list_id)
-  function add_list(K, Val) {
+  function set_list(K, Val) {
 		if !exists(K) {
 			__cash(K)
 			ds_map_add_list(raw, K, Val)
@@ -139,13 +135,6 @@ function Multimap() {
 			ds_map_replace_list(raw, K, Val)
 			return Temp
 		}
-	}
-
-	///@function change(key, value)
-  function change(K, Val) { 
-		if !exists(K)
-			__cash(K)
-		return __set(K, Val)
 	}
 
 	///@function get(bucket_iterator, [iterator])
@@ -180,11 +169,21 @@ function Multimap() {
 			return undefined
 	}
 
-	///@function is_list(K)
-  function is_list(K) { ds_map_is_list(raw, K) }
+	///@function is_list(key, iterator)
+  function is_list(K, It) {
+		var MyList = at(K)
+		if ds_list_size(MyList) <= It
+			return false
+		return ds_list_is_list(raw, MyList[| It])
+	}
 
-	///@function is_map(K)
-  function is_map(K) { ds_map_is_map(raw, K) }
+	///@function is_map(key, iterator)
+  function is_map(K, It) {
+		var MyList = at(K)
+		if ds_list_size(MyList) <= It
+			return false
+		return ds_list_is_map(raw, MyList[| It])
+	}
 
 	///@function exists(K)
   function exists(K) { return ds_map_exists(raw, K) }
@@ -201,7 +200,7 @@ function Multimap() {
 	///@function emplace(key, tuple)
 	function emplace(K, Params) { set(K, construct(Params)) }
 
-	///@function check_all(begin, end, predicate)
+	///@function check_all(key, begin, end, predicate)
 	function check_all(First, Last, Pred) {
 		var pred = method(other, Pred)
 		while First != Last {
@@ -213,7 +212,7 @@ function Multimap() {
 		return true
 	}
 
-	///@function check_any(begin, end, predicate)
+	///@function check_any(key, begin, end, predicate)
 	function check_any(First, Last, Pred) {
 		var pred = method(other, Pred)
 		while First != Last {
@@ -225,7 +224,7 @@ function Multimap() {
 		return false
 	}
 
-	///@function check_none(begin, end, predicate)
+	///@function check_none(key, begin, end, predicate)
 	function check_none(First, Last, Pred) {
 		var pred = method(other, Pred)
 		while First != Last {
@@ -237,7 +236,7 @@ function Multimap() {
 		return true
 	}
 
-	///@function foreach(begin, end, predicate)
+	///@function foreach(key, begin, end, predicate)
 	function foreach(First, Last, Pred) {
 		var pred = method(other, Pred)
 		while First != Last {
@@ -247,7 +246,7 @@ function Multimap() {
 		return pred
 	}
 
-	///@function find(begin, end, value, [comparator])
+	///@function find(key, begin, end, value, [comparator])
 	function find(First, Last, Val, Comparator) {
 		var comp = select_argument(Comparator, comparator_equal)
 		while First != Last {
@@ -258,7 +257,7 @@ function Multimap() {
 		return Last
 	}
 
-	///@function find_if(begin, end, predicate)
+	///@function find_if(key, begin, end, predicate)
 	function find_if(First, Last, Pred) {
 		var pred = method(other, Pred)
 		while First != Last {
@@ -270,7 +269,7 @@ function Multimap() {
 		return Last
 	}
 
-	///@function count(begin, end, value)
+	///@function count(key, begin, end, value)
 	function count(First, Last, Val) {
 		for (var it = First, result = 0; it != Last; ++it) {
 			if get(it) == Val
@@ -279,7 +278,7 @@ function Multimap() {
 		return result
 	}
 
-	///@function count_if(begin, end, predicate)
+	///@function count_if(key, begin, end, predicate)
 	function count_if(First, Last, Pred) {
 		var pred = method(other, Pred)
 		for (var it = First, result = 0; it != Last; ++it) {
@@ -343,7 +342,7 @@ function Multimap() {
 	///@function swap_range(bucket_iterator_1, begin, end, bucket_iterator_2, bucket_iterator_2_output)
 	function swap_range(Index, First, Last, OutIndex, Output) {
 		while First != Last {
-	    iter_swap(First, Output)
+	    iter_swap(Index, First, OutIndex, Output)
 
 			First++
 			Output++
@@ -359,10 +358,13 @@ function Multimap() {
 	}
 
 	///@function iter_swap(bucket_iterator_1, iterator, bucket_iterator_2, output)
-	function iter_swap(It, OutIndex, Output) {
-		var Temp = get(It)
-		iter_set(It, Dst.get(DstIt))
-		Dst.iter_set(DstIt, Temp)
+	function iter_swap(Index, It, OutIndex, Output) {
+		var MyKey = bucket_get(Index)
+		var MyVal = get(Index, It)
+		var OtherKey = bucket_get(OutIndex)
+
+		iter_set(MyKey, It, get(OutIndex, Output))
+		iter_set(OtherKey, OutIndex, MyVal)
 	}
 
 	///@function remove(begin, end, [value])
@@ -404,20 +406,15 @@ function Multimap() {
 	///@function __cash(key)
 	function __cash(K) {
 		if is_undefined(ds_list_find_value(key_memory, K)) {
-			ds_list_add(key_memory, K)
-			key_memory_size++
+			key_memory.push_back(K)
 		}
 	}
 
 	///@function __try_decash(key)
 	function __try_decash(K) {
-		if 0 < key_memory_size {
-			var It = ds_list_find_index(key_memory, K)
-			if It != -1 {
-				ds_list_delete(key_memory, It)
-				key_memory_size--
-				return true
-			}
+		if 0 < key_memory.size() {
+			key_memory.remove(key_memory.ibegin(), key_memory.iend(), K)
+			return true
 		}
 		return false
 	}

@@ -241,7 +241,7 @@ function Algorithm() {
 		return DstIt
 	}
 
-	///@function remove(begin, end, [value])
+	///@function remove(begin, end, value)
 	function remove(First, Last, Val) {
 		for (var it = First, result = First; it != Last; ++it) {
 			if get(it) == Val {

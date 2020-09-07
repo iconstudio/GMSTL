@@ -161,10 +161,10 @@ function Map(): Container() constructor {
 	}
 
 	///@function is_list(K)
-  function is_list(K) { ds_map_is_list(raw, K) }
+  function is_list(K) { return ds_map_is_list(raw, K) }
 
 	///@function is_map(K)
-  function is_map(K) { ds_map_is_map(raw, K) }
+  function is_map(K) { return ds_map_is_map(raw, K) }
 
 	///@function exists(K)
   function exists(K) { return ds_map_exists(raw, K) }
