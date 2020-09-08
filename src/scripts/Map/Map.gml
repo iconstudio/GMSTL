@@ -45,10 +45,10 @@ function Map(): Container() constructor {
 		}
 	}
 
-	///@function bucket_get(bucket_iterator)
-  function bucket_get(Index) {
-		if 0 <= Index and Index < bucket_count()
-			return key_memory[| Index]
+	///@function get_key(bucket_iterator)
+  function get_key(BucketIndex) {
+		if 0 <= BucketIndex and BucketIndex < bucket_count()
+			return key_memory[| BucketIndex]
 		return undefined
 	}
 
@@ -58,9 +58,9 @@ function Map(): Container() constructor {
 	}
 
 	///@function bucket_size(bucket_iterator)
-  function bucket_size(Index) {
-		if 0 <= Index and Index < bucket_count()
-			return ds_list_size(key_memory[| Index])
+  function bucket_size(BucketIndex) {
+		if 0 <= BucketIndex and BucketIndex < bucket_count()
+			return ds_list_size(key_memory[| BucketIndex])
 		else
 			return 0
 	}
@@ -124,7 +124,7 @@ function Map(): Container() constructor {
 
 	///@function get(iterator)
   function get(It) {
-		return at(bucket_get(It))
+		return at(get_key(It))
 	}
 
 	///@function at(key)
@@ -252,22 +252,22 @@ function Map(): Container() constructor {
 
 	///@function count(begin, end, value)
 	function count(First, Last, Val) {
-		for (var it = First, result = 0; it != Last; ++it) {
+		for (var it = First, Result = 0; it != Last; ++it) {
 			if get(it) == Val
-				result++
+				Result++
 		}
-		return result
+		return Result
 	}
 
 	///@function count_if(begin, end, predicate)
 	function count_if(First, Last, Pred) {
 		var pred = method(other, Pred)
-		for (var it = First, result = 0; it != Last; ++it) {
+		for (var it = First, Result = 0; it != Last; ++it) {
 			var Val = get(it)
 			if pred(Val)
-				result++
+				Result++
 		}
-		return result
+		return Result
 	}
 
 	///@function erase_key(key)
@@ -327,30 +327,30 @@ function Map(): Container() constructor {
 		Dst.iter_set(DstIt, Temp)
 	}
 
-	///@function remove(begin, end, [value])
+	///@function remove(begin, end, value)
 	function remove(First, Last, Val) {
-		for (var it = First, result = First; it != Last; ++it) {
+		for (var it = First, Result = First; it != Last; ++it) {
 			if get(it) == Val {
-				erase(result)
+				erase(Result)
 			} else {
-				result++
+				Result++
 			}
 		}
-		return result
+		return Result
 	}
 
 	///@function remove_if(begin, end, predicate)
 	function remove_if(First, Last, Pred) {
 		var pred = method(other, Pred)
-		for (var it = First, result = First, Val; it != Last; ++it) {
-			Val = get(result)
-			if pred(get(result)) {
-				erase(result)
+		for (var it = First, Result = First, Val; it != Last; ++it) {
+			Val = get(Result)
+			if pred(get(Result)) {
+				erase(Result)
 			} else {
-				result++
+				Result++
 			}
 		}
-		return result
+		return Result
 	}
 
 	///@function transform(begin, end, output, predicate)
