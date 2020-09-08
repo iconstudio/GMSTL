@@ -28,9 +28,13 @@
 			var BucketIndex = bucket(Key)
 			for (var It = ibegin(BucketIndex); It != iend(BucketIndex); ++It)
 				myfunc(get(BucketIndex, It))
+
+		To Iterate values within methods:
+			var BucketIndex = bucket(Key)
+			myfunc(BucketIndex, ibegin(BucketIndex), iend(BucketIndex))
 		
 */
-#macro Ordered_Multimap Multimap
+#macro Unordered_Multimap Multimap
 function Multimap() {
 	type = Multimap
 	raw = ds_map_create()
@@ -88,7 +92,7 @@ function Multimap() {
   function set_list(K, Val) {
 		if !exists(K) {
 			__cash(K)
-			var NewList = new List(Val)
+			var NewList = new List(Val) // referencing the builting-list
 			ds_map_set(raw, K, NewList)
 		} else {
 			var BeforeList = ds_map_find_value(raw, K)
@@ -153,6 +157,16 @@ function Multimap() {
 	///@function bucket_size(bucket_iterator)
   function bucket_size(BucketIndex) {
 		return get(BucketIndex).size()
+	}
+
+	///@function equal_range(key)
+  function equal_range(K) { 
+		if !exists(K) {
+			return [0, 0]
+		} else {
+			var BucketIndex = bucket(K)
+			return [ibegin(BucketIndex), iend(BucketIndex)]
+		}
 	}
 
 	///@function back(bucket_iterator)
@@ -411,6 +425,36 @@ function Multimap() {
 	function stable_sort(BucketIndex, First, Last, Comparator) {
 		var MyList = get(BucketIndex)
 		MyList.stable_sort(First, Last, Comparator)
+	}
+
+	///@function nth_element(bucket_iterator, begin, nth, end, [comparator])
+	function nth_element(BucketIndex, First, Nth, Last, Comparator) {
+		var MyList = get(BucketIndex)
+		MyList.nth_element(First, Nth, Last, Comparator)
+	}
+
+	///@function is_sorted(bucket_iterator, begin, end, [comparator])
+	function is_sorted(BucketIndex, First, Last, Comparator) {
+		var MyList = get(BucketIndex)
+		return MyList.is_sorted(First, Last, Comparator)
+	}
+
+	///@function unguarded_partition(bucket_iterator, begin, end, pivot, [comparator])
+	function unguarded_partition(BucketIndex, First, Last, Pivot, Comparator) {
+		var MyList = get(BucketIndex)
+		return MyList.unguarded_partition(First, Last, Pivot, Comparator)
+	}
+
+	///@function partition(bucket_iterator, begin, end, predicate)
+	function partition(BucketIndex, First, Last, Pred) {
+		var MyList = get(BucketIndex)
+		return MyList.partition(First, Last, Pred)
+	}
+
+	///@function is_partitioned(bucket_iterator, begin, end, predicate)
+	function is_partitioned(BucketIndex, First, Last, Pred) {
+		var MyList = get(BucketIndex)
+		return MyList.is_partitioned(First, Last, Pred)
 	}
 
 	///@function __cash(key)

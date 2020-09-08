@@ -18,6 +18,7 @@
 ### ✅ Iterable Container
   * [x] List
   * [x] Array
+  * [ ] Grid
 
 ### ❎ Sequential Container
   * [x] Stack

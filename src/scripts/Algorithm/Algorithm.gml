@@ -605,21 +605,15 @@ function Algorithm() {
 		return true
 	}
 
-	///@function unguarded_partition(begin, end, pivot, [predicate_project], [comparator])
-	function unguarded_partition(First, Last, Pivot, Pred, Comparator) {
-		var pred
-		if !is_undefined(Pred) and is_method(Pred)
-			pred = method(other, Pred)
-		else
-			pred = function(Val) { return Val }
-
+	///@function unguarded_partition(begin, end, pivot, [comparator])
+	function unguarded_partition(First, Last, Pivot, Comparator) {
 		var comp = select_argument(Comparator, comparator_less)
 	  while true {
-	    while comp(pred(get(First)), Pivot)
+	    while comp(get(First), Pivot)
 				First++
 
 	    Last--
-	    while comp(Pivot, pred(get(Last)))
+	    while comp(Pivot, get(Last))
 				Last--
 
 	    if !(First < Last)
