@@ -57,6 +57,18 @@ show_debug_message("The " + string(nth) + "th Iterator: " + string(nth_result_it
 show_debug_message("The " + string(nth) + "th Value: " + string(nth_result_value))
 print(test_sum)
 
-show_debug_message("\nRandoms")
-test_sum.shuffle(test_sum.ibegin(), test_sum.iend())
-//print(test_sum)
+show_debug_message("\nTransform a List into a Multimap")
+// Transform into paired-container
+test_sum.transform(test_sum.ibegin(), test_sum.iend(), test_sum.ibegin(), function (Val) {
+	return [irandom(2), Val]
+})
+print(test_sum)
+
+show_debug_message("\nMultimap")
+test_multimap = new Multimap(test_sum)
+for (var KIt = test_multimap.ibegin(); KIt != test_multimap.iend(); ++KIt) {
+	var TempKey = test_multimap.get_key(KIt)
+	var TempList = test_multimap.get(KIt)
+	show_debug_message("Values with key " + string(TempKey) + ": ")
+	print(TempList)
+}

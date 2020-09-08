@@ -8,7 +8,6 @@
 		Multimap(Builtin-PairedArray)
 		Multimap(Builtin-PairedList)
 		Multimap(Builtin-Map)
-		Multimap(Builtin-PriorityQueue)
 		Multimap(Arg0, Arg1, ...)
 
 	Initialize:
@@ -35,7 +34,7 @@
 		
 */
 #macro Unordered_Multimap Multimap
-function Multimap() {
+function Multimap(): Container() constructor {
 	type = Multimap
 	raw = ds_map_create()
 	key_memory = new List()
@@ -59,24 +58,6 @@ function Multimap() {
 		throw "An error occured when getting the end of a multimap!"
 	}
 
-	///@function at(key)
-  function at(K) { return ds_map_find_value(raw, K) }
-
-	///@function __set(key, value)
-	function __set(K, Val) {
-		if !exists(K) {
-			__cash(K)
-			var NewList = new List(Val)
-			ds_map_set(raw, K, NewList)
-			NewList.push_back(Val)
-			return NewList
-		} else {
-			var TempList = at(K)
-			TempList.push_back(Val)
-			return TempList
-		}
-	}
-
 	///@function set(values_pair)
 	function set(PairedVal) {
 		if is_array(PairedVal)
@@ -88,18 +69,15 @@ function Multimap() {
 		return self
 	}
 
-	///@function set_list(key, builtin_list_id)
-  function set_list(K, Val) {
-		if !exists(K) {
-			__cash(K)
-			var NewList = new List(Val) // referencing the builting-list
-			ds_map_set(raw, K, NewList)
-		} else {
-			var BeforeList = ds_map_find_value(raw, K)
-			BeforeList.destroy()
-			delete BeforeList
-			ds_map_set(raw, K, Val)
-		}
+	///@function insert(values_pair)
+	function insert(PairedVal) {
+		if is_array(PairedVal)
+			__add(PairedVal[0], PairedVal[1])
+		else if is_struct(PairedVal)
+			__add(PairedVal.first, PairedVal.second)
+		else if argument_count == 2
+			__add(argument[0], argument[1])
+		return self
 	}
 
 	///@function iter_set(bucket_iterator, values_pair)
@@ -120,13 +98,6 @@ function Multimap() {
 		return self
 	}
 
-	///@function get_key(bucket_iterator)
-  function get_key(BucketIndex) {
-		if 0 <= BucketIndex and BucketIndex < bucket_count() // key
-			return key_memory.get(BucketIndex)
-		return undefined
-	}
-
 	///@function get(bucket_iterator, [iterator])
   function get(BucketIndex) {
 		if 0 <= BucketIndex and BucketIndex < bucket_count() {
@@ -138,15 +109,25 @@ function Multimap() {
 		return undefined
 	}
 
-	///@function bucket(key)
-  function bucket(K) {
-		//Cannot return the iterator at end
-		return ds_list_find_index(key_memory.data(), K) // optimize
+	///@function get_key(bucket_iterator)
+  function get_key(BucketIndex) {
+		if 0 <= BucketIndex and BucketIndex < bucket_count() // key
+			return key_memory.get(BucketIndex)
+		return undefined
 	}
+
+	///@function at(key)
+  function at(K) { return ds_map_find_value(raw, K) }
 
 	///@function bucket_set(bucket_iterator, iterator, value)
   function bucket_set(BucketIndex, It, Val) {
 		get(BucketIndex).set(It, Val)
+	}
+
+	///@function bucket(key)
+  function bucket(K) {
+		//Cannot return the iterator at end
+		return ds_list_find_index(key_memory.data(), K) // optimize
 	}
 
 	///@function bucket_count()
@@ -457,22 +438,6 @@ function Multimap() {
 		return MyList.is_partitioned(First, Last, Pred)
 	}
 
-	///@function __cash(key) 
-	function __cash(K) {
-		if is_undefined(ds_list_find_value(key_memory, K)) {
-			key_memory.push_back(K)
-		}
-	}
-
-	///@function __try_decash(key)
-	function __try_decash(K) {
-		if 0 < key_memory.size() {
-			key_memory.remove(key_memory.ibegin(), key_memory.iend(), K)
-			return true
-		}
-		return false
-	}
-
 	function destroy() {
 		var Begin = ibegin()
 		var End = iend()
@@ -491,9 +456,72 @@ function Multimap() {
 	}
 
 	///@function read(data_string)
-	function read(Str) { ds_map_read(raw, Str) }
+	function read(Str) { 
+		var TempMap = ds_map_create()
+		ds_map_read(TempMap, Str)
+		var Size = ds_map_size(TempMap)
+		if 0 < Size {
+			var MIt = ds_map_find_first(TempMap)
+			for (var i = 0; i < Size; ++i) {
+				__cash(MIt)
+				ds_map_set(raw, MIt, ds_map_find_value(TempMap, MIt))
+				MIt = ds_map_find_next(TempMap, MIt)
+			}
+		}
+	}
 
 	function write() { return ds_map_write(raw) }
+
+	///@function __create(key, value)
+	function __create(K, Val) {
+		__cash(K)
+		var NewList = new List()
+		NewList.push_back(Val)
+		ds_map_set(raw, K, NewList)
+	}
+
+	///@function __attach(key, value)
+	function __attach(K, Val) {
+		var TempList = at(K)
+		TempList.push_back(Val)
+	}
+
+	///@function __replace(key, value)
+	function __replace(K, Val) {
+		var TempList = at(K)
+		TempList.clear()
+		TempList.push_back(Val)
+	}
+
+	///@function __set(key, value)
+	function __set(K, Val) {
+		if !exists(K)
+			__create(K, Val)
+	 else
+			__replace(K, Val)
+	}
+
+	///@function __add(key, value)
+	function __add(K, Val) {
+		if !exists(K)
+			__create(K, Val)
+		else
+			__attach(K, Val)
+	}
+
+	///@function __cash(key) 
+	function __cash(K) {
+		key_memory.push_back(K)
+	}
+
+	///@function __try_decash(key)
+	function __try_decash(K) {
+		if 0 < key_memory.size() {
+			if key_memory.remove(key_memory.ibegin(), key_memory.iend(), K) != key_memory.iend()
+				return true
+		}
+		return false
+	}
 
 	if 0 < argument_count {
 		if argument_count == 1 {
@@ -501,9 +529,10 @@ function Multimap() {
 
 			if is_struct(Item) {
 				if is_iterable(Item) {
-					// (*) Iterable-PairedContainer
+					// (*) Iterable Paired Container
 					for (var It = Item.ibegin(); It != Item.iend(); ++It) {
-						set(Item.get(It))
+						var PairedVal = Item.get(It)
+						insert(PairedVal[0], PairedVal[1])
 					}
 				} else if instanceof(Item) == "Map" {
 					// (*) Map
@@ -512,26 +541,36 @@ function Multimap() {
 				} else if instanceof(Item) == "Multimap" {
 					// (*) Multimap
 					if 0 < Item.size() {
-						for (var It = Item.ibegin(); It != Item.iend(); ++It) {
-							var TempKey = Item.get_key(It)
-							var TempList = Item.get(It)
-							set(TempKey, TempList.duplicate())
+						for (var KIt = Item.ibegin(); KIt != Item.iend(); ++KIt) {
+							var TempKey = Item.get_key(KIt)
+							var TempList = Item.get(KIt)
+							for (var It = TempList.ibegin(); It != TempList.iend(); ++It) {
+								insert(TempKey, TempList.get(It))
+							}
 						}
 					}
 				}
 			} else if is_array(Item) {
-				// (*) Built-in PairedArray
+				// (*) Built-in Paired Array
 				for (var i = 0; i < array_length(Item); ++i) {
-					set(Item[i])
+					insert(Item[i])
 				}
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
-				// (*) Built-in PairedList
+				// (*) Built-in Paired List
 				for (var i = 0; i < ds_list_size(Item); ++i) {
-					set(Item[| i])
+					insert(Item[| i])
 				}
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_map) {
 				// (*) Built-in Map
-				ds_map_copy(raw, Item)
+				var Size = ds_map_size(Item)
+				if 0 < Size {
+					var MIt = ds_map_find_first(Item)
+					for (var i = 0; i < Size; ++i) {
+						__cash(MIt)
+						ds_map_set(raw, MIt, ds_map_find_value(Item, MIt))
+						MIt = ds_map_find_next(Item, MIt)
+					}
+				}
 			} else {
 				// (*) Arg
 				set(Item)
@@ -539,7 +578,7 @@ function Multimap() {
 		} else {
 			// (*) Arg0, Arg1, ...
 			for (var i = 0; i < argument_count; ++i) {
-				set(argument[i])
+				insert(argument[i])
 			}
 		}
 	}

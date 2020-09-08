@@ -115,6 +115,16 @@ function List(): Container() constructor {
 	///@description Fast
   function sort_builtin(Ascending) { ds_list_sort(raw, Ascending) }
 
+	function destroy() {
+		ds_list_destroy(raw)
+		raw = undefined
+	}
+
+	///@function read(data_string)
+	function read(Str) { ds_list_read(raw, Str) }
+
+	function write() { return ds_list_write(raw) }
+
 	///@function __erase_one(iterator)
 	function __erase_one(It) {
 		var Temp = get(It)
@@ -134,33 +144,19 @@ function List(): Container() constructor {
 		return Temp
 	}
 
-	function destroy() {
-		ds_list_destroy(raw)
-		raw = undefined
-	}
-
-	///@function read(data_string)
-	function read(Str) { ds_list_read(raw, Str) }
-
-	function write() { return ds_list_write(raw) }
-
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]
 
 			if is_struct(Item) and is_iterable(Item) {
 				// (*) Container
-				var First = ibegin()
 				for (var It = Item.ibegin(); It != Item.iend(); ++It) {
-					if It == iend()
-						break
-					set(First++, Item.get(It))
+					push_back(Item.get(It))
 				}
 			} else if is_array(Item) {
 				// (*) Built-in Array
-				var First = ibegin()
 				for (var i = 0; i < array_length(Item); ++i) {
-					set(First++, Item[i])
+					push_back(Item[i])
 				}
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
