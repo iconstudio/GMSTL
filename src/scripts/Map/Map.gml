@@ -42,34 +42,6 @@ function Map(): Container() constructor {
 	///@function iend()
   function iend() { return size() }
 
-	///@function cash(key)
-	function cash(K) {
-		if !exists(K) {
-			ds_list_add(key_memory, K)
-			key_memory_size++
-		}
-	}
-
-	///@function try_decash(key)
-	function try_decash(K) {
-		if 0 < key_memory_size {
-			var It = ds_list_find_index(key_memory, K)
-			if It != -1 {
-				ds_list_delete(key_memory, It)
-				key_memory_size--
-				return true
-			}
-		}
-		return false
-	}
-
-	///@function __set(key, value)
-	function __set(K, Val) {
-		if !exists(K)
-			cash(K)
-		ds_map_set(raw, K, Val)
-	}
-
 	///@function set(values_pair)
 	function set(PairedVal) {
 		if is_array(PairedVal)
@@ -98,7 +70,7 @@ function Map(): Container() constructor {
 	///@function change(key, value)
   function change(K, Val) { 
 		if !exists(K)
-			cash(K)
+			__cash(K)
 		return ds_map_replace(raw, K, Val)
 	}
 
@@ -145,14 +117,14 @@ function Map(): Container() constructor {
 	///@function set_list(key, builtin_list_id)
   function set_list(K, Val) {
 		if !exists(K)
-			cash(K)
+			__cash(K)
 		ds_map_add_list(raw, K, Val)
 	}
 
 	///@function add_map(key, builtin_map_id)
   function set_map(K, Val) {
 		if !exists(K)
-			cash(K)
+			__cash(K)
 		ds_map_add_map(raw, K, Val)
 	}
 
@@ -264,14 +236,14 @@ function Map(): Container() constructor {
 	function erase_key(K) {
 		var Temp = at(K)
 		ds_map_delete(raw, K)
-		try_decash(K)
+		__try_decash(K)
 		return Temp
 	}
 
 	///@function __erase_one(iterator)
 	function __erase_one(It) {
 		var TempK = key_memory[| It]
-		if try_decash(TempK) {
+		if __try_decash(TempK) {
 			var Val = at(TempK)
 			ds_map_delete(raw, TempK)
 			return Val
@@ -365,6 +337,32 @@ function Map(): Container() constructor {
 
 	function write() {
 		return ds_map_write(raw)
+	}
+
+	///@function __set(key, value)
+	function __set(K, Val) {
+		if !exists(K)
+			__cash(K)
+		ds_map_set(raw, K, Val)
+	}
+
+	///@function __cash(key)
+	function __cash(K) {
+		ds_list_add(key_memory, K)
+		key_memory_size++
+	}
+
+	///@function __try_decash(key)
+	function __try_decash(K) {
+		if 0 < key_memory_size {
+			var It = ds_list_find_index(key_memory, K)
+			if It != -1 {
+				ds_list_delete(key_memory, It)
+				key_memory_size--
+				return true
+			}
+		}
+		return false
 	}
 
 	if 0 < argument_count {
