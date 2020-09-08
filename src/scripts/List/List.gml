@@ -150,17 +150,13 @@ function List(): Container() constructor {
 
 			if is_struct(Item) and is_iterable(Item) {
 				// (*) Container
-				var First = ibegin()
 				for (var It = Item.ibegin(); It != Item.iend(); ++It) {
-					if It == iend()
-						break
-					set(First++, Item.get(It))
+					push_back(Item.get(It))
 				}
 			} else if is_array(Item) {
 				// (*) Built-in Array
-				var First = ibegin()
 				for (var i = 0; i < array_length(Item); ++i) {
-					set(First++, Item[i])
+					push_back(Item[i])
 				}
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
