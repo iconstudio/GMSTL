@@ -16,23 +16,28 @@
 		set_value_type(type)
 
 	Usage:
-		To Iterate keys:
+		To Iterate on keys:
 			for (var It = ibegin(); It != iend(); ++It)
-				myfunc(bucket_get(It))
+				myfunc(get_key(It))
+
+		To Iterate on lists:
+			for (var It = ibegin(); It != iend(); ++It)
+				myfunc(get(It))
 
 		To Iterate values with a key:
-			var Bucket = bucket(Key)
-			for (var It = ibegin(Bucket); It != iend(Bucket); ++It)
-				myfunc(get(Bucket, It))
+			var BucketIndex = bucket(Key)
+			for (var It = ibegin(BucketIndex); It != iend(BucketIndex); ++It)
+				myfunc(get(BucketIndex, It))
 		
 */
+#macro Ordered_Multimap Multimap
 function Multimap() {
 	type = Multimap
 	raw = ds_map_create()
 	key_memory = new List()
 	key_memory.clear() // To avoid the 0-populate-value problem.
 
-	///@function ibegin(bucket_iterator)
+	///@function ibegin([bucket_iterator])
   function ibegin() {
 		if argument_count == 0
 			return 0
@@ -40,7 +45,7 @@ function Multimap() {
 			return 0 // Logic
 	}
 
-	///@function iend(bucket_iterator)
+	///@function iend([bucket_iterator])
   function iend() {
 		if argument_count == 0 {
 			return size()
@@ -50,45 +55,20 @@ function Multimap() {
 		throw "An error occured when getting the end of a multimap!"
 	}
 
-	///@function bucket(key)
-  function bucket(K) {
-		var It = ds_list_find_index(key_memory.data(), K)
-		if It != -1 {
-			return It
-		} else {
-			//Cannot return the iterator at end
-			return -1
-		}
-	}
-
-	///@function bucket_get(bucket_iterator)
-  function bucket_get(Index) {
-		if 0 <= Index and Index < bucket_count() // key
-			return key_memory.get(Index)
-		return undefined
-	}
-
-	///@function bucket_count()
-  function bucket_count() {
-		return key_memory.size()
-	}
-
-	///@function bucket_size(bucket_iterator)
-  function bucket_size(Index) {
-		return ds_list_size(at(bucket_get(Index)))
-	}
+	///@function at(key)
+  function at(K) { return ds_map_find_value(raw, K) }
 
 	///@function __set(key, value)
 	function __set(K, Val) {
 		if !exists(K) {
 			__cash(K)
-			var TempList = ds_list_create()
-			ds_list_add(TempList, Val)
-			set_list(K, TempList)
-			return TempList
+			var NewList = new List(Val)
+			ds_map_set(raw, K, NewList)
+			NewList.push_back(Val)
+			return NewList
 		} else {
 			var TempList = at(K)
-			ds_list_add(TempList, Val)
+			TempList.push_back(Val)
 			return TempList
 		}
 	}
@@ -104,9 +84,23 @@ function Multimap() {
 		return self
 	}
 
-	///@function iter_set(key, values_pair)
-  function iter_set(K, PairedVal) {
-		var KIt = bucket(K), It = -1, Val = 0
+	///@function set_list(key, builtin_list_id)
+  function set_list(K, Val) {
+		if !exists(K) {
+			__cash(K)
+			var NewList = new List(Val)
+			ds_map_set(raw, K, NewList)
+		} else {
+			var BeforeList = ds_map_find_value(raw, K)
+			BeforeList.destroy()
+			delete BeforeList
+			ds_map_set(raw, K, Val)
+		}
+	}
+
+	///@function iter_set(bucket_iterator, values_pair)
+  function iter_set(BucketIndex, PairedVal) {
+		var It = -1, Val = 0
 		if is_array(PairedVal) {
 			It = PairedVal[0]
 			Val = PairedVal[1]
@@ -118,71 +112,57 @@ function Multimap() {
 			Val = argument[2]
 		}
 
-		if KIt != -1
-			get(KIt)[| It] = Val
-		else
-			__set(K, Val)
+		bucket_set(BucketIndex, It, Val)
 		return self
 	}
 
-	///@function set_list(key, builtin_list_id)
-  function set_list(K, Val) {
-		if !exists(K) {
-			__cash(K)
-			ds_map_add_list(raw, K, Val)
-		} else {
-			var Temp = ds_map_find_value(raw, K)
-			ds_map_replace_list(raw, K, Val)
-			return Temp
-		}
+	///@function get_key(bucket_iterator)
+  function get_key(BucketIndex) {
+		if 0 <= BucketIndex and BucketIndex < bucket_count() // key
+			return key_memory.get(BucketIndex)
+		return undefined
 	}
 
 	///@function get(bucket_iterator, [iterator])
-  function get(Index) {
-		if argument_count == 1 { // list
-			if Index < bucket_count()
-				return at(key_memory[| Index])
-		} else if argument_count == 2 { // value
-			var It = argument[1]
-			if Index < bucket_count()
-				return at(key_memory[| Index])[| It]
+  function get(BucketIndex) {
+		if 0 <= BucketIndex and BucketIndex < bucket_count() {
+			var Result = at(get_key(BucketIndex)) // list
+			if argument_count == 2
+				Result = Result.get(argument[1]) // value
+			return Result
 		}
 		return undefined
 	}
 
-	///@function at(key)
-  function at(K) { return ds_map_find_value(raw, K) }
-
-	///@function back()
-  function back() {
-		if 0 < key_memory_size
-			return get(key_memory_size - 1)
-		else
-			return undefined
+	///@function bucket(key)
+  function bucket(K) {
+		//Cannot return the iterator at end
+		return ds_list_find_index(key_memory.data(), K) // optimize
 	}
 
-	///@function front()
-  function front() { 
-		if 0 < key_memory_size
-			return get(0)
-		else
-			return undefined
+	///@function bucket_set(bucket_iterator, iterator, value)
+  function bucket_set(BucketIndex, It, Val) {
+		get(BucketIndex).set(It, Val)
 	}
 
-	///@function is_list(key, iterator)
-  function is_list(K, It) {
-		var MyList = at(K)
-		if ds_list_size(MyList) <= It
-			return false
-		return ds_list_is_list(raw, MyList[| It])
+	///@function bucket_count()
+  function bucket_count() {
+		return key_memory.size()
 	}
 
-	///@function is_map(key, iterator)
-  function is_map(K, It) {
-		var MyList = at(K)
-		if ds_list_size(MyList) <= It
-			return false
-		return ds_list_is_map(raw, MyList[| It])
+	///@function bucket_size(bucket_iterator)
+  function bucket_size(BucketIndex) {
+		return get(BucketIndex).size()
+	}
+
+	///@function back(bucket_iterator)
+  function back(BucketIndex) {
+		return get(BucketIndex).back()
+	}
+
+	///@function front(bucket_iterator)
+  function front(BucketIndex) { 
+		return get(BucketIndex).front()
 	}
 
 	///@function exists(K)
@@ -200,117 +180,90 @@ function Multimap() {
 	///@function emplace(key, tuple)
 	function emplace(K, Params) { set(K, construct(Params)) }
 
-	///@function check_all(key, begin, end, predicate)
-	function check_all(First, Last, Pred) {
+	///@function check_all(bucket_iterator, begin, end, predicate)
+	function check_all(BucketIndex, First, Last, Pred) {
 		var pred = method(other, Pred)
-		while First != Last {
-			var Val = get(First)
-			if !pred(Val)
-				return false
-			First++
-		}
-		return true
+		var MyList = get(BucketIndex)
+		return MyList.check_all(First, Last, pred)
 	}
 
-	///@function check_any(key, begin, end, predicate)
-	function check_any(First, Last, Pred) {
+	///@function check_any(bucket_iterator, begin, end, predicate)
+	function check_any(BucketIndex, First, Last, Pred) {
 		var pred = method(other, Pred)
-		while First != Last {
-			var Val = get(First)
-			if pred(Val)
-				return true
-			First++
-		}
-		return false
+		var MyList = get(BucketIndex)
+		return MyList.check_any(First, Last, pred)
 	}
 
-	///@function check_none(key, begin, end, predicate)
-	function check_none(First, Last, Pred) {
+	///@function check_none(bucket_iterator, begin, end, predicate)
+	function check_none(BucketIndex, First, Last, Pred) {
 		var pred = method(other, Pred)
-		while First != Last {
-			var Val = get(First)
-			if pred(Val)
-				return false
-			First++
-		}
-		return true
+		var MyList = get(BucketIndex)
+		return MyList.check_none(First, Last, pred)
 	}
 
-	///@function foreach(key, begin, end, predicate)
-	function foreach(First, Last, Pred) {
+	///@function foreach(bucket_iterator, begin, end, predicate)
+	function foreach(BucketIndex, First, Last, Pred) {
 		var pred = method(other, Pred)
-		while First != Last {
-			pred(get(First))
-			First++
-		}
-		return pred
+		var MyList = get(BucketIndex)
+		return MyList.foreach(First, Last, pred)
 	}
 
-	///@function find(key, begin, end, value, [comparator])
-	function find(First, Last, Val, Comparator) {
-		var comp = select_argument(Comparator, comparator_equal)
-		while First != Last {
-			if comp(get(First), Val)
-				return First
-			First++
-		}
-		return Last
+	///@function find(bucket_iterator, begin, end, value, [comparator])
+	function find(BucketIndex, First, Last, Val, Comparator) {
+		var MyList = get(BucketIndex)
+		return MyList.find(First, Last, Val, Comparator)
 	}
 
-	///@function find_if(key, begin, end, predicate)
-	function find_if(First, Last, Pred) {
+	///@function find_if(bucket_iterator, begin, end, predicate)
+	function find_if(BucketIndex, First, Last, Pred) {
 		var pred = method(other, Pred)
-		while First != Last {
-			var Val = get(First)
-			if !is_undefined(Val) and pred(Val)
-				return First
-			First++
-		}
-		return Last
+		var MyList = get(BucketIndex)
+		return MyList.find_if(First, Last, pred)
 	}
 
-	///@function count(key, begin, end, value)
-	function count(First, Last, Val) {
-		for (var it = First, result = 0; it != Last; ++it) {
-			if get(it) == Val
-				result++
-		}
-		return result
+	///@function count(bucket_iterator, begin, end, value)
+	function count(BucketIndex, First, Last, Val) {
+		var MyList = get(BucketIndex)
+		return MyList.count(First, Last, Val)
 	}
 
-	///@function count_if(key, begin, end, predicate)
-	function count_if(First, Last, Pred) {
+	///@function count_if(bucket_iterator, begin, end, predicate)
+	function count_if(BucketIndex, First, Last, Pred) {
 		var pred = method(other, Pred)
-		for (var it = First, result = 0; it != Last; ++it) {
-			var Val = get(it)
-			if pred(Val)
-				result++
-		}
-		return result
+		var MyList = get(BucketIndex)
+		return MyList.count_if(First, Last, pred)
+	}
+
+	///@function erase(bucket_iterator, begin, [end])
+	function erase(BucketIndex) {
+		if argument_count == 1
+			erase_key(get_key(BucketIndex))
+		if argument_count == 2
+			__erase_one(BucketIndex, argument[1])
+		else if argument_count == 3
+			__erase_range(BucketIndex, argument[1], argument[2])
 	}
 
 	///@function erase_key(key)
 	function erase_key(K) {
-		var TempList = at(K)
-		ds_list_destroy(TempList)
+		var MyList = at(K)
+		MyList.destroy()
+		delete MyList
 		ds_map_delete(raw, K)
 		__try_decash(K)
 	}
 
-	///@function __erase_one(iterator)
-	function __erase_one(It) {
-		var TempK = key_memory[| It]
-		if __try_decash(TempK) {
-			var TempList = at(TempK)
-			ds_list_destroy(TempList)
-			ds_map_delete(raw, TempK)
-		}
+	///@function __erase_one(bucket_iterator, iterator)
+	function __erase_one(BucketIndex, It) {
+		var MyList = get(BucketIndex)
+		MyList.erase(It)
 	}
 
-	///@function __erase_range(begin, end)
-	function __erase_range(First, Last) {
+	///@function __erase_range(bucket_iterator, begin, end)
+	function __erase_range(BucketIndex, First, Last) {
+		var MyList = get(BucketIndex)
 		for (; First != Last; ++First) {
-			__erase_one(First)
+			MyList.erase(First)
 		}
 	}
 
@@ -321,35 +274,6 @@ function Multimap() {
 		set(KeyB, Temp)
 	}
 
-	///@function bucket_swap(key, iterator_1, iterator_2)
-	function bucket_swap(K, ItA, ItB) {
-		var Temp = get(K, ItA)
-		iter_set(K, get(K, ItB))
-		iter_set(K, Temp)
-	}
-
-	///@function bucket_iter_swap(bucket_iterator, iterator, destination, destination_bucket_iterator, destination_bucket_iterator_output)
-	function bucket_iter_swap(Index, It, Dst, OutIndex, Output) {
-		var MyKey = bucket_get(Index)
-		var MyVal = get(Index, It)
-		var DstKey = bucket_get(OutIndex)
-		var DstVal = Dst.get(OutIndex, Output)
-
-		iter_set(MyKey, It, DstVal)
-		Dst.iter_set(DstKey, Output, MyVal)
-	}
-
-	///@function swap_range(bucket_iterator_1, begin, end, bucket_iterator_2, bucket_iterator_2_output)
-	function swap_range(Index, First, Last, OutIndex, Output) {
-		while First != Last {
-	    iter_swap(Index, First, OutIndex, Output)
-
-			First++
-			Output++
-	  }
-	  return Output
-	}
-
 	///@function key_swap(key, destination, destination_key)
 	function key_swap(K, Dst, DstK) {
 		var Temp = at(K)
@@ -357,50 +281,136 @@ function Multimap() {
 		Dst.set(DstK, Temp)
 	}
 
-	///@function iter_swap(bucket_iterator_1, iterator, bucket_iterator_2, output)
-	function iter_swap(Index, It, OutIndex, Output) {
-		var MyKey = bucket_get(Index)
-		var MyVal = get(Index, It)
-		var OtherKey = bucket_get(OutIndex)
-
-		iter_set(MyKey, It, get(OutIndex, Output))
-		iter_set(OtherKey, OutIndex, MyVal)
+	///@function bucket_swap(bucket_iterator, iterator_1, iterator_2)
+	function bucket_swap(BucketIndex, ItA, ItB) {
+		var Temp = get(BucketIndex, ItA)
+		bucket_set(BucketIndex, ItA, get(BucketIndex, ItB))
+		bucket_set(BucketIndex, ItB, Temp)
 	}
 
-	///@function remove(begin, end, [value])
-	function remove(First, Last, Val) {
-		for (var it = First, result = First; it != Last; ++it) {
-			if get(it) == Val {
-				erase(result)
-			} else {
-				result++
-			}
-		}
-		return result
+	///@function iter_swap(bucket_iterator_1, iterator_1, bucket_iterator_2, iterator_2)
+	function iter_swap(BucketIndex, It, OutIndex, Output) {
+		var Temp = get(BucketIndex, It)
+		iter_set(BucketIndex, It, get(OutIndex, Output))
+		iter_set(OutIndex, OutIndex, Temp)
 	}
 
-	///@function remove_if(begin, end, predicate)
-	function remove_if(First, Last, Pred) {
-		var pred = method(other, Pred)
-		for (var it = First, result = First, Val; it != Last; ++it) {
-			Val = get(result)
-			if pred(get(result)) {
-				erase(result)
-			} else {
-				result++
-			}
-		}
-		return result
-	}
-
-	///@function transform(begin, end, output, predicate)
-	function transform(First, Last, Output, Pred) {
-		var pred = method(other, Pred)
+	///@function swap_range(bucket_iterator_1, begin, end, bucket_iterator_2, bucket_iterator_2_output)
+	function swap_range(BucketIndex, First, Last, OutIndex, Output) {
 		while First != Last {
-			iter_set(Output++, pred(get(First)))
+	    iter_swap(BucketIndex, First, OutIndex, Output)
+
 			First++
-		}
-		return Output
+			Output++
+	  }
+	  return Output
+	}
+
+	///@function bucket_iter_swap(bucket_iterator, iterator, destination, destination_bucket_iterator, destination_bucket_iterator_output)
+	function bucket_iter_swap(BucketIndex, It, Dst, OutIndex, Output) {
+		var Temp = get(BucketIndex, It)
+		bucket_set(BucketIndex, It, Dst.get(OutIndex, Output))
+		Dst.bucket_set(OutIndex, Output, Temp)
+	}
+
+	///@function remove(bucket_iterator, begin, end, value)
+	function remove(BucketIndex, First, Last, Val) {
+		var MyList = get(BucketIndex)
+		return MyList.remove(First, Last, Val)
+	}
+
+	///@function remove_if(bucket_iterator, begin, end, predicate)
+	function remove_if(BucketIndex, First, Last, Pred) {
+		var pred = method(other, Pred)
+		var MyList = get(BucketIndex)
+		return MyList.remove_if(First, Last, pred)
+	}
+
+	///@function bucket_move(bucket_iterator, begin, end, output)
+	function bucket_move(BucketIndex, First, Last, Output) {
+		var MyList = get(BucketIndex)
+		return MyList.move(First, Last, Output)
+	}
+
+	///@function move(bucket_iterator_1, begin, end, bucket_iterator_2, bucket_iterator_2_output)
+	function move(BucketIndex, First, Last, OutIndex, Output) {
+		var MyList = get(BucketIndex)
+		var OtherList = get(OutIndex)
+		return MyList.move_to(First, Last, OtherList, Output)
+	}
+
+	///@function move_to(bucket_iterator, begin, end, destination, destination_bucket_iterator, destination_bucket_iterator_output)
+	function move_to(BucketIndex, First, Last, Dst, OutIndex, Output) {
+		var MyList = get(BucketIndex)
+		var DstList = Dst.get(OutIndex)
+		return MyList.move_to(First, Last, DstList, Output)
+	}
+
+	///@function fill(bucket_iterator, begin, end, value)
+	function fill(BucketIndex, First, Last, Val) {
+		var MyList = get(BucketIndex)
+		MyList.fill(First, Last, Val)
+	}
+
+	///@function rotate(bucket_iterator, begin, middle, end)
+	function rotate(BucketIndex, First, Middle, Last) {
+		var MyList = get(BucketIndex)
+		return MyList.rotate(First, Middle, Last)
+	}
+
+	///@function reverse(bucket_iterator, begin, end)
+	function reverse(BucketIndex, First, Last) {
+		var MyList = get(BucketIndex)
+		MyList.reverse(First, Last)
+	}
+
+	///@function transform(bucket_iterator, begin, end, output, predicate)
+	function transform(BucketIndex, First, Last, Output, Pred) {
+		var pred = method(other, Pred)
+		var MyList = get(BucketIndex)
+		return MyList.transform(First, Last, Output, pred)
+	}
+
+	///@function min_element(bucket_iterator, begin, end, [comparator])
+	function min_element(BucketIndex, First, Last, Comparator) {
+		var MyList = get(BucketIndex)
+		return MyList.min_element(First, Last, Comparator)
+	}
+
+	///@function max_element(bucket_iterator, begin, end, [comparator])
+	function max_element(BucketIndex, First, Last, Comparator) {
+		var MyList = get(BucketIndex)
+		return MyList.max_element(First, Last, Comparator)
+	}
+
+	///@function lower_bound(bucket_iterator, begin, end, value, [comparator])
+	function lower_bound(BucketIndex, First, Last, Val, Comparator) {
+		var MyList = get(BucketIndex)
+		return MyList.lower_bound(First, Last, Val, Comparator)
+	}
+
+	///@function upper_bound(bucket_iterator, begin, end, value, [comparator])
+	function upper_bound(BucketIndex, First, Last, Val, Comparator) {
+		var MyList = get(BucketIndex)
+		return MyList.lower_bound(First, Last, Val, Comparator)
+	}
+
+	///@function binary_search(bucket_iterator, begin, end, value, [comparator])
+	function binary_search(BucketIndex, First, Last, Val, Comparator) {
+		var MyList = get(BucketIndex)
+		return MyList.binary_search(First, Last, Val, Comparator)
+	}
+
+	///@function sort(bucket_iterator, begin, end, [comparator])
+	function sort(BucketIndex, First, Last, Comparator) {
+		var MyList = get(BucketIndex)
+		MyList.sort(First, Last, Comparator)
+	}
+
+	///@function stable_sort(bucket_iterator, begin, end, [comparator])
+	function stable_sort(BucketIndex, First, Last, Comparator) {
+		var MyList = get(BucketIndex)
+		MyList.stable_sort(First, Last, Comparator)
 	}
 
 	///@function __cash(key)
