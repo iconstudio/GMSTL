@@ -464,7 +464,7 @@ function Multimap(): Container() constructor {
 			var MIt = ds_map_find_first(TempMap)
 			for (var i = 0; i < Size; ++i) {
 				__cash(MIt)
-				ds_map_set(raw, ds_map_find_value(TempMap, MIt))
+				ds_map_set(raw, MIt, ds_map_find_value(TempMap, MIt))
 				MIt = ds_map_find_next(TempMap, MIt)
 			}
 		}
@@ -567,7 +567,7 @@ function Multimap(): Container() constructor {
 					var MIt = ds_map_find_first(Item)
 					for (var i = 0; i < Size; ++i) {
 						__cash(MIt)
-						ds_map_set(raw, ds_map_find_value(Item, MIt))
+						ds_map_set(raw, MIt, ds_map_find_value(Item, MIt))
 						MIt = ds_map_find_next(Item, MIt)
 					}
 				}

@@ -67,8 +67,8 @@ function Map(): Container() constructor {
 	///@function emplace(key, tuple)
 	function emplace(K, Params) { set(K, construct(Params)) }
 
-	///@function change(key, value)
-  function change(K, Val) { 
+	///@function replace(key, value)
+  function replace(K, Val) { 
 		if !exists(K)
 			__cash(K)
 		return ds_map_replace(raw, K, Val)
@@ -240,23 +240,6 @@ function Map(): Container() constructor {
 		return Temp
 	}
 
-	///@function __erase_one(iterator)
-	function __erase_one(It) {
-		var TempK = key_memory[| It]
-		if __try_decash(TempK) {
-			var Val = at(TempK)
-			ds_map_delete(raw, TempK)
-			return Val
-		}
-	}
-
-	///@function __erase_range(begin, end)
-	function __erase_range(First, Last) {
-		for (; First != Last; ++First) {
-			__erase_one(First)
-		}
-	}
-
 	///@function swap(key_1, key_2)
 	function swap(KeyA, KeyB) {
 		var Temp = at(KeyA)
@@ -344,6 +327,23 @@ function Map(): Container() constructor {
 		if !exists(K)
 			__cash(K)
 		ds_map_set(raw, K, Val)
+	}
+
+	///@function __erase_one(iterator)
+	function __erase_one(It) {
+		var TempK = key_memory[| It]
+		if __try_decash(TempK) {
+			var Val = at(TempK)
+			ds_map_delete(raw, TempK)
+			return Val
+		}
+	}
+
+	///@function __erase_range(begin, end)
+	function __erase_range(First, Last) {
+		for (; First != Last; ++First) {
+			__erase_one(First)
+		}
 	}
 
 	///@function __cash(key)
