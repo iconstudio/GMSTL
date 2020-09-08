@@ -605,7 +605,7 @@ function Algorithm() {
 		return true
 	}
 
-	///@function unguarded_partition(begin, end, pivot, predicate_project, [comparator])
+	///@function unguarded_partition(begin, end, pivot, [predicate_project], [comparator])
 	function unguarded_partition(First, Last, Pivot, Pred, Comparator) {
 		var pred
 		if !is_undefined(Pred) and is_method(Pred)
@@ -721,19 +721,4 @@ function Algorithm() {
 	    swap(iterator_advance(First, i), iterator_advance(First, Gen(i + 1)))
 	  }
 	}
-}
-
-///@function iterator_distance(iterator_1, iterator_2)
-function iterator_distance(ItA, ItB) {
-	return abs(ItB - ItA)
-}
-
-///@function iterator_advance(iterator, distance)
-function iterator_advance(It, Dist) {
-	return It + floor(Dist)
-}
-
-///@function iterator_next(iterator)
-function iterator_next(It) {
-	return It + 1
 }
