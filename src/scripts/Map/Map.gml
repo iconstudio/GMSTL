@@ -42,17 +42,6 @@ function Map(): Container() constructor {
 	///@function iend()
   function iend() { return size() }
 
-	///@function bucket(key)
-  function bucket(K) {
-		//Cannot return the iterator at end
-		return ds_list_find_index(key_memory, K)
-	}
-
-	///@function bucket_count()
-  function bucket_count() {
-		return key_memory_size
-	}
-
 	///@function cash(key)
 	function cash(K) {
 		if !exists(K) {
@@ -128,6 +117,17 @@ function Map(): Container() constructor {
 	///@function at(key)
   function at(K) { return ds_map_find_value(raw, K) }
 
+	///@function bucket(key)
+  function bucket(K) {
+		//Cannot return the iterator at end
+		return ds_list_find_index(key_memory, K)
+	}
+
+	///@function bucket_count()
+  function bucket_count() {
+		return key_memory_size
+	}
+
   function back() {
 		if 0 < key_memory_size
 			return get(key_memory_size - 1)
@@ -142,7 +142,7 @@ function Map(): Container() constructor {
 			return undefined
 	}
 
-	///@function add_list(key, builtin_list_id)
+	///@function set_list(key, builtin_list_id)
   function set_list(K, Val) {
 		if !exists(K)
 			cash(K)
