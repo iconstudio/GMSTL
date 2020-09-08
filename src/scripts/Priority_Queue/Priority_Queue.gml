@@ -13,7 +13,6 @@
 	Initialize:
 		new Multimap
 		set_value_type(type)
-		set_comparator(compare_function)
 
 	Usage:
 		

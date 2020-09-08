@@ -429,6 +429,23 @@ function Multimap() {
 		return false
 	}
 
+	function destroy() {
+		var Begin = ibegin()
+		var End = iend()
+		if 0 < End {
+			for (var It = Begin; It != End; ++It) {
+				var TempList = get(It)
+				TempList.destroy()
+				delete TempList
+			}
+			ds_map_clear(raw)
+			key_memory.destroy()
+			delete key_memory
+		}
+		ds_map_destroy(raw)
+		raw = undefined
+	}
+
 	///@function read(data_string)
 	function read(Str) {
 		ds_map_read(raw, Str)

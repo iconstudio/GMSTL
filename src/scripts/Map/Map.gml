@@ -363,6 +363,11 @@ function Map(): Container() constructor {
 		return Output
 	}
 
+	function destroy() {
+		ds_map_destroy(raw)
+		raw = undefined
+	}
+
 	///@function read(data_string)
 	function read(Str) {
 		ds_map_read(raw, Str)

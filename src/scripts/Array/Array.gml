@@ -57,7 +57,7 @@ function Array(): Container() constructor {
 	///@function __erase_one(iterator)
 	function __erase_one(It) {
 		var Temp = get(It)
-		var NewPos = move(iterator_next(It), iend(), It)
+		//var NewPos = move(iterator_next(It), iend(), It)
 		show_debug_message("!")
 		//set(NewPos, undefined)
 		//for (var CIt = It + 1; CIt != iend(); ++CIt) {
@@ -72,6 +72,12 @@ function Array(): Container() constructor {
 		//repeat iterator_distance(First, Last)
 		//	ds_list_delete(raw, First)
 		return First
+	}
+
+	function destroy() {
+		//delete raw
+		raw = 0 // Destroy the array
+		raw = undefined
 	}
 
 	if 0 < argument_count {

@@ -141,6 +141,11 @@ function List(): Container() constructor {
 		return Temp
 	}
 
+	function destroy() {
+		ds_list_destroy(raw)
+		raw = undefined
+	}
+
 	///@function read(data_string)
 	function read(Str) {
 		ds_list_read(raw, Str)

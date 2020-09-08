@@ -19,16 +19,14 @@
   * [x] List
   * [x] Array
 
-### ❎ Forward Container
+### ❎ Sequential Container
   * [x] Stack
-  * [x] Queue iconstudio/GMContainers
-  * [ ] Priority Queue iconstudio/GMContainers
+  * [x] Queue
+  * [ ] Priority Queue
 
 ### ❎ Associative Container
   * [x] Unordered Map
-  * [ ] Unordered Multiple Map
-  * [ ] Ordered Multiple Map
-  * [ ] Set
+  * [x] Ordered Multiple Map
 
 ### ❎ Graph Container: 
   * [ ] Tree
