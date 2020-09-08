@@ -387,7 +387,7 @@ function Multimap(): Container() constructor {
 	///@function upper_bound(bucket_iterator, begin, end, value, [comparator])
 	function upper_bound(BucketIndex, First, Last, Val, Comparator) {
 		var MyList = get(BucketIndex)
-		return MyList.lower_bound(First, Last, Val, Comparator)
+		return MyList.upper_bound(First, Last, Val, Comparator)
 	}
 
 	///@function binary_search(bucket_iterator, begin, end, value, [comparator])
