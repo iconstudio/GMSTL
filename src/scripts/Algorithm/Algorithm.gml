@@ -74,29 +74,29 @@ function Algorithm() {
 
 	///@function count(begin, end, value)
 	function count(First, Last, Val) {
-		for (var it = First, result = 0; it != Last; ++it) {
+		for (var it = First, Result = 0; it != Last; ++it) {
 			if get(it) == Val
-				result++
+				Result++
 		}
-		return result
+		return Result
 	}
 
 	///@function count_if(begin, end, predicate)
 	function count_if(First, Last, Pred) {
 		var pred = method(other, Pred)
-		for (var it = First, result = 0; it != Last; ++it) {
+		for (var it = First, Result = 0; it != Last; ++it) {
 			var Val = get(it)
 			if pred(Val)
-				result++
+				Result++
 		}
-		return result
+		return Result
 	}
 
 	///@function erase(begin, [end])
 	function erase(ItA, ItB) {
-		if is_undefined(ItB) or ItA == ItB
+		if argument_count == 1
 			return __erase_one(ItA)
-		else
+		else if argument_count == 2
 			return __erase_range(ItA, ItB)
 	}
 
@@ -243,28 +243,28 @@ function Algorithm() {
 
 	///@function remove(begin, end, value)
 	function remove(First, Last, Val) {
-		for (var it = First, result = First; it != Last; ++it) {
+		for (var it = First, Result = First; it != Last; ++it) {
 			if get(it) == Val {
-				erase(result)
+				erase(Result)
 			} else {
-				result++
+				Result++
 			}
 		}
-		return result
+		return Result
 	}
 
 	///@function remove_if(begin, end, predicate)
 	function remove_if(First, Last, Pred) {
 		var pred = method(other, Pred)
-		for (var it = First, result = First, Val; it != Last; ++it) {
-			Val = get(result)
-			if pred(get(result)) {
-				erase(result)
+		for (var it = First, Result = First, Val; it != Last; ++it) {
+			Val = get(Result)
+			if pred(Val) {
+				erase(Result)
 			} else {
-				result++
+				Result++
 			}
 		}
-		return result
+		return Result
 	}
 
 	///@function move(begin, end, output)
@@ -272,18 +272,18 @@ function Algorithm() {
 		while First != Last {
 			//erase()
 			set(Output, First)
-			set(First, undefined)
 
 			First++
 			Output++
 	  }
+		erase(First, Last)
 		return Output
 	}
 
 	///@function move_to(begin, end, destination, destination_begin)
 	function move_to(First, Last, Dst, DstIt) {
 		copy_to(First, Last, Dst, DstIt)
-		remove(First, Last)
+		erase(First, Last)
 	}
 
 	///@function fill(begin, end, value)
@@ -334,12 +334,12 @@ function Algorithm() {
 		if First == Last
 			return Last
 
-		var result = First
+		var Result = First
 		while ++First != Last {
-		  if comp(get(First), get(result))
-		    result = First
+		  if comp(get(First), get(Result))
+		    Result = First
 		}
-		return result
+		return Result
 	}
 
 	///@function max_element(begin, end, [comparator])
@@ -348,12 +348,12 @@ function Algorithm() {
 		if First == Last
 			return Last
 
-		var result = First
+		var Result = First
 		while ++First != Last {
-		  if comp(get(result), get(First))
-		    result = First
+		  if comp(get(Result), get(First))
+		    Result = First
 		}
-		return result
+		return Result
 	}
 
 	///@function lower_bound(begin, end, value, [comparator])
