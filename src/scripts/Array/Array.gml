@@ -49,30 +49,21 @@ function Array(): Container() constructor {
 		raw = array_create(Size)
 	}
 
-	///@function __erase_one(iterator)
-	function __erase_one(It) {
-		var Temp = get(It)
-		//var NewPos = move(iterator_next(It), iend(), It)
-		show_debug_message("!")
-		//set(NewPos, undefined)
-		//for (var CIt = It + 1; CIt != iend(); ++CIt) {
-		//	set(It++, get(CIt))
-		//}
-		return Temp
-	}
-
-	///@function __erase_range(begin, end)
-	function __erase_range(First, Last) {
-		show_debug_message("?")
-		//repeat iterator_distance(First, Last)
-		//	ds_list_delete(raw, First)
-		return First
-	}
-
 	function destroy() {
 		//delete raw
 		raw = 0 // Destroy the array
 		raw = undefined
+	}
+
+	///@function __erase_one(iterator)
+	function __erase_one(It) {
+		set(It, undefined)
+	}
+
+	///@function __erase_range(begin, end)
+	function __erase_range(First, Last) {
+		for (var It = First; It != Last; ++It)
+			set(It, undefined)
 	}
 
 	if 0 < argument_count {

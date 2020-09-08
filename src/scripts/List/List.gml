@@ -115,6 +115,16 @@ function List(): Container() constructor {
 	///@description Fast
   function sort_builtin(Ascending) { ds_list_sort(raw, Ascending) }
 
+	function destroy() {
+		ds_list_destroy(raw)
+		raw = undefined
+	}
+
+	///@function read(data_string)
+	function read(Str) { ds_list_read(raw, Str) }
+
+	function write() { return ds_list_write(raw) }
+
 	///@function __erase_one(iterator)
 	function __erase_one(It) {
 		var Temp = get(It)
@@ -133,16 +143,6 @@ function List(): Container() constructor {
 		}
 		return Temp
 	}
-
-	function destroy() {
-		ds_list_destroy(raw)
-		raw = undefined
-	}
-
-	///@function read(data_string)
-	function read(Str) { ds_list_read(raw, Str) }
-
-	function write() { return ds_list_write(raw) }
 
 	if 0 < argument_count {
 		if argument_count == 1 {
