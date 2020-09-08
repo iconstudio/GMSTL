@@ -21,7 +21,7 @@
 function Priority_Queue(): Container() constructor {
 	type = Priority_Queue
 	raw = ds_priority_create()
-	ds_pr
+	
 
 	///@function push(value)
 	function push(Val) { ds_stack_push(raw, Val) }

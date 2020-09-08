@@ -14,6 +14,14 @@
 		set_value_type(type)
 
 	Usage:
+		To Iterate with pair:
+			var BucketNumber = bucket_count()
+			for (var i = 0; i < BucketNumber; ++i) {
+				var Key = get_key(i)
+				var Val = at(Key)
+				myfunc(Key, Val)
+			}
+
 		To Iterate with keys:
 			for (var It = ibegin(); It != iend(); ++It)
 				myfunc(get(It))
@@ -36,20 +44,8 @@ function Map(): Container() constructor {
 
 	///@function bucket(key)
   function bucket(K) {
-		var It = ds_list_find_index(key_memory, K)
-		if It != -1 {
-			return It
-		} else {
-			//Cannot return the iterator at end
-			return -1
-		}
-	}
-
-	///@function get_key(bucket_iterator)
-  function get_key(BucketIndex) {
-		if 0 <= BucketIndex and BucketIndex < bucket_count()
-			return key_memory[| BucketIndex]
-		return undefined
+		//Cannot return the iterator at end
+		return ds_list_find_index(key_memory, K)
 	}
 
 	///@function bucket_count()
@@ -57,17 +53,9 @@ function Map(): Container() constructor {
 		return key_memory_size
 	}
 
-	///@function bucket_size(bucket_iterator)
-  function bucket_size(BucketIndex) {
-		if 0 <= BucketIndex and BucketIndex < bucket_count()
-			return ds_list_size(key_memory[| BucketIndex])
-		else
-			return 0
-	}
-
 	///@function cash(key)
 	function cash(K) {
-		if is_undefined(ds_list_find_value(key_memory, K)) {
+		if !exists(K) {
 			ds_list_add(key_memory, K)
 			key_memory_size++
 		}
@@ -88,9 +76,9 @@ function Map(): Container() constructor {
 
 	///@function __set(key, value)
 	function __set(K, Val) {
-		ds_map_set(raw, K, Val)
 		if !exists(K)
 			cash(K)
+		ds_map_set(raw, K, Val)
 	}
 
 	///@function set(values_pair)
@@ -130,6 +118,13 @@ function Map(): Container() constructor {
 		return at(get_key(It))
 	}
 
+	///@function get_key(bucket_iterator)
+  function get_key(BucketIndex) {
+		if 0 <= BucketIndex and BucketIndex < bucket_count()
+			return key_memory[| BucketIndex]
+		return undefined
+	}
+
 	///@function at(key)
   function at(K) { return ds_map_find_value(raw, K) }
 
@@ -148,14 +143,14 @@ function Map(): Container() constructor {
 	}
 
 	///@function add_list(key, builtin_list_id)
-  function add_list(K, Val) {
+  function set_list(K, Val) {
 		if !exists(K)
 			cash(K)
 		ds_map_add_list(raw, K, Val)
 	}
 
 	///@function add_map(key, builtin_map_id)
-  function add_map(K, Val) {
+  function set_map(K, Val) {
 		if !exists(K)
 			cash(K)
 		ds_map_add_map(raw, K, Val)
@@ -167,7 +162,7 @@ function Map(): Container() constructor {
 	///@function is_map(K)
   function is_map(K) { return ds_map_is_map(raw, K) }
 
-	///@function exists(K)
+	///@function exists(key)
   function exists(K) { return ds_map_exists(raw, K) }
 
 	function size() { return ds_map_size(raw) }
@@ -376,7 +371,7 @@ function Map(): Container() constructor {
 		if argument_count == 1 {
 			var Item = argument[0]
 
-			if is_struct(Item) and is_iterable(Item) {
+			if is_struct(Item) {
 				if is_iterable(Item) {
 					// (*) Iterable-PairedContainer
 					for (var It = Item.ibegin(); It != Item.iend(); ++It) {
@@ -385,6 +380,7 @@ function Map(): Container() constructor {
 				} else if instanceof(Item) == "Map" {
 					// (*) Map
 					ds_map_copy(raw, Item.data())
+					ds_list_copy(key_memory, Item.key_memory)
 				}
 			} else if is_array(Item) {
 				// (*) Built-in PairedArray

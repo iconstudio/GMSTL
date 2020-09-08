@@ -2,13 +2,13 @@
 	Constructors:
 		Multimap()
 		Multimap(Arg)
-		Multimap(Map)
 		Multimap(Multimap)
+		Multimap(Iterable-PairedContainer)
+		Multimap(Map)
 		Multimap(Builtin-PairedArray)
 		Multimap(Builtin-PairedList)
 		Multimap(Builtin-Map)
 		Multimap(Builtin-PriorityQueue)
-		Multimap(Iterable-PairedContainer)
 		Multimap(Arg0, Arg1, ...)
 
 	Initialize:
@@ -179,7 +179,7 @@ function Multimap() {
 		return get(BucketIndex).front()
 	}
 
-	///@function exists(K)
+	///@function exists(key)
   function exists(K) { return ds_map_exists(raw, K) }
 
 	///@function size()
@@ -499,7 +499,7 @@ function Multimap() {
 		if argument_count == 1 {
 			var Item = argument[0]
 
-			if is_struct(Item) and is_iterable(Item) {
+			if is_struct(Item) {
 				if is_iterable(Item) {
 					// (*) Iterable-PairedContainer
 					for (var It = Item.ibegin(); It != Item.iend(); ++It) {
@@ -508,6 +508,16 @@ function Multimap() {
 				} else if instanceof(Item) == "Map" {
 					// (*) Map
 					ds_map_copy(raw, Item.data())
+					ds_list_copy(key_memory, Item.key_memory)
+				} else if instanceof(Item) == "Multimap" {
+					// (*) Multimap
+					if 0 < Item.size() {
+						for (var It = Item.ibegin(); It != Item.iend(); ++It) {
+							var TempKey = Item.get_key(It)
+							var TempList = Item.get(It)
+							set(TempKey, TempList.duplicate())
+						}
+					}
 				}
 			} else if is_array(Item) {
 				// (*) Built-in PairedArray
