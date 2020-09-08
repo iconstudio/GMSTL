@@ -6,7 +6,7 @@ function Container() {
 	///@function is_iterable(container)
 	function is_iterable(_Container) {
 		var meta = instanceof(_Container)
-		return meta == "Array" or meta == "List"
+		return meta == "Array" or meta == "List" or meta == "Grid"
 	}
 
 	///@function make_element_from_tuple(tuple...)
@@ -82,8 +82,8 @@ function Iterator(Cont, BucketIndex) constructor {
 		return container.set(index, Val)
 	}
 
-	///@function get()
-	function get() {
+	///@function get_value()
+	function get_value() {
 		return container.get(index)
 	}
 

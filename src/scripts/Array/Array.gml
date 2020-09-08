@@ -32,20 +32,15 @@ function Array(): Container() constructor {
 	}
 
 	///@function get(iterator)
-  function get(It) {
-		return raw[It]
-	}
+  function get(It) { return raw[It] }
 
 	///@function at(index)
   function at(i) { return raw[i] }
 
-	///@function back()
   function back() { return at(inner_size - 1) }
 
-	///@function front()
   function front() { return at(0) }
 
-	///@function size()
 	function size() { return inner_size }
 
 	///@function allocate(size)

@@ -3,10 +3,10 @@
 		Stack()
 		Stack(Arg)
 		Stack(Stack)
+		Stack(Iterable-Container)
 		Stack(Builtin-Array)
 		Stack(Builtin-List)
 		Stack(Builtin-Stack)
-		Stack(Iterable-Container)
 		Stack(Arg0, Arg1, ...)
 
 	Initialize:
@@ -27,40 +27,25 @@ function Stack(): Container() constructor {
 	///@function push_back(value)
 	function push_back(Val) { ds_stack_push(raw, Val) }
 
-	///@function pop()
 	function pop() { ds_stack_pop(raw) }
 
-	///@function pop_back()
 	function pop_back() { return ds_stack_pop(raw) }
 
 	///@function emplace(tuple)
 	function emplace(Params) { push(construct(Params)) }
 
-	///@function top()
-  function top() {
-		return ds_stack_top(raw)
-	}
+  function top() { return ds_stack_top(raw) }
 
-	function size() {
-		return ds_stack_size(raw)
-	}
+	function size() { return ds_stack_size(raw) }
 
-	function empty() {
-		return ds_stack_empty(raw)
-	}
+	function empty() { return ds_stack_empty(raw) }
 
-	function clear() {
-		ds_stack_clear(raw)
-	}
+	function clear() { ds_stack_clear(raw) }
 
 	///@function read(data_string)
-	function read(Str) {
-		ds_stack_read(raw, Str)
-	}
+	function read(Str) { ds_stack_read(raw, Str) }
 
-	function write() {
-		return ds_stack_write(raw)
-	}
+	function write() { return ds_stack_write(raw) }
 
 	if 0 < argument_count {
 		if argument_count == 1 {

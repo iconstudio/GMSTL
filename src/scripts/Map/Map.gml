@@ -3,10 +3,10 @@
 		Map()
 		Map(Arg)
 		Map(Map)
+		Map(Iterable-PairedContainer)
 		Map(Builtin-PairedArray)
 		Map(Builtin-PairedList)
 		Map(Builtin-Map)
-		Map(Iterable-PairedContainer)
 		Map(Arg0, Arg1, ...)
 
 	Initialize:
@@ -115,6 +115,9 @@ function Map(): Container() constructor {
 		return self
 	}
 
+	///@function emplace(key, tuple)
+	function emplace(K, Params) { set(K, construct(Params)) }
+
 	///@function change(key, value)
   function change(K, Val) { 
 		if !exists(K)
@@ -130,7 +133,6 @@ function Map(): Container() constructor {
 	///@function at(key)
   function at(K) { return ds_map_find_value(raw, K) }
 
-	///@function back()
   function back() {
 		if 0 < key_memory_size
 			return get(key_memory_size - 1)
@@ -138,7 +140,6 @@ function Map(): Container() constructor {
 			return undefined
 	}
 
-	///@function front()
   function front() { 
 		if 0 < key_memory_size
 			return get(0)
@@ -169,17 +170,11 @@ function Map(): Container() constructor {
 	///@function exists(K)
   function exists(K) { return ds_map_exists(raw, K) }
 
-	///@function size()
 	function size() { return ds_map_size(raw) }
 
-	///@function empty()
 	function empty() { return ds_map_empty(raw) }
 
-	///@function clear()
 	function clear() { ds_map_clear(raw) }
-
-	///@function emplace(key, tuple)
-	function emplace(K, Params) { set(K, construct(Params)) }
 
 	///@function check_all(begin, end, predicate)
 	function check_all(First, Last, Pred) {

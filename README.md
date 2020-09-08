@@ -23,11 +23,12 @@
 ### ❎ Sequential Container
   * [x] Stack
   * [x] Queue
+  * [x] Priority Deque
   * [ ] Priority Queue
 
 ### ❎ Associative Container
   * [x] Unordered Map
-  * [x] Ordered Multiple Map
+  * [x] Unordered Multiple Map
 
 ### ❎ Graph Container: 
   * [ ] Tree

@@ -3,10 +3,10 @@
 		Queue()
 		Queue(Arg)
 		Queue(Queue)
+		Queue(Iterable-Container)
 		Queue(Builtin-Array)
 		Queue(Builtin-List)
 		Queue(Builtin-Queue)
-		Queue(Iterable-Container)
 		Queue(Arg0, Arg1, ...)
 
 	Initialize:
@@ -27,45 +27,27 @@ function Queue(): Container() constructor {
 	///@function push_back(value)
 	function push_back(Val) { ds_queue_enqueue(raw, Val) }
 
-	///@function pop()
 	function pop() { ds_queue_dequeue(raw) }
 
-	///@function pop_front()
 	function pop_front() { return ds_queue_dequeue(raw) }
 
 	///@function emplace(tuple)
 	function emplace(Params) { push(construct(Params)) }
 
-	///@function back()
-  function back() {
-		return ds_queue_tail(raw)
-	}
+  function back() { return ds_queue_tail(raw)}
 
-	///@function front()
-  function front() { 
-		return ds_queue_head(raw)
-	}
+  function front() {  return ds_queue_head(raw) }
 
-	function size() {
-		return ds_queue_size(raw)
-	}
+	function size() { return ds_queue_size(raw) }
 
-	function empty() {
-		return ds_queue_empty(raw)
-	}
+	function empty() { return ds_queue_empty(raw) }
 
-	function clear() {
-		ds_queue_clear(raw)
-	}
+	function clear() { ds_queue_clear(raw) }
 
 	///@function read(data_string)
-	function read(Str) {
-		ds_queue_read(raw, Str)
-	}
+	function read(Str) { ds_queue_read(raw, Str) }
 
-	function write() {
-		return ds_queue_write(raw)
-	}
+	function write() { return ds_queue_write(raw) }
 
 	if 0 < argument_count {
 		if argument_count == 1 {

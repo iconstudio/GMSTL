@@ -59,13 +59,10 @@ function List(): Container() constructor {
 	///@function emplace_front(tuple)
 	function emplace_front(Params) { push_front(construct(Params)) }
 
-	///@function pop_back()
 	function pop_back() { return erase(iend() - 1) }
 
-	///@function pop_front()
 	function pop_front() { return erase(ibegin()) }
 
-	///@function back()
   function back() {
 		var sz = size()
 		if 0 < sz
@@ -74,7 +71,6 @@ function List(): Container() constructor {
 			return undefined
 	}
 
-	///@function front()
   function front() { 
 		if 0 < size() 
 			return at(0)
@@ -88,13 +84,10 @@ function List(): Container() constructor {
 	///@function mark_map(index)
   function mark_map(i) { ds_list_mark_as_map(raw, i) }
 
-	///@function size()
 	function size() { return ds_list_size(raw) }
 
-	///@function empty()
 	function empty() { return ds_list_empty(raw) }
 
-	///@function clear()
 	function clear() { ds_list_clear(raw) }
 
 	///@function resize(size, [value_fill])
@@ -147,13 +140,9 @@ function List(): Container() constructor {
 	}
 
 	///@function read(data_string)
-	function read(Str) {
-		ds_list_read(raw, Str)
-	}
+	function read(Str) { ds_list_read(raw, Str) }
 
-	function write() {
-		return ds_list_write(raw)
-	}
+	function write() { return ds_list_write(raw) }
 
 	if 0 < argument_count {
 		if argument_count == 1 {

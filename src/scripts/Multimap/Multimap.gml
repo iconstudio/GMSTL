@@ -457,7 +457,7 @@ function Multimap() {
 		return MyList.is_partitioned(First, Last, Pred)
 	}
 
-	///@function __cash(key)
+	///@function __cash(key) 
 	function __cash(K) {
 		if is_undefined(ds_list_find_value(key_memory, K)) {
 			key_memory.push_back(K)
@@ -491,13 +491,9 @@ function Multimap() {
 	}
 
 	///@function read(data_string)
-	function read(Str) {
-		ds_map_read(raw, Str)
-	}
+	function read(Str) { ds_map_read(raw, Str) }
 
-	function write() {
-		return ds_map_write(raw)
-	}
+	function write() { return ds_map_write(raw) }
 
 	if 0 < argument_count {
 		if argument_count == 1 {
