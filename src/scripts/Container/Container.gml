@@ -72,6 +72,64 @@ function Container() {
 	add = -1
 }
 
+///@function Iterator(container, index)
+function Iterator(Cont, BucketIndex) constructor {
+	container = Cont
+	index = BucketIndex
+
+	///@function set(value)
+	function set(Val) {
+		return container.set(index, Val)
+	}
+
+	///@function get()
+	function get() {
+		return container.get(index)
+	}
+
+	///@function equals(other)
+	function equals(Other) {
+		if is_real(Other)
+			return bool(Other == index)
+		else
+			return bool(Other.container == container and Other.index == index)
+	}
+
+	function go_forward() {
+		return index++
+	}
+
+	function go_backward() {
+		return --index
+	}
+}
+
+///@function iterator_distance(iterator_1, iterator_2)
+function iterator_distance(ItA, ItB) {
+	var ItA_Index = is_real(ItA) ? ItA : ItA.index
+	var ItB_Index = is_real(ItB) ? ItB : ItB.index
+	return abs(ItB_Index - ItA_Index)
+}
+
+///@function iterator_advance(iterator, distance)
+function iterator_advance(It, Dist) {
+	var Distance = floor(is_real(Dist) ? Dist : Dist.index)
+	if is_real(It) {
+		return It + Distance
+	} else {
+		It.index += Distance
+		return It
+	}
+}
+
+///@function iterator_next(iterator)
+function iterator_next(It) {
+	if is_real(It)
+		return It + 1
+	else
+		return new Iterator(It.container, It.index + 1)
+}
+
 function Wrapper(Val) constructor {
 	value = Val
 }
