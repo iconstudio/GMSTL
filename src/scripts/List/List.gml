@@ -90,30 +90,13 @@ function List(): Container() constructor {
 
 	function clear() { ds_list_clear(raw) }
 
-	///@function resize(size, [value_fill])
-	function resize(Size, Fv) {
-		var osz = size()
-		if 0 < Size and Size != osz {
-			if Size < osz {
-				while size() != Size
-					pop_back()
-			} else {
-				var fv = select_argument(Fv, (is_undefined(value_type) ? 0 : undefined))
-				while size() != Size
-					push_back(fv)
-			}
-			return true
-		}
-		return false
-	}
+	///@function sort_builtin(ascending)
+	///@description Fast
+  function sort_builtin(Ascending) { ds_list_sort(raw, Ascending) }
 
 	///@function shuffle_builtin()
 	///@description Fast
   function shuffle_builtin() { ds_list_shuffle(raw) }
-
-	///@function sort_builtin(ascending)
-	///@description Fast
-  function sort_builtin(Ascending) { ds_list_sort(raw, Ascending) }
 
 	function destroy() {
 		ds_list_destroy(raw)
