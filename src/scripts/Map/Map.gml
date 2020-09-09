@@ -56,11 +56,11 @@ function Map(): Container() constructor {
 	///@function iter_set(values_pair)
   function iter_set(PairedVal) { 
 		if is_array(PairedVal)
-			__set(key_memory[| PairedVal[0]], PairedVal[1])
+			__set(get_key(PairedVal[0]), PairedVal[1])
 		else if is_struct(PairedVal)
-			__set(key_memory[| PairedVal.first], PairedVal.second)
+			__set(get_key(PairedVal.first), PairedVal.second)
 		else if argument_count == 2
-			__set(key_memory[| argument[0]], argument[1])
+			__set(get_key(argument[0]), argument[1])
 		return self
 	}
 
@@ -392,7 +392,15 @@ function Map(): Container() constructor {
 				}
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_map) {
 				// (*) Built-in Map
-				ds_map_copy(raw, Item)
+				var Size = ds_map_size(Item)
+				if 0 < Size {
+					var MIt = ds_map_find_first(Item)
+					for (var i = 0; i < Size; ++i) {
+						set(MIt, ds_map_find_value(Item, MIt))
+						MIt = ds_map_find_next(Item, MIt)
+					}
+				}
+				//ds_map_copy(raw, Item)
 			} else {
 				// (*) Arg
 				set(Item)

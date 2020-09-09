@@ -34,7 +34,7 @@ function Container() {
 
 	///@function construct(data...)
 	function construct() {
-		if is_undefined(value_type) { // real
+		if is_undefined(value_type) { // literals
 			if argument_count == 0
 				return 0
 			else

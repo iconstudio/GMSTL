@@ -1,24 +1,21 @@
 /*
 	Constructors:
-		Multimap()
+		Priority_Queue(comparator)
 
 	Initialize:
-		new Multimap()
+		new Priority_Queue(cmpfunc)
 
 	Usage:
 		
-		
 */
-function Priority_Queue(): Container() constructor {
+///@function Priority_Queue(comparator)
+function Priority_Queue(Comparator): Container() constructor {
 	type = Priority_Queue
-	raw = ds_priority_create()
-	
+	raw = ds_list_create()
+	comparator = method(other, Comparator)
 
 	///@function push(value)
-	function push(Val) { ds_stack_push(raw, Val) }
-
-	///@function push_back(value)
-	function push_back(Val) { ds_stack_push(raw, Val) }
+	function push(Val) { ds_list_add(raw, Val) }
 
 	///@function pop()
 	function pop() { ds_stack_pop(raw) }

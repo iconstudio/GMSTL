@@ -328,6 +328,17 @@ function Algorithm() {
 		return Output
 	}
 
+	///@function transform_binary(begin, end, another_begin, output, predicate)
+	function transform_binary(First, Last, PairFirst, Output, Pred) {
+		var pred = method(other, Pred)
+		while First != Last {
+			set(Output++, pred(get(First), get(PairFirst)))
+			First++
+			PairFirst++
+		}
+		return Output
+	}
+
 	///@function min_element(begin, end, [comparator])
 	function min_element(First, Last, Comparator) {
 		var comp = select_argument(Comparator, comparator_less)
