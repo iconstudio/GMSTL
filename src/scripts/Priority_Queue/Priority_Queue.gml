@@ -32,7 +32,7 @@ function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 
 	function duplicate() {
 		var Result = new Priority_Queue(self.comparator, self.is_stable)
-		for (var It = raw.ibegin(); It != raw.iend(); ++It)
+		for (var It = raw.nbegin(); It != raw.nend(); ++It)
 			Result.push(raw.get(It))
 		return Result
 	}

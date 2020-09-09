@@ -19,11 +19,11 @@ function Array(): Container() constructor {
 	type = Array
 	inner_size = 0
 
-	///@function ibegin()
-  function ibegin() { return 0 }
+	///@function nbegin()
+  function nbegin() { return 0 }
 
-	///@function iend()
-  function iend() { return inner_size }
+	///@function nend()
+  function nend() { return inner_size }
 
 	///@function set(iterator, value)
   function set(It, Val) {
@@ -74,7 +74,7 @@ function Array(): Container() constructor {
 				// (*) Container
 				allocate(Item.size())
 				var First = 0
-				for (var It = Item.ibegin(); It != Item.iend(); ++It) {
+				for (var It = Item.nbegin(); It != Item.nend(); ++It) {
 					set(First++, Item.get(It))
 				}
 			} else if is_array(Item) {

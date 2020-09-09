@@ -101,11 +101,11 @@ function Algorithm() {
   function assign() {
 		var Output = 0
 		if argument_count == 2 {
-			Output = ibegin()
+			Output = nbegin()
 			repeat argument[0]
 				set(Output++, argument[1])
 		} else if argument_count == 3 {
-			Output = ibegin()
+			Output = nbegin()
 			for (var It = argument[1]; It != argument[2]; ++It)
 				set(Output++, argument[0].get(It))
 		}

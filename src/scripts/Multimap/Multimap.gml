@@ -16,21 +16,21 @@
 
 	Usage:
 		To Iterate on keys:
-			for (var It = ibegin(); It != iend(); ++It)
+			for (var It = nbegin(); It != nend(); ++It)
 				myfunc(get_key(It))
 
 		To Iterate on lists:
-			for (var It = ibegin(); It != iend(); ++It)
+			for (var It = nbegin(); It != nend(); ++It)
 				myfunc(get(It))
 
 		To Iterate values with a key:
 			var BucketIndex = bucket(Key)
-			for (var It = ibegin(BucketIndex); It != iend(BucketIndex); ++It)
+			for (var It = nbegin(BucketIndex); It != nend(BucketIndex); ++It)
 				myfunc(get(BucketIndex, It))
 
 		To Iterate values within methods:
 			var BucketIndex = bucket(Key)
-			myfunc(BucketIndex, ibegin(BucketIndex), iend(BucketIndex))
+			myfunc(BucketIndex, nbegin(BucketIndex), nend(BucketIndex))
 		
 */
 #macro Unordered_Multimap Multimap
@@ -40,16 +40,16 @@ function Multimap(): Container() constructor {
 	key_memory = new List()
 	key_memory.clear() // To avoid the 0-populate-value problem.
 
-	///@function ibegin([bucket_iterator])
-  function ibegin() {
+	///@function nbegin([bucket_iterator])
+  function nbegin() {
 		if argument_count == 0
 			return 0
 		else
 			return 0 // Logic
 	}
 
-	///@function iend([bucket_iterator])
-  function iend() {
+	///@function nend([bucket_iterator])
+  function nend() {
 		if argument_count == 0 {
 			return size()
 		} else if is_real(argument[0]) and 0 <= argument[0] and argument[0] < bucket_count() {
@@ -146,7 +146,7 @@ function Multimap(): Container() constructor {
 			return [0, 0]
 		} else {
 			var BucketIndex = bucket(K)
-			return [ibegin(BucketIndex), iend(BucketIndex)]
+			return [nbegin(BucketIndex), nend(BucketIndex)]
 		}
 	}
 
@@ -439,8 +439,8 @@ function Multimap(): Container() constructor {
 	}
 
 	function destroy() {
-		var Begin = ibegin()
-		var End = iend()
+		var Begin = nbegin()
+		var End = nend()
 		if 0 < End {
 			for (var It = Begin; It != End; ++It) {
 				var TempList = get(It)
@@ -517,7 +517,7 @@ function Multimap(): Container() constructor {
 	///@function __try_decash(key)
 	function __try_decash(K) {
 		if 0 < key_memory.size() {
-			if key_memory.remove(key_memory.ibegin(), key_memory.iend(), K) != key_memory.iend()
+			if key_memory.remove(key_memory.nbegin(), key_memory.nend(), K) != key_memory.nend()
 				return true
 		}
 		return false
@@ -530,7 +530,7 @@ function Multimap(): Container() constructor {
 			if is_struct(Item) {
 				if is_iterable(Item) {
 					// (*) Iterable Paired Container
-					for (var It = Item.ibegin(); It != Item.iend(); ++It) {
+					for (var It = Item.nbegin(); It != Item.nend(); ++It) {
 						var PairedVal = Item.get(It)
 						insert(PairedVal[0], PairedVal[1])
 					}
@@ -541,10 +541,10 @@ function Multimap(): Container() constructor {
 				} else if instanceof(Item) == "Multimap" {
 					// (*) Multimap
 					if 0 < Item.size() {
-						for (var KIt = Item.ibegin(); KIt != Item.iend(); ++KIt) {
+						for (var KIt = Item.nbegin(); KIt != Item.nend(); ++KIt) {
 							var TempKey = Item.get_key(KIt)
 							var TempList = Item.get(KIt)
-							for (var It = TempList.ibegin(); It != TempList.iend(); ++It) {
+							for (var It = TempList.nbegin(); It != TempList.nend(); ++It) {
 								insert(TempKey, TempList.get(It))
 							}
 						}

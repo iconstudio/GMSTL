@@ -79,7 +79,7 @@ function Priority_Deque(): Container() constructor {
 			if is_struct(Item) {
 				if is_iterable(Item) {
 					// (*) Iterable-PairedContainer
-					for (var It = Item.ibegin(); It != Item.iend(); ++It) {
+					for (var It = Item.nbegin(); It != Item.nend(); ++It) {
 						push(Item.get(It))
 					}
 				} else if instanceof(Item) == "Map" {

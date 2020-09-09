@@ -19,11 +19,11 @@ function List(): Container() constructor {
 	type = List
 	raw = ds_list_create()
 
-	///@function ibegin()
-  function ibegin() { return 0 }
+	///@function nbegin()
+  function nbegin() { return 0 }
 
-	///@function iend()
-  function iend() { return size() }
+	///@function nend()
+  function nend() { return size() }
 
 	///@function set(iterator, value)
   function set(It, Val) { 
@@ -51,7 +51,7 @@ function List(): Container() constructor {
 	function push_back(Val) { ds_list_add(raw, Val) }
 
 	///@function push_front(value)
-	function push_front(Val) { insert(ibegin(), Val) }
+	function push_front(Val) { insert(nbegin(), Val) }
 
 	///@function emplace_back(tuple)
 	function emplace_back(Params) { push_back(construct(Params)) }
@@ -59,9 +59,9 @@ function List(): Container() constructor {
 	///@function emplace_front(tuple)
 	function emplace_front(Params) { push_front(construct(Params)) }
 
-	function pop_back() { return erase(iend() - 1) }
+	function pop_back() { return erase(nend() - 1) }
 
-	function pop_front() { return erase(ibegin()) }
+	function pop_front() { return erase(nbegin()) }
 
   function back() {
 		var sz = size()
@@ -133,7 +133,7 @@ function List(): Container() constructor {
 
 			if is_struct(Item) and is_iterable(Item) {
 				// (*) Container
-				for (var It = Item.ibegin(); It != Item.iend(); ++It) {
+				for (var It = Item.nbegin(); It != Item.nend(); ++It) {
 					push_back(Item.get(It))
 				}
 			} else if is_array(Item) {

@@ -23,7 +23,7 @@
 			}
 
 		To Iterate with keys:
-			for (var It = ibegin(); It != iend(); ++It)
+			for (var It = nbegin(); It != nend(); ++It)
 				myfunc(get(It))
 		
 */
@@ -36,11 +36,11 @@ function Map(): Container() constructor {
 	key_memory_size = 0
 	ds_list_clear(key_memory) // To avoid the 0-populate-value problem.
 
-	///@function ibegin()
-  function ibegin() { return 0 }
+	///@function nbegin()
+  function nbegin() { return 0 }
 
-	///@function iend()
-  function iend() { return size() }
+	///@function nend()
+  function nend() { return size() }
 
 	///@function set(values_pair)
 	function set(PairedVal) {
@@ -372,7 +372,7 @@ function Map(): Container() constructor {
 			if is_struct(Item) {
 				if is_iterable(Item) {
 					// (*) Iterable-PairedContainer
-					for (var It = Item.ibegin(); It != Item.iend(); ++It) {
+					for (var It = Item.nbegin(); It != Item.nend(); ++It) {
 						set(Item.get(It))
 					}
 				} else if instanceof(Item) == "Map" {
