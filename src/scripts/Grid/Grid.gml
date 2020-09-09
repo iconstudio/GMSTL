@@ -9,8 +9,8 @@
 	Usage:
 		Recommend using internal functions to control the Grid.
 
-		To Iterate on values: (slow)
-			for (var It = ibegin(); It != iend(); ++It) {
+		To Iterate a sequence on all values: (slow)
+			for (var It = nbegin(); It != nend(); ++It) {
 				myfunc(get_on(It))
 			}
 
@@ -21,24 +21,24 @@
 				}
 			}
 
-		To Iterate on row: (very slow, You Must Use Internal Functions If They Can Do The Job)
+		To Iterate on row: (very slow, please use internal functions if they can do the job)
 			for (var k = 0; k < height; ++k) { // row
-				for (var It = ibegin(k); It < iend(k); ++It) { // column
+				for (var It = nbegin(k); It < nend(k); ++It) { // iterate
 					myfunc(get_on(It))
 				}
 			}
 
-		To Iterate with iterators (1): (more slow, please use internal functions if they can do the job)
+		To Iterate a sequence with iterators (1): (so slow, please use internal functions if they can do the job)
 			var It = new GridIterator(self, First)
 			repeat Last - First {
-				myfunc(get(It))
+				myfunc(It.get())
 				It.go_forward()
 			}
 			delete It
 
-		To Iterate with iterators (2): (more slow, please use internal functions if they can do the job)
+		To Iterate a sequence with iterators (2): (so slow, please use internal functions if they can do the job)
 			for (var It = new GridIterator(self, First); !It.equals(Last); It.go_forward()) {
-				myfunc(get(It))
+				myfunc(It.get())
 				It.go_forward()
 			}
 			delete It
@@ -53,17 +53,24 @@ function Grid(Width, Height): Container() constructor {
 	height = Height
 	inner_iterator = new GridIterator(self, 0)
 	inner_size = width * height
+	__iend = new GridIterator(self, inner_size)
 
-	///@function ibegin([row])
-  function ibegin() {
+	///@function ibegin()
+  function ibegin() { return new GridIterator(self, 0) }
+
+	///@function iend()
+  function iend() { return __iend }
+
+	///@function nbegin([row])
+  function nbegin() {
 		if argument_count == 1
 			return argument[0] * width
 		else
 			return 0
 	}
 
-	///@function iend([row])
-  function iend() {
+	///@function nend([row])
+  function nend() {
 		if argument_count == 1
 			return (argument[0] + 1) * width
 		else
@@ -73,12 +80,6 @@ function Grid(Width, Height): Container() constructor {
   ///@function set(x, y, value)
 	function set(X, Y, Val) {
 		raw[# X, Y] = Val
-		return self
-	}
-
-  ///@function insert(iterator, value)
-	function insert(It, Val) {
-		set(It.x, It.y, Val)
 		return self
 	}
 
@@ -128,22 +129,48 @@ function Grid(Width, Height): Container() constructor {
 	///@function at(x, y)
 	function at(X, Y) { return raw[# X, Y] }
 
-	///@function get(iterator)
-	function get(It) { return at(It.x, It.y) }
-
 	///@function get_on(index)
 	function get_on(Index) {
 		inner_iterator.set_index(Index)
 		return at(inner_iterator.x, inner_iterator.y)
 	}
 
+	///@function exists(x1, y1, x2, y2, value)
+	function exists(X1, Y1, X2, Y2, Val) { return ds_grid_value_exists(raw, X1, Y1, X2, Y2, Val) }
+
+	///@function exists_disk(x, y, radius, value)
+	function exists_disk(X, Y, Rads, Val) { return ds_grid_value_disk_exists(raw, X, Y, Rads, Val) }
+
+	///@function max_region(x1, y1, x2, y2)
+	function max_region(X1, Y1, X2, Y2) { return ds_grid_get_max(raw, X1, Y1, X2, Y2) }
+
+	///@function min_region(x1, y1, x2, y2)
+	function min_region(X1, Y1, X2, Y2) { return ds_grid_get_min(raw, X1, Y1, X2, Y2) }
+
+	///@function mean_region(x1, y1, x2, y2)
+	function mean_region(X1, Y1, X2, Y2) { return ds_grid_get_mean(raw, X1, Y1, X2, Y2) }
+
+	///@function sum_region(x1, y1, x2, y2)
+	function sum_region(X1, Y1, X2, Y2) { return ds_grid_get_sum(raw, X1, Y1, X2, Y2) }
+
+	///@function max_disk(x, y, radius)
+	function max_disk(X, Y, Rads) { return ds_grid_get_disk_max(raw, X, Y, Rads) }
+
+	///@function min_disk(x, y, radius)
+	function min_disk(X, Y, Rads) { return ds_grid_get_disk_min(raw, X, Y, Rads) }
+
+	///@function mean_disk(x, y, radius)
+	function mean_disk(X, Y, Rads) { return ds_grid_get_disk_mean(raw, X, Y, Rads) }
+
+	///@function sum_disk(x, y, radius)
+	function sum_disk(X, Y, Rads) { return ds_grid_get_disk_sum(raw, X, Y, Rads) }
+
 	///@function check_all(x1, y1, x2, y2, predicate)
 	function check_all(X1, Y1, X2, Y2, Pred) {
 		var pred = method(other, Pred)
-		for (; Y1 < Y2; ++Y1) {
+		for (var j = Y1; j < Y2; ++j) {
 			for (var i = X1; i < X2; ++i) {
-				var Val = at(i, Y1)
-				if !pred(Val)
+				if !pred(at(i, j))
 					return false
 			}
 		}
@@ -153,11 +180,11 @@ function Grid(Width, Height): Container() constructor {
 	///@function check_any(begin, end, predicate)
 	function check_any(X1, Y1, X2, Y2, Pred) {
 		var pred = method(other, Pred)
-		while First != Last {
-			var Val = get(First)
-			if pred(Val)
-				return true
-			First++
+		for (var j = Y1; j < Y2; ++j) {
+			for (var i = X1; i < X2; ++i) {
+				if pred(at(i, j))
+					return true
+			}
 		}
 		return false
 	}
@@ -165,11 +192,11 @@ function Grid(Width, Height): Container() constructor {
 	///@function check_none(begin, end, predicate)
 	function check_none(X1, Y1, X2, Y2, Pred) {
 		var pred = method(other, Pred)
-		while First != Last {
-			var Val = get(First)
-			if pred(Val)
-				return false
-			First++
+		for (var j = Y1; j < Y2; ++j) {
+			for (var i = X1; i < X2; ++i) {
+				if pred(at(i, j))
+					return false
+			}
 		}
 		return true
 	}
@@ -177,63 +204,76 @@ function Grid(Width, Height): Container() constructor {
 	///@function foreach(begin, end, predicate)
 	function foreach(X1, Y1, X2, Y2, Pred) {
 		var pred = method(other, Pred)
-		while First != Last {
-			pred(get(First))
-			First++
+		for (var j = Y1; j < Y2; ++j) { // row first
+			for (var i = X1; i < X2; ++i) {
+				pred(at(i, j))
+			}
 		}
 		return pred
 	}
 
 	///@function find(x1, y1, x2, y2, value)
 	function find(X1, Y1, X2, Y2, Val) {
-		var XR = ds_grid_value_x(X1, Y1, X2, Y2, Val)
-		var YR = ds_grid_value_y(X1, Y1, X2, Y2, Val)
-		if XR == -1 or YR == -1
-			return undefined
-		else
-			return new GridIterator(XR, YR, self)
+		for (var i = X1; i < X2; ++i) { // column first
+			for (var j = Y1; j < Y2; ++j) {
+				if at(i, j) == Val
+					return wrap_coordinates(i, j, width)
+			}
+		}
+		return undefined
 	}
 
 	///@function find_disk(x, y, radius, value)
 	function find_disk(X, Y, Rads, Val) {
-		var XR = ds_grid_value_disk_x(X, Y, Rads, Val)
-		var YR = ds_grid_value_disk_y(X, Y, Rads, Val)
+		var XR = ds_grid_value_disk_x(raw, X, Y, Rads, Val)
+		var YR = ds_grid_value_disk_y(raw, X, Y, Rads, Val)
 		if XR == -1 or YR == -1
 			return undefined
 		else
-			return new GridIterator(XR, YR, self)
+			return wrap_coordinates(XR, YR, width)
 	}
 
-	///@function find_if(begin, end, predicate)
+	///@function find_if(x1, y1, x2, y2, predicate)
 	function find_if(X1, Y1, X2, Y2, Pred) {
 		var pred = method(other, Pred)
-		while First != Last {
-			var Val = get(First)
-			if !is_undefined(Val) and pred(Val)
-				return First
-			First++
+		for (var Val = 0, i = X1; i < X2; ++i) { // column first
+			for (var j = Y1; j < Y2; ++j) {
+				Val = at(i, j)
+				if!is_undefined(Val) and pred(Val)
+					return wrap_coordinates(i, j, width)
+			}
 		}
-		return Last
+		return undefined
 	}
 
-	///@function count(begin, end, value)
+	///@function count(x1, y1, x2, y2, value)
 	function count(X1, Y1, X2, Y2, Val) {
-		for (var it = First, Result = 0; it != Last; ++it) {
-			if get(it) == Val
-				Result++
+		for (var i = X1, Result = 0; i < X2; ++i) {
+			for (var j = Y1; j < Y2; ++j) {
+				if at(i, j) == Val
+					Result++
+			}
 		}
 		return Result
 	}
 
-	///@function count_if(begin, end, predicate)
+	///@function count_if(x1, y1, x2, y2, predicate)
 	function count_if(X1, Y1, X2, Y2, Pred) {
-		var pred = method(other, Pred)
-		for (var it = First, Result = 0; it != Last; ++it) {
-			var Val = get(it)
-			if pred(Val)
-				Result++
+		var pred = method(other, Pred), Result = 0
+		for (var i = X1; i < X2; ++i) {
+			for (var j = Y1; j < Y2; ++j) {
+				if pred(at(i, j))
+					Result++
+			}
 		}
 		return Result
+	}
+
+	///@function swap(x1, y1, x2, y2)
+	function swap(X1, Y1, X2, Y2) {
+		var Temp = at(X1, Y1)
+		set(X1, Y1, at(X2, Y2))
+		set(X2, Y2, Temp)
 	}
 
 	///@function copy_to(x1, y1, x2, y2, destination_begin)
@@ -243,21 +283,53 @@ function Grid(Width, Height): Container() constructor {
 		ds_grid_set_grid_region(DstRaw, raw, X1, Y1, X2, Y2, DstIt.x, DstIt.y)
 	}
 
-	function get_max(X1, Y1, X2, Y2) { return ds_grid_get_max(raw, X1, Y1, X2, Y2) }
-	function get_min(X1, Y1, X2, Y2) { return ds_grid_get_min(raw, X1, Y1, X2, Y2) }
-	function get_mean(X1, Y1, X2, Y2) { return ds_grid_get_mean(raw, X1, Y1, X2, Y2) }
-	function get_sum(X1, Y1, X2, Y2) { return ds_grid_get_sum(raw, X1, Y1, X2, Y2) }
+	///@function reverse(x1, y1, x2, y2)
+	function reverse(X1, Y1, X2, Y2) {
+		for (var j = Y1; j < Y2; ++j)
+			reverse_column(j)
+		for (var i = X1; i < X2; ++i)
+			reverse_row(i)
+	}
 
-	function get_max_disk(X, Y, Rads) { return ds_grid_get_disk_max(raw, X, Y, Rads) }
-	function get_min_disk(X, Y, Rads) { return ds_grid_get_disk_min(raw, X, Y, Rads) }
-	function get_mean_disk(X, Y, Rads) { return ds_grid_get_disk_mean(raw, X, Y, Rads) }
-	function get_sum_disk(X, Y, Rads) { return ds_grid_get_disk_sum(raw, X, Y, Rads) }
+	///@function reverse_column(row)
+	function reverse_column(Row) {
+		if 1 < width {
+			var First = 0, Last = width
+			while (First != Last) and (First != --Last) {
+		    swap(First, Row, Last, Row)
+		    First++
+		  }
+		}
+	}
+
+	///@function reverse_row(column)
+	function reverse_row(Column) {
+		if 1 < height {
+			var First = 0, Last = height
+			while (First != Last) and (First != --Last) {
+		    swap(Column, First, Column, Last)
+		    First++
+		  }
+		}
+	}
+
+	///@function transform(x1, y1, x2, y2, predicate)
+	function transform(X1, Y1, X2, Y2, Pred) {
+		var pred = method(other, Pred), Val = 0
+		for (var j = Y1; j < Y2; ++j) {
+			for (var i = X1; i < X2; ++i) {
+				Val = at(i, j)
+				set(i, j, pred(Val))
+			}
+		}
+	}
 
 	///@function resize(width, height)
 	function resize(Width, Height) {
 		width = Width
 		height = Height
 		inner_size = width * height
+		__iend.index = inner_size
 		ds_grid_resize(raw, Width, Height)
 	}
 
@@ -285,13 +357,19 @@ function Grid(Width, Height): Container() constructor {
 
 	function destroy() {
 		delete inner_iterator
+		delete __iend
 		ds_grid_destroy(raw)
 		raw = undefined
 	}
 }
 
-///@function wrap_coordinates(index, width, height)
-function wrap_coordinates(Index, Width, Height) {
+///@function wrap_coordinates(x, y, width)
+function wrap_coordinates(X, Y, Width) {
+	return X + Y * Width
+}
+
+///@function disemble_coordinates(index, width, height)
+function disemble_coordinates(Index, Width, Height) {
 	if Width == 1 {
 		return [0, Index]
 	} else if Height == 1 {
@@ -305,7 +383,7 @@ function wrap_coordinates(Index, Width, Height) {
 ///@function GridIterator(container, index)
 function GridIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	function update_coordinates() {
-		var Result = wrap_coordinates(index, container.width, container.height)
+		var Result = disemble_coordinates(index, container.width, container.height)
 		x = Result[0]
 		y = Result[1]
 	}
@@ -318,13 +396,22 @@ function GridIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	function set(Val) { return container.set(x, y, Val) }
 
 	///@function get()
-	function get() { return container.get(x, y) }
+	function get() { return container.at(x, y) }
 
 	///@function set_index(index)
 	function set_index(Index) {
-		set_index = Index
-		update_coordinates()
+		if index != Index {
+			index = Index
+			update_coordinates()
+		}
 		return index
+	}
+
+	///@function swap(other)
+	function swap(Other) {
+		var Temp = get()
+		set(Other.get())
+		Other.set(Temp)
 	}
 
 	function go_backward() {
