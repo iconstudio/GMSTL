@@ -566,8 +566,7 @@ function Multimap(): Container() constructor {
 				if 0 < Size {
 					var MIt = ds_map_find_first(Item)
 					for (var i = 0; i < Size; ++i) {
-						__cash(MIt)
-						ds_map_set(raw, MIt, ds_map_find_value(Item, MIt))
+						set(MIt, ds_map_find_value(Item, MIt))
 						MIt = ds_map_find_next(Item, MIt)
 					}
 				}

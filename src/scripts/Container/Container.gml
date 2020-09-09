@@ -34,7 +34,7 @@ function Container() {
 
 	///@function construct(data...)
 	function construct() {
-		if is_undefined(value_type) { // real
+		if is_undefined(value_type) { // literals
 			if argument_count == 0
 				return 0
 			else
@@ -65,43 +65,34 @@ function Container() {
 	}
 
 	///@function get_value_type()
-	function get_value_type() {
-		return value_type
-	}
+	function get_value_type() { return value_type }
 
 	add = -1
 }
 
 ///@function Iterator(container, index)
-function Iterator(Cont, BucketIndex) constructor {
+function Iterator(Cont, Index) constructor {
 	container = Cont
-	index = BucketIndex
+	index = Index
 
 	///@function set(value)
-	function set(Val) {
-		return container.set(index, Val)
-	}
+	function set(Val) { container.set(index, Val) }
 
-	///@function get_value()
-	function get_value() {
-		return container.get(index)
-	}
+	///@function get()
+	function get() { return container.set(index) }
 
 	///@function equals(other)
 	function equals(Other) {
 		if is_real(Other)
-			return bool(Other == index)
-		else
+			return bool(Other.index == index)
+		else if is_struct(Other)
 			return bool(Other.container == container and Other.index == index)
+		return false
 	}
 
-	function go_forward() {
-		return index++
-	}
+	function go_forward() { return index++ }
 
-	function go_backward() {
-		return --index
-	}
+	function go_backward() { return --index }
 }
 
 ///@function iterator_distance(iterator_1, iterator_2)
@@ -116,18 +107,21 @@ function iterator_advance(It, Dist) {
 	var Distance = floor(is_real(Dist) ? Dist : Dist.index)
 	if is_real(It) {
 		return It + Distance
-	} else {
+	} else if is_struct(It) {
 		It.index += Distance
 		return It
 	}
+	return undefined
 }
 
 ///@function iterator_next(iterator)
 function iterator_next(It) {
 	if is_real(It)
 		return It + 1
-	else
+	else if is_struct(It)
 		return new Iterator(It.container, It.index + 1)
+	else
+		return undefined
 }
 
 function Wrapper(Val) constructor {

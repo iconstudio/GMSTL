@@ -1,6 +1,6 @@
 {
   "resources": [
-    {"id":{"name":"Priority_Queue","path":"scripts/Priority_Queue/Priority_Queue.yy",},"order":9,},
+    {"id":{"name":"Priority_Queue","path":"scripts/Priority_Queue/Priority_Queue.yy",},"order":10,},
     {"id":{"name":"Array","path":"scripts/Array/Array.yy",},"order":4,},
     {"id":{"name":"Functional","path":"scripts/Functional/Functional.yy",},"order":0,},
     {"id":{"name":"Pair","path":"scripts/Pair/Pair.yy",},"order":3,},
@@ -14,7 +14,7 @@
     {"id":{"name":"Multimap","path":"scripts/Multimap/Multimap.yy",},"order":12,},
     {"id":{"name":"Tree","path":"scripts/Tree/Tree.yy",},"order":13,},
     {"id":{"name":"Grid","path":"scripts/Grid/Grid.yy",},"order":6,},
-    {"id":{"name":"Priority_Deque","path":"scripts/Priority_Deque/Priority_Deque.yy",},"order":10,},
+    {"id":{"name":"Priority_Deque","path":"scripts/Priority_Deque/Priority_Deque.yy",},"order":9,},
     {"id":{"name":"roomExample","path":"rooms/roomExample/roomExample.yy",},"order":0,},
   ],
   "Options": [

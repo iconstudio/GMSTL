@@ -1,8 +1,5 @@
 ///@description Using this function to implement methods.
 function Algorithm() {
-	_Nth_val = 0
-	_Nth_cmp = -1
-
 	///@function check_all(begin, end, predicate)
 	function check_all(First, Last, Pred) {
 		var pred = method(other, Pred)
@@ -324,6 +321,17 @@ function Algorithm() {
 		while First != Last {
 			set(Output++, pred(get(First)))
 			First++
+		}
+		return Output
+	}
+
+	///@function transform_binary(begin, end, another_begin, output, predicate)
+	function transform_binary(First, Last, PairFirst, Output, Pred) {
+		var pred = method(other, Pred)
+		while First != Last {
+			set(Output++, pred(get(First), get(PairFirst)))
+			First++
+			PairFirst++
 		}
 		return Output
 	}
