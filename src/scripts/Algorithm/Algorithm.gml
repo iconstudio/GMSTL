@@ -1,8 +1,5 @@
 ///@description Using this function to implement methods.
 function Algorithm() {
-	_Nth_val = 0
-	_Nth_cmp = -1
-
 	///@function check_all(begin, end, predicate)
 	function check_all(First, Last, Pred) {
 		var pred = method(other, Pred)
