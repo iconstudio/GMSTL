@@ -23,19 +23,25 @@ function Stack(): Container() constructor {
 	///@function push_back(value)
 	function push_back(Value) { ds_stack_push(raw, Value) }
 
+	///@function pop()
 	function pop() { ds_stack_pop(raw) }
 
+	///@function pop_back()
 	function pop_back() { return ds_stack_pop(raw) }
 
 	///@function emplace(tuple)
 	function emplace(Params) { push(construct(Params)) }
 
-  function top() { return ds_stack_top(raw) }
+  ///@function top()
+	function top() { return ds_stack_top(raw) }
 
+	///@function size()
 	function size() { return ds_stack_size(raw) }
 
+	///@function empty()
 	function empty() { return ds_stack_empty(raw) }
 
+	///@function clear()
 	function clear() { ds_stack_clear(raw) }
 
 	///@function read(data_string)
@@ -49,44 +55,37 @@ function Stack(): Container() constructor {
 
 	type = Stack
 	raw = ds_stack_create()
-	inner_size = 0
 
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]
 
 			if is_struct(Item) {
-				if is_iterable(Item) {
+				if instanceof(Item) == "Stack" {
+					// (*) Copy Constructor
+					ds_queue_copy(raw, Item.data())
+				} else if is_iterable(Item) {
 					// (*) Iterable-Container
-					for (var It = Item.first(); It != Item.last(); ++It) {
-						push(Item.get(It))
-					}
-				} else if instanceof(Item) == "Stack" {
-					// (*) Stack
-					ds_stack_copy(raw, Item.data())
+					foreach(Item.first(), Item.last(), function(Val) { push(Val) })
 				}
 			} else if is_array(Item) {
 				// (*) Built-in Array
-				for (var i = 0; i < array_length(Item); ++i) {
-					push(Item[i])
-				}
-			} else if !is_nan(Item) and ds_exists(Item, ds_type_stack) {
-				// (*) Built-in Stack
-				ds_stack_copy(raw, Item)
+				for (var i = 0; i < array_length(Item); ++i) push(Item[i])
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
 				for (var i = 0; i < ds_list_size(Item); ++i) {
 					push(Item[| i])
 				}
+			} else if !is_nan(Item) and ds_exists(Item, ds_type_stack) {
+				// (*) Built-in Stack
+				ds_stack_copy(raw, Item)
 			} else {
 				// (*) Arg
 				push(Item)
 			}
 		} else {
 			// (*) Arg0, Arg1, ...
-			for (var i = 0; i < argument_count; ++i) {
-				push(argument[i])
-			}
+			for (var i = 0; i < argument_count; ++i) push(argument[i])
 		}
 	}
 }

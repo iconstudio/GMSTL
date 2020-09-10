@@ -27,8 +27,14 @@ function Priority_Deque(): Container() constructor {
 	function push(PairedVal) {
 		if is_array(PairedVal)
 			ds_priority_add(raw, PairedVal[1], PairedVal[0])
-		else if is_struct(PairedVal)
-			ds_priority_add(raw, PairedVal.second, PairedVal.first)
+		else if argument_count == 2
+			ds_priority_add(raw, argument[1], argument[0])
+	}
+
+	///@function push(values_pair)
+	function push(PairedVal) {
+		if is_array(PairedVal)
+			ds_priority_add(raw, PairedVal[1], PairedVal[0])
 		else if argument_count == 2
 			ds_priority_add(raw, argument[1], argument[0])
 	}

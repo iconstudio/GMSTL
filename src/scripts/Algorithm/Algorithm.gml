@@ -667,6 +667,7 @@ function is_sorted(First, Last, Comparator) {
 ///@function unguarded_partition(begin, end, pivot, [comparator])
 function unguarded_partition(First, Last, Pivot, Comparator) {
 	First = make_iterator(First)
+	Last = make_iterator(Last)
 
 	var Compare = select_argument(Comparator, compare_less)
 	while true {

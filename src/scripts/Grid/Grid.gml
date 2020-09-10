@@ -302,6 +302,18 @@ function wrap_coordinates(Index, Width, Height) {
 	}
 }
 
+///@function GridColumnIterator(container, index)
+function GridColumnIterator(Cont, Index): Iterator(Cont, Index) constructor {
+}
+
+///@function GridRowIterator(container, index)
+function GridRowIterator(Cont, Index): Iterator(Cont, Index) constructor {
+}
+
+///@function GridRegionIterator(container, index)
+function GridRegionIterator(Cont, Index): Iterator(Cont, Index) constructor {
+}
+
 ///@function GridIterator(container, index)
 function GridIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	function update_coordinates() {
