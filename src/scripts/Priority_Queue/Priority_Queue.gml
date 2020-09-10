@@ -32,14 +32,14 @@ function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 
 	function duplicate() {
 		var Result = new Priority_Queue(self.comparator, self.is_stable)
-		for (var It = raw.ibegin(); It != raw.iend(); ++It)
+		for (var It = raw.first(); It != raw.last(); ++It)
 			Result.push(raw.get(It))
 		return Result
 	}
 
 	///@function push(value)
-	function push(Val) { 
-		raw.push_back(Val)
+	function push(Value) { 
+		raw.push_back(Value)
 		var Size = raw.size()
 		if 1 < Size {
 			if is_stable

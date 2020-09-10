@@ -22,10 +22,10 @@ function Queue(): Container() constructor {
 	inner_size = 0
 
 	///@function push(value)
-	function push(Val) { ds_queue_enqueue(raw, Val) }
+	function push(Value) { ds_queue_enqueue(raw, Value) }
 
 	///@function push_back(value)
-	function push_back(Val) { ds_queue_enqueue(raw, Val) }
+	function push_back(Value) { ds_queue_enqueue(raw, Value) }
 
 	function pop() { ds_queue_dequeue(raw) }
 
@@ -49,6 +49,9 @@ function Queue(): Container() constructor {
 
 	function write() { return ds_queue_write(raw) }
 
+	///@function destroy()
+	function destroy() { ds_queue_destroy(raw) gc_collect() }
+
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]
@@ -56,7 +59,7 @@ function Queue(): Container() constructor {
 			if is_struct(Item) {
 				if is_iterable(Item) {
 					// (*) Iterable-Container
-					for (var It = Item.ibegin(); It != Item.iend(); ++It) {
+					for (var It = Item.first(); It != Item.last(); ++It) {
 						push(Item.get(It))
 					}
 				} else if instanceof(Item) == "Queue" {

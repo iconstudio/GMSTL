@@ -17,15 +17,11 @@
 		
 */
 function Stack(): Container() constructor {
-	type = Stack
-	raw = ds_stack_create()
-	inner_size = 0
-
 	///@function push(value)
-	function push(Val) { ds_stack_push(raw, Val) }
+	function push(Value) { ds_stack_push(raw, Value) }
 
 	///@function push_back(value)
-	function push_back(Val) { ds_stack_push(raw, Val) }
+	function push_back(Value) { ds_stack_push(raw, Value) }
 
 	function pop() { ds_stack_pop(raw) }
 
@@ -45,7 +41,15 @@ function Stack(): Container() constructor {
 	///@function read(data_string)
 	function read(Str) { ds_stack_read(raw, Str) }
 
+	///@function write()
 	function write() { return ds_stack_write(raw) }
+
+	///@function destroy()
+	function destroy() { ds_stack_destroy(raw) gc_collect() }
+
+	type = Stack
+	raw = ds_stack_create()
+	inner_size = 0
 
 	if 0 < argument_count {
 		if argument_count == 1 {
@@ -54,7 +58,7 @@ function Stack(): Container() constructor {
 			if is_struct(Item) {
 				if is_iterable(Item) {
 					// (*) Iterable-Container
-					for (var It = Item.ibegin(); It != Item.iend(); ++It) {
+					for (var It = Item.first(); It != Item.last(); ++It) {
 						push(Item.get(It))
 					}
 				} else if instanceof(Item) == "Stack" {

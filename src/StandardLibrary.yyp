@@ -1,9 +1,9 @@
 {
   "resources": [
+    {"id":{"name":"Iterator","path":"scripts/Iterator/Iterator.yy",},"order":3,},
     {"id":{"name":"Priority_Queue","path":"scripts/Priority_Queue/Priority_Queue.yy",},"order":10,},
     {"id":{"name":"Array","path":"scripts/Array/Array.yy",},"order":4,},
     {"id":{"name":"Functional","path":"scripts/Functional/Functional.yy",},"order":0,},
-    {"id":{"name":"Pair","path":"scripts/Pair/Pair.yy",},"order":3,},
     {"id":{"name":"oExample","path":"objects/oExample/oExample.yy",},"order":0,},
     {"id":{"name":"Queue","path":"scripts/Queue/Queue.yy",},"order":8,},
     {"id":{"name":"Map","path":"scripts/Map/Map.yy",},"order":11,},

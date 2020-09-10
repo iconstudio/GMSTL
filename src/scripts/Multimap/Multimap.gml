@@ -16,21 +16,21 @@
 
 	Usage:
 		To Iterate on keys:
-			for (var It = ibegin(); It != iend(); ++It)
+			for (var It = first(); It != last(); ++It)
 				myfunc(get_key(It))
 
 		To Iterate on lists:
-			for (var It = ibegin(); It != iend(); ++It)
+			for (var It = first(); It != last(); ++It)
 				myfunc(get(It))
 
 		To Iterate values with a key:
 			var BucketIndex = bucket(Key)
-			for (var It = ibegin(BucketIndex); It != iend(BucketIndex); ++It)
+			for (var It = first(BucketIndex); It != last(BucketIndex); ++It)
 				myfunc(get(BucketIndex, It))
 
 		To Iterate values within methods:
 			var BucketIndex = bucket(Key)
-			myfunc(BucketIndex, ibegin(BucketIndex), iend(BucketIndex))
+			myfunc(BucketIndex, first(BucketIndex), last(BucketIndex))
 		
 */
 #macro Unordered_Multimap Multimap
@@ -40,16 +40,16 @@ function Multimap(): Container() constructor {
 	key_memory = new List()
 	key_memory.clear() // To avoid the 0-populate-value problem.
 
-	///@function ibegin([bucket_iterator])
-  function ibegin() {
+	///@function first([bucket_iterator])
+  function first() {
 		if argument_count == 0
 			return 0
 		else
 			return 0 // Logic
 	}
 
-	///@function iend([bucket_iterator])
-  function iend() {
+	///@function last([bucket_iterator])
+  function last() {
 		if argument_count == 0 {
 			return size()
 		} else if is_real(argument[0]) and 0 <= argument[0] and argument[0] < bucket_count() {
@@ -82,19 +82,19 @@ function Multimap(): Container() constructor {
 
 	///@function iter_set(bucket_iterator, values_pair)
   function iter_set(BucketIndex, PairedVal) {
-		var It = -1, Val = 0
+		var It = -1, Value = 0
 		if is_array(PairedVal) {
 			It = PairedVal[0]
-			Val = PairedVal[1]
+			Value = PairedVal[1]
 		} else if is_struct(PairedVal) {
 			It = PairedVal.first
-			Val = PairedVal.second
+			Value = PairedVal.second
 		} else if argument_count == 3 {
 			It = argument[1]
-			Val = argument[2]
+			Value = argument[2]
 		}
 
-		bucket_set(BucketIndex, It, Val)
+		bucket_set(BucketIndex, It, Value)
 		return self
 	}
 
@@ -120,8 +120,8 @@ function Multimap(): Container() constructor {
   function at(K) { return ds_map_find_value(raw, K) }
 
 	///@function bucket_set(bucket_iterator, iterator, value)
-  function bucket_set(BucketIndex, It, Val) {
-		get(BucketIndex).set(It, Val)
+  function bucket_set(BucketIndex, It, Value) {
+		get(BucketIndex).set(It, Value)
 	}
 
 	///@function bucket(key)
@@ -146,7 +146,7 @@ function Multimap(): Container() constructor {
 			return [0, 0]
 		} else {
 			var BucketIndex = bucket(K)
-			return [ibegin(BucketIndex), iend(BucketIndex)]
+			return [first(BucketIndex), last(BucketIndex)]
 		}
 	}
 
@@ -177,54 +177,54 @@ function Multimap(): Container() constructor {
 
 	///@function check_all(bucket_iterator, begin, end, predicate)
 	function check_all(BucketIndex, First, Last, Pred) {
-		var pred = method(other, Pred)
+		Pred = method(other, Pred)
 		var MyList = get(BucketIndex)
 		return MyList.check_all(First, Last, pred)
 	}
 
 	///@function check_any(bucket_iterator, begin, end, predicate)
 	function check_any(BucketIndex, First, Last, Pred) {
-		var pred = method(other, Pred)
+		Pred = method(other, Pred)
 		var MyList = get(BucketIndex)
 		return MyList.check_any(First, Last, pred)
 	}
 
 	///@function check_none(bucket_iterator, begin, end, predicate)
 	function check_none(BucketIndex, First, Last, Pred) {
-		var pred = method(other, Pred)
+		Pred = method(other, Pred)
 		var MyList = get(BucketIndex)
 		return MyList.check_none(First, Last, pred)
 	}
 
 	///@function foreach(bucket_iterator, begin, end, predicate)
 	function foreach(BucketIndex, First, Last, Pred) {
-		var pred = method(other, Pred)
+		Pred = method(other, Pred)
 		var MyList = get(BucketIndex)
 		return MyList.foreach(First, Last, pred)
 	}
 
 	///@function find(bucket_iterator, begin, end, value, [comparator])
-	function find(BucketIndex, First, Last, Val, Comparator) {
+	function find(BucketIndex, First, Last, Value, Comparator) {
 		var MyList = get(BucketIndex)
-		return MyList.find(First, Last, Val, Comparator)
+		return MyList.find(First, Last, Value, Comparator)
 	}
 
 	///@function find_if(bucket_iterator, begin, end, predicate)
 	function find_if(BucketIndex, First, Last, Pred) {
-		var pred = method(other, Pred)
+		Pred = method(other, Pred)
 		var MyList = get(BucketIndex)
 		return MyList.find_if(First, Last, pred)
 	}
 
 	///@function count(bucket_iterator, begin, end, value)
-	function count(BucketIndex, First, Last, Val) {
+	function count(BucketIndex, First, Last, Value) {
 		var MyList = get(BucketIndex)
-		return MyList.count(First, Last, Val)
+		return MyList.count(First, Last, Value)
 	}
 
 	///@function count_if(bucket_iterator, begin, end, predicate)
 	function count_if(BucketIndex, First, Last, Pred) {
-		var pred = method(other, Pred)
+		Pred = method(other, Pred)
 		var MyList = get(BucketIndex)
 		return MyList.count_if(First, Last, pred)
 	}
@@ -257,7 +257,7 @@ function Multimap(): Container() constructor {
 	///@function __erase_range(bucket_iterator, begin, end)
 	function __erase_range(BucketIndex, First, Last) {
 		var MyList = get(BucketIndex)
-		for (; First != Last; ++First) {
+		for (; First.not_equals(Last); ++First) {
 			MyList.erase(First)
 		}
 	}
@@ -292,11 +292,11 @@ function Multimap(): Container() constructor {
 
 	///@function swap_range(bucket_iterator_1, begin, end, bucket_iterator_2, bucket_iterator_2_output)
 	function swap_range(BucketIndex, First, Last, OutIndex, Output) {
-		while First != Last {
+		while First.not_equals(Last) {
 	    iter_swap(BucketIndex, First, OutIndex, Output)
 
 			First++
-			Output++
+			Output.go()
 	  }
 	  return Output
 	}
@@ -309,14 +309,14 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function remove(bucket_iterator, begin, end, value)
-	function remove(BucketIndex, First, Last, Val) {
+	function remove(BucketIndex, First, Last, Value) {
 		var MyList = get(BucketIndex)
-		return MyList.remove(First, Last, Val)
+		return MyList.remove(First, Last, Value)
 	}
 
 	///@function remove_if(bucket_iterator, begin, end, predicate)
 	function remove_if(BucketIndex, First, Last, Pred) {
-		var pred = method(other, Pred)
+		Pred = method(other, Pred)
 		var MyList = get(BucketIndex)
 		return MyList.remove_if(First, Last, pred)
 	}
@@ -342,9 +342,9 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function fill(bucket_iterator, begin, end, value)
-	function fill(BucketIndex, First, Last, Val) {
+	function fill(BucketIndex, First, Last, Value) {
 		var MyList = get(BucketIndex)
-		MyList.fill(First, Last, Val)
+		MyList.fill(First, Last, Value)
 	}
 
 	///@function rotate(bucket_iterator, begin, middle, end)
@@ -361,7 +361,7 @@ function Multimap(): Container() constructor {
 
 	///@function transform(bucket_iterator, begin, end, output, predicate)
 	function transform(BucketIndex, First, Last, Output, Pred) {
-		var pred = method(other, Pred)
+		Pred = method(other, Pred)
 		var MyList = get(BucketIndex)
 		return MyList.transform(First, Last, Output, pred)
 	}
@@ -379,21 +379,21 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function lower_bound(bucket_iterator, begin, end, value, [comparator])
-	function lower_bound(BucketIndex, First, Last, Val, Comparator) {
+	function lower_bound(BucketIndex, First, Last, Value, Comparator) {
 		var MyList = get(BucketIndex)
-		return MyList.lower_bound(First, Last, Val, Comparator)
+		return MyList.lower_bound(First, Last, Value, Comparator)
 	}
 
 	///@function upper_bound(bucket_iterator, begin, end, value, [comparator])
-	function upper_bound(BucketIndex, First, Last, Val, Comparator) {
+	function upper_bound(BucketIndex, First, Last, Value, Comparator) {
 		var MyList = get(BucketIndex)
-		return MyList.upper_bound(First, Last, Val, Comparator)
+		return MyList.upper_bound(First, Last, Value, Comparator)
 	}
 
 	///@function binary_search(bucket_iterator, begin, end, value, [comparator])
-	function binary_search(BucketIndex, First, Last, Val, Comparator) {
+	function binary_search(BucketIndex, First, Last, Value, Comparator) {
 		var MyList = get(BucketIndex)
-		return MyList.binary_search(First, Last, Val, Comparator)
+		return MyList.binary_search(First, Last, Value, Comparator)
 	}
 
 	///@function sort(bucket_iterator, begin, end, [comparator])
@@ -439,8 +439,8 @@ function Multimap(): Container() constructor {
 	}
 
 	function destroy() {
-		var Begin = ibegin()
-		var End = iend()
+		var Begin = first()
+		var End = last()
 		if 0 < End {
 			for (var It = Begin; It != End; ++It) {
 				var TempList = get(It)
@@ -473,40 +473,40 @@ function Multimap(): Container() constructor {
 	function write() { return ds_map_write(raw) }
 
 	///@function __create(key, value)
-	function __create(K, Val) {
+	function __create(K, Value) {
 		__cash(K)
 		var NewList = new List()
-		NewList.push_back(Val)
+		NewList.push_back(Value)
 		ds_map_set(raw, K, NewList)
 	}
 
 	///@function __attach(key, value)
-	function __attach(K, Val) {
+	function __attach(K, Value) {
 		var TempList = at(K)
-		TempList.push_back(Val)
+		TempList.push_back(Value)
 	}
 
 	///@function __replace(key, value)
-	function __replace(K, Val) {
+	function __replace(K, Value) {
 		var TempList = at(K)
 		TempList.clear()
-		TempList.push_back(Val)
+		TempList.push_back(Value)
 	}
 
 	///@function __set(key, value)
-	function __set(K, Val) {
+	function __set(K, Value) {
 		if !exists(K)
-			__create(K, Val)
+			__create(K, Value)
 	 else
-			__replace(K, Val)
+			__replace(K, Value)
 	}
 
 	///@function __add(key, value)
-	function __add(K, Val) {
+	function __add(K, Value) {
 		if !exists(K)
-			__create(K, Val)
+			__create(K, Value)
 		else
-			__attach(K, Val)
+			__attach(K, Value)
 	}
 
 	///@function __cash(key) 
@@ -517,7 +517,7 @@ function Multimap(): Container() constructor {
 	///@function __try_decash(key)
 	function __try_decash(K) {
 		if 0 < key_memory.size() {
-			if key_memory.remove(key_memory.ibegin(), key_memory.iend(), K) != key_memory.iend()
+			if key_memory.remove(key_memory.first(), key_memory.last(), K) != key_memory.last()
 				return true
 		}
 		return false
@@ -530,7 +530,7 @@ function Multimap(): Container() constructor {
 			if is_struct(Item) {
 				if is_iterable(Item) {
 					// (*) Iterable Paired Container
-					for (var It = Item.ibegin(); It != Item.iend(); ++It) {
+					for (var It = Item.first(); It != Item.last(); ++It) {
 						var PairedVal = Item.get(It)
 						insert(PairedVal[0], PairedVal[1])
 					}
@@ -541,10 +541,10 @@ function Multimap(): Container() constructor {
 				} else if instanceof(Item) == "Multimap" {
 					// (*) Multimap
 					if 0 < Item.size() {
-						for (var KIt = Item.ibegin(); KIt != Item.iend(); ++KIt) {
+						for (var KIt = Item.first(); KIt != Item.last(); ++KIt) {
 							var TempKey = Item.get_key(KIt)
 							var TempList = Item.get(KIt)
-							for (var It = TempList.ibegin(); It != TempList.iend(); ++It) {
+							for (var It = TempList.first(); It != TempList.last(); ++It) {
 								insert(TempKey, TempList.get(It))
 							}
 						}

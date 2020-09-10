@@ -18,12 +18,12 @@
 			var BucketNumber = bucket_count()
 			for (var i = 0; i < BucketNumber; ++i) {
 				var Key = get_key(i)
-				var Val = at(Key)
-				myfunc(Key, Val)
+				var Value = at(Key)
+				myfunc(Key, Value)
 			}
 
 		To Iterate with keys:
-			for (var It = ibegin(); It != iend(); ++It)
+			for (var It = first(); It != last(); ++It)
 				myfunc(get(It))
 		
 */
@@ -36,11 +36,11 @@ function Map(): Container() constructor {
 	key_memory_size = 0
 	ds_list_clear(key_memory) // To avoid the 0-populate-value problem.
 
-	///@function ibegin()
-  function ibegin() { return 0 }
+	///@function first()
+  function first() { return 0 }
 
-	///@function iend()
-  function iend() { return size() }
+	///@function last()
+  function last() { return size() }
 
 	///@function set(values_pair)
 	function set(PairedVal) {
@@ -68,10 +68,10 @@ function Map(): Container() constructor {
 	function emplace(K, Params) { set(K, construct(Params)) }
 
 	///@function replace(key, value)
-  function replace(K, Val) { 
+  function replace(K, Value) { 
 		if !exists(K)
 			__cash(K)
-		return ds_map_replace(raw, K, Val)
+		return ds_map_replace(raw, K, Value)
 	}
 
 	///@function get(iterator)
@@ -115,17 +115,17 @@ function Map(): Container() constructor {
 	}
 
 	///@function set_list(key, builtin_list_id)
-  function set_list(K, Val) {
+  function set_list(K, Value) {
 		if !exists(K)
 			__cash(K)
-		ds_map_add_list(raw, K, Val)
+		ds_map_add_list(raw, K, Value)
 	}
 
 	///@function add_map(key, builtin_map_id)
-  function set_map(K, Val) {
+  function set_map(K, Value) {
 		if !exists(K)
 			__cash(K)
-		ds_map_add_map(raw, K, Val)
+		ds_map_add_map(raw, K, Value)
 	}
 
 	///@function is_list(K)
@@ -145,10 +145,10 @@ function Map(): Container() constructor {
 
 	///@function check_all(begin, end, predicate)
 	function check_all(First, Last, Pred) {
-		var pred = method(other, Pred)
-		while First != Last {
-			var Val = get(First)
-			if !pred(Val)
+		Pred = method(other, Pred)
+		while First.not_equals(Last) {
+			var Value = get(First)
+			if !pred(Value)
 				return false
 			First++
 		}
@@ -157,10 +157,10 @@ function Map(): Container() constructor {
 
 	///@function check_any(begin, end, predicate)
 	function check_any(First, Last, Pred) {
-		var pred = method(other, Pred)
-		while First != Last {
-			var Val = get(First)
-			if pred(Val)
+		Pred = method(other, Pred)
+		while First.not_equals(Last) {
+			var Value = get(First)
+			if pred(Value)
 				return true
 			First++
 		}
@@ -169,10 +169,10 @@ function Map(): Container() constructor {
 
 	///@function check_none(begin, end, predicate)
 	function check_none(First, Last, Pred) {
-		var pred = method(other, Pred)
-		while First != Last {
-			var Val = get(First)
-			if pred(Val)
+		Pred = method(other, Pred)
+		while First.not_equals(Last) {
+			var Value = get(First)
+			if pred(Value)
 				return false
 			First++
 		}
@@ -181,8 +181,8 @@ function Map(): Container() constructor {
 
 	///@function foreach(begin, end, predicate)
 	function foreach(First, Last, Pred) {
-		var pred = method(other, Pred)
-		while First != Last {
+		Pred = method(other, Pred)
+		while First.not_equals(Last) {
 			pred(get(First))
 			First++
 		}
@@ -190,10 +190,10 @@ function Map(): Container() constructor {
 	}
 
 	///@function find(begin, end, value, [comparator])
-	function find(First, Last, Val, Comparator) {
-		var comp = select_argument(Comparator, comparator_equal)
-		while First != Last {
-			if comp(get(First), Val)
+	function find(First, Last, Value, Comparator) {
+		var Compare = select_argument(Comparator, compare_equal)
+		while First.not_equals(Last) {
+			if Compare(get(First), Value)
 				return First
 			First++
 		}
@@ -202,10 +202,10 @@ function Map(): Container() constructor {
 
 	///@function find_if(begin, end, predicate)
 	function find_if(First, Last, Pred) {
-		var pred = method(other, Pred)
-		while First != Last {
-			var Val = get(First)
-			if !is_undefined(Val) and pred(Val)
+		Pred = method(other, Pred)
+		while First.not_equals(Last) {
+			var Value = get(First)
+			if !is_undefined(Value) and pred(Value)
 				return First
 			First++
 		}
@@ -213,9 +213,9 @@ function Map(): Container() constructor {
 	}
 
 	///@function count(begin, end, value)
-	function count(First, Last, Val) {
-		for (var it = First, Result = 0; it != Last; ++it) {
-			if get(it) == Val
+	function count(First, Last, Value) {
+		for (var it = First, Result = 0; it != Last; it.go()) {
+			if get(it) == Value
 				Result++
 		}
 		return Result
@@ -223,10 +223,10 @@ function Map(): Container() constructor {
 
 	///@function count_if(begin, end, predicate)
 	function count_if(First, Last, Pred) {
-		var pred = method(other, Pred)
-		for (var it = First, Result = 0; it != Last; ++it) {
-			var Val = get(it)
-			if pred(Val)
+		Pred = method(other, Pred)
+		for (var it = First, Result = 0; it != Last; it.go()) {
+			var Value = get(it)
+			if pred(Value)
 				Result++
 		}
 		return Result
@@ -238,24 +238,6 @@ function Map(): Container() constructor {
 		ds_map_delete(raw, K)
 		__try_decash(K)
 		return Temp
-	}
-
-	///@function swap(key_1, key_2)
-	function swap(KeyA, KeyB) {
-		var Temp = at(KeyA)
-		set(KeyA, at(KeyB))
-		set(KeyB, Temp)
-	}
-
-	///@function swap_range(begin, end, output)
-	function swap_range(First, Last, Output) {
-		while First != Last {
-	    iter_swap(First, Output)
-
-			First++
-			Output++
-	  }
-	  return Output
 	}
 
 	///@function key_swap(key, destination, destination_key)
@@ -273,9 +255,9 @@ function Map(): Container() constructor {
 	}
 
 	///@function remove(begin, end, value)
-	function remove(First, Last, Val) {
-		for (var it = First, Result = First; it != Last; ++it) {
-			if get(it) == Val {
+	function remove(First, Last, Value) {
+		for (var it = First, Result = First; it != Last; it.go()) {
+			if get(it) == Value {
 				erase(Result)
 			} else {
 				Result++
@@ -286,9 +268,9 @@ function Map(): Container() constructor {
 
 	///@function remove_if(begin, end, predicate)
 	function remove_if(First, Last, Pred) {
-		var pred = method(other, Pred)
-		for (var it = First, Result = First, Val; it != Last; ++it) {
-			Val = get(Result)
+		Pred = method(other, Pred)
+		for (var it = First, Result = First, Value; it != Last; it.go()) {
+			Value = get(Result)
 			if pred(get(Result)) {
 				erase(Result)
 			} else {
@@ -300,9 +282,9 @@ function Map(): Container() constructor {
 
 	///@function transform(begin, end, output, predicate)
 	function transform(First, Last, Output, Pred) {
-		var pred = method(other, Pred)
-		while First != Last {
-			iter_set(Output++, pred(get(First)))
+		Pred = method(other, Pred)
+		while First.not_equals(Last) {
+			iter_set(Output.go(), pred(get(First)))
 			First++
 		}
 		return Output
@@ -323,25 +305,25 @@ function Map(): Container() constructor {
 	}
 
 	///@function __set(key, value)
-	function __set(K, Val) {
+	function __set(K, Value) {
 		if !exists(K)
 			__cash(K)
-		ds_map_set(raw, K, Val)
+		ds_map_set(raw, K, Value)
 	}
 
 	///@function __erase_one(iterator)
 	function __erase_one(It) {
 		var TempK = key_memory[| It]
 		if __try_decash(TempK) {
-			var Val = at(TempK)
+			var Value = at(TempK)
 			ds_map_delete(raw, TempK)
-			return Val
+			return Value
 		}
 	}
 
 	///@function __erase_range(begin, end)
 	function __erase_range(First, Last) {
-		for (; First != Last; ++First) {
+		for (; First.not_equals(Last); ++First) {
 			__erase_one(First)
 		}
 	}
@@ -372,7 +354,7 @@ function Map(): Container() constructor {
 			if is_struct(Item) {
 				if is_iterable(Item) {
 					// (*) Iterable-PairedContainer
-					for (var It = Item.ibegin(); It != Item.iend(); ++It) {
+					for (var It = Item.first(); It != Item.last(); ++It) {
 						set(Item.get(It))
 					}
 				} else if instanceof(Item) == "Map" {

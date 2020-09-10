@@ -43,7 +43,7 @@ function Priority_Deque(): Container() constructor {
 	function emplace(Params) { push(construct(Params)) }
 
 	///@function get(value)
-	function get(Val) { return ds_priority_find_priority(raw, Val) }
+	function get(Value) { return ds_priority_find_priority(raw, Value) }
 
   function tail() { return ds_priority_find_min(raw) }
 
@@ -60,7 +60,7 @@ function Priority_Deque(): Container() constructor {
 	function clear() { ds_priority_clear(raw) }
 
 	///@function remove(value)
-	function remove(Val) { ds_priority_delete_value(raw, Val) }
+	function remove(Value) { ds_priority_delete_value(raw, Value) }
 
 	function destroy() {
 		ds_priority_destroy(raw)
@@ -79,7 +79,7 @@ function Priority_Deque(): Container() constructor {
 			if is_struct(Item) {
 				if is_iterable(Item) {
 					// (*) Iterable-PairedContainer
-					for (var It = Item.ibegin(); It != Item.iend(); ++It) {
+					for (var It = Item.first(); It != Item.last(); ++It) {
 						push(Item.get(It))
 					}
 				} else if instanceof(Item) == "Map" {
@@ -87,8 +87,8 @@ function Priority_Deque(): Container() constructor {
 					var BucketNumber = Item.bucket_count()
 					for (var i = 0; i < BucketNumber; ++i) {
 						var Key = Item.get_key(i)
-						var Val = Item.at(Key)
-						push(Key, Val)
+						var Value = Item.at(Key)
+						push(Key, Value)
 					}
 				} else if instanceof(Item) == "Priority_Deque" {
 					// (*) Priority Deque
