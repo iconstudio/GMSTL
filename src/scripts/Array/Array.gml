@@ -2,46 +2,65 @@
 	Constructors:
 		Array()
 		Array(Arg)
+		Array(Arg0, Arg1, ...)
 		Array(Builtin-Array)
 		Array(Builtin-List)
-		Array(Iterable-Container)
-		Array(Arg0, Arg1, ...)
+		Array(Container)
+		Array(Iterator-Begin, Iterator-End)
 
 	Initialize:
-		new Array;
-		set_value_type(type)
+		new Array();
 
 	Usage:
 		
 */
 function Array(): Container() constructor {
-	Algorithm()
-	type = Array
-	inner_size = 0
+	///@function first()
+  function first() { return (new iterator_type(self, 0)).pure() }
 
-	///@function ibegin()
-  function ibegin() { return 0 }
+	///@function last()
+  function last() { return (new iterator_type(self, size())).pure() }
 
-	///@function iend()
-  function iend() { return inner_size }
+	///@function cfirst()
+  function cfirst() { return (new const_iterator_type(self, 0)).pure() }
 
-	///@function set(iterator, value)
-  function set(It, Val) {
-		raw[It] = Val
+	///@function clast()
+  function clast() { return (new const_iterator_type(self, size())).pure() }
+
+	///@function set(index, value)
+  function set(Index, Value) {
+		raw[Index] = Value
 		return self
 	}
 
-	///@function get(iterator)
-  function get(It) { return raw[It] }
-
 	///@function at(index)
-  function at(i) { return raw[i] }
+  function at(Index) { return raw[Index] }
 
-  function back() { return at(inner_size - 1) }
+  ///@function back()
+	function back() { return at(inner_size - 1) }
 
-  function front() { return at(0) }
+  ///@function front()
+	function front() { return at(0) }
 
+	///@function erase_at(index)
+	function erase_at(Index) {
+		var Value = at(Index)
+		set(Index, undefined)
+		return Value
+	}
+
+	///@function erase_one(iterator)
+	function erase_one(It) {
+		var Value = It.get()
+		It.set(undefined)
+		return Value
+	}
+
+	///@function size()
 	function size() { return inner_size }
+
+	///@function destroy()
+	function destroy() { raw = 0 gc_collect() }
 
 	///@function allocate(size)
 	function allocate(Size) {
@@ -49,56 +68,44 @@ function Array(): Container() constructor {
 		raw = array_create(Size)
 	}
 
-	function destroy() {
-		//delete raw
-		raw = 0 // Destroy the array
-		raw = undefined
-	}
+	type = Array
+	iterator_type = RandomIterator
+	const_iterator_type = ConstIterator
+	inner_size = 0
 
-	///@function __erase_one(iterator)
-	function __erase_one(It) {
-		set(It, undefined)
-	}
-
-	///@function __erase_range(begin, end)
-	function __erase_range(First, Last) {
-		for (var It = First; It != Last; ++It)
-			set(It, undefined)
-	}
-
+	// ** Assigning **
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]
-
-			 if is_struct(Item) and is_iterable(Item) {
-				// (*) Container
-				allocate(Item.size())
-				var First = 0
-				for (var It = Item.ibegin(); It != Item.iend(); ++It) {
-					set(First++, Item.get(It))
-				}
-			} else if is_array(Item) {
+			if is_array(Item) {
 				// (*) Built-in Array
 				allocate(array_length(Item))
 				array_copy(raw, 0, Item, 0, inner_size)
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
-				var Size = ds_list_size(Item)
-				allocate(Size)
-				for (var i = 0; i < Size; ++i) {
-					set(i, ds_list_find_value(Item, i))
-				}
+				allocate(ds_list_size(Item))
+				for (var i = 0; i < inner_size; ++i) set(i, Item[| i])
+			} else if is_struct(Item) and is_iterable(Item) {
+				// (*) Container
+				allocate(Item.size())
+				assign(Item.first(), Item.last())
 			} else {
 				// (*) Arg
 				allocate(1)
 				set(0, Item)
 			}
 		} else {
+			// (*) Iterator-Begin, Iterator-End
+			if argument_count == 2 {
+				if is_struct(argument[0]) and is_iterator(argument[0])
+				and is_struct(argument[1]) and is_iterator(argument[1]) {
+					assign(argument[0], argument[1])
+					exit
+				}
+			}
 			// (*) Arg0, Arg1, ...
 			allocate(argument_count)
-			for (var i = 0; i < argument_count; ++i) {
-				set(i, argument[i])
-			}
+			for (var i = 0; i < argument_count; ++i) set(i, argument[i])
 		}
 	}
 }

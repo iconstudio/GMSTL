@@ -6,7 +6,7 @@
     "path": "folders/Scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "Pair",
+  "name": "Unordered_Map",
   "tags": [],
   "resourceType": "GMScript",
 }

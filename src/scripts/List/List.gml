@@ -2,56 +2,42 @@
 	Constructors:
 		List()
 		List(Arg)
+		List(Arg0, Arg1, ...)
 		List(Builtin-Array)
 		List(Builtin-List)
-		List(Iterable-Container)
-		List(Arg0, Arg1, ...)
+		List(Container)
+		List(Iterator-Begin, Iterator-End)
 
 	Initialize:
-		new List;
-		set_value_type(type)
+		new List();
 
 	Usage:
 		
 */
 function List(): Container() constructor {
-	Algorithm()
-	type = List
-	raw = ds_list_create()
+	///@function first()
+  function first() { return (new iterator_type(self, 0)).pure() }
 
-	///@function ibegin()
-  function ibegin() { return 0 }
+	///@function last()
+  function last() { return (new iterator_type(self, size())).pure() }
 
-	///@function iend()
-  function iend() { return size() }
+	///@function cfirst()
+  function cfirst() { return (new const_iterator_type(self, 0)).pure() }
 
-	///@function set(iterator, value)
-  function set(It, Val) { 
-		ds_list_set(raw, It, Val)
-		return self
-	}
+	///@function clast()
+  function clast() { return (new const_iterator_type(self, size())).pure() }
 
-	///@function get(iterator)
-  function get(It) {
-		if is_nan(It)
-			throw "An error occured when trying to acquire a value from the list!"
-		return raw[| It]
-	}
+	///@function set(index, value)
+  function set(Index, Value) { ds_list_set(raw, Index, Value) return self }
 
-	///@function at(index)
-  function at(i) { return ds_list_find_value(raw, i) }
-
-	///@function insert(iterator, value)
-  function insert(It, Val) {
-		ds_list_insert(raw, It, Val)
-		return It
-	}
+	///@function insert(index, value)
+  function insert(Index, Value) { ds_list_insert(raw, Index, Value) }
 
 	///@function push_back(value)
-	function push_back(Val) { ds_list_add(raw, Val) }
+	function push_back(Value) { ds_list_add(raw, Value) }
 
 	///@function push_front(value)
-	function push_front(Val) { insert(ibegin(), Val) }
+	function push_front(Value) { insert(0, Value) }
 
 	///@function emplace_back(tuple)
 	function emplace_back(Params) { push_back(construct(Params)) }
@@ -59,100 +45,105 @@ function List(): Container() constructor {
 	///@function emplace_front(tuple)
 	function emplace_front(Params) { push_front(construct(Params)) }
 
-	function pop_back() { return erase(iend() - 1) }
+	///@function at(index)
+  function at(Index) { return ds_list_find_value(raw, Index) }
 
-	function pop_front() { return erase(ibegin()) }
+	///@function back()
+	function back() { return at(size() - 1) }
 
-  function back() {
-		var sz = size()
-		if 0 < sz
-			return at(sz - 1)
-		else
-			return undefined
+	///@function front()
+	function front() { return at(0) }
+
+	///@function erase_at(index)
+	function erase_at(Index) {
+		var Value = at(Index)
+		ds_list_delete(raw, Index)
+		return Value
 	}
 
-  function front() { 
-		if 0 < size() 
-			return at(0)
-		else
-			return undefined
+	///@function erase_one(iterator)
+	function erase_one(It) {
+		var Value = It.get()
+		ds_list_delete(raw, It)
+		It.pointer--
+		return Value
 	}
+
+	///@function pop_back()
+	function pop_back() { return erase_at(size() - 1) }
+
+	///@function pop_front()
+	function pop_front() { return erase_at(0) }
 
 	///@function mark_list(index)
-  function mark_list(i) { ds_list_mark_as_list(raw, i) }
+  function mark_list(Index) { ds_list_mark_as_list(raw, Index) }
 
 	///@function mark_map(index)
-  function mark_map(i) { ds_list_mark_as_map(raw, i) }
+  function mark_map(Index) { ds_list_mark_as_map(raw, Index) }
 
+	///@function is_list(index)
+  function is_list(Index) { return ds_list_is_list(raw, Index) }
+
+	///@function is_map(index)
+  function is_map(Index) { return ds_list_is_map(raw, Index) }
+
+	///@function size()
 	function size() { return ds_list_size(raw) }
 
+	///@function empty()
 	function empty() { return ds_list_empty(raw) }
 
+	///@function clear()
 	function clear() { ds_list_clear(raw) }
 
 	///@function sort_builtin(ascending)
-	///@description Fast
   function sort_builtin(Ascending) { ds_list_sort(raw, Ascending) }
 
 	///@function shuffle_builtin()
-	///@description Fast
   function shuffle_builtin() { ds_list_shuffle(raw) }
-
-	function destroy() {
-		ds_list_destroy(raw)
-		raw = undefined
-	}
 
 	///@function read(data_string)
 	function read(Str) { ds_list_read(raw, Str) }
 
+	///@function write()
 	function write() { return ds_list_write(raw) }
 
-	///@function __erase_one(iterator)
-	function __erase_one(It) {
-		var Temp = get(It)
-		ds_list_delete(raw, It)
-		return Temp
-	}
+	///@function destroy()
+	function destroy() { ds_list_destroy(raw) gc_collect() }
 
-	///@function __erase_range(begin, end)
-	function __erase_range(First, Last) {
-		var Dist = iterator_distance(First, Last)
-		var Temp = array_create(Dist, undefined)
-		var It = 0
-		repeat Dist {
-			Dist[It++] = get(First)
-			ds_list_delete(raw, First)
-		}
-		return Temp
-	}
+	raw = ds_list_create()
+	type = List
+	iterator_type = RandomIterator
+	const_iterator_type = ConstIterator
 
+	// ** Assigning **
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]
-
-			if is_struct(Item) and is_iterable(Item) {
-				// (*) Container
-				for (var It = Item.ibegin(); It != Item.iend(); ++It) {
-					push_back(Item.get(It))
-				}
-			} else if is_array(Item) {
+			if is_array(Item) {
 				// (*) Built-in Array
-				for (var i = 0; i < array_length(Item); ++i) {
-					push_back(Item[i])
-				}
+				for (var i = 0; i < array_length(Item); ++i) push_back(Item[i])
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
-				ds_list_copy(raw, Item)
+				for (var i = 0; i < inner_size; ++i) push_back(Item[| i])
+			} else if is_struct(Item) and is_iterable(Item) {
+				// (*) Container
+				assign(Item.first(), Item.last())
 			} else {
 				// (*) Arg
-				push_back(Item)
+				push_back(0, Item)
 			}
 		} else {
-			// (*) Arg0, Arg1, ...
-			for (var i = 0; i < argument_count; ++i) {
-				push_back(argument[i])
+			// (*) Iterator-Begin, Iterator-End
+			if argument_count == 2 {
+				if is_struct(argument[0]) and is_iterator(argument[0])
+				and is_struct(argument[1]) and is_iterator(argument[1]) {
+					assign(argument[0], argument[1])
+					exit
+				}
 			}
+			// (*) Arg0, Arg1, ...
+			for (var i = 0; i < argument_count; ++i) push_back(argument[i])
 		}
 	}
 }

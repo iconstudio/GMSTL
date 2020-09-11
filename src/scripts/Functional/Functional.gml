@@ -2,19 +2,19 @@ function integral(condition, value_true, value_false) {
 	return condition ? value_true : value_false
 }
 
-function comparator_equal(a, b) {
+function compare_equal(a, b) {
 	if is_undefined(a) or is_undefined(b)
 		return false
 	return bool(a == b)
 }
 
-function comparator_less(a, b) {
+function compare_less(a, b) {
 	if is_undefined(a) or is_undefined(b)
 		return false
 	return bool(a < b)
 }
 
-function comparator_greater(a, b) {
+function compare_greater(a, b) {
 	if is_undefined(a) or is_undefined(b)
 		return false
 	return bool(a > b)
@@ -31,4 +31,9 @@ function choice(index) {
 		return argument[index + 1]
 	else 
 		return undefined
+}
+
+///@function make_pair(value_1, value_2)
+function make_pair(Val0, Val1) {
+	return [Val0, Val1]
 }
