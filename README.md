@@ -15,29 +15,32 @@
   * [x] Weak Sort: Merge, Inner Merge, Nth Element, Partition, Partition by a Pivot
   * [x] Random: Shuffle by Engine and Generator
 
-###  Iterable Containers
+###  Sequential Containers
 
   * [x] List
   * [x] Array
-  * [ ] Grid
 
-###  Container Adaptors
+###  Container Adapters
 
   * [x] Stack
   * [x] Queue
-  * [x] Priority Deque
+  * [x] Priority Dequeue
   * [x] Priority Queue
 
 ###  Associative Containers
 
   * [ ] Ordered Map
   * [ ] Ordered Multiple Map
+  * [ ] Unordered Map
+  * [ ] Unordered Multiple Map
 
 ###  Graph Containers:
 
+  * [ ] Grid
   * [ ] Tree
+  * [ ] Binary Tree
   * [ ] Red-Black Tree
-  * [ ] Heap
+  * [ ] Heap Tree
 
 ---
 Written by 2020 iconer
