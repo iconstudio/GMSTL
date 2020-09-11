@@ -48,6 +48,12 @@ function List(): Container() constructor {
 	///@function at(index)
   function at(Index) { return ds_list_find_value(raw, Index) }
 
+	///@function back()
+	function back() { return at(size() - 1) }
+
+	///@function front()
+	function front() { return at(0) }
+
 	///@function erase_at(index)
 	function erase_at(Index) {
 		var Value = at(Index)
@@ -68,12 +74,6 @@ function List(): Container() constructor {
 
 	///@function pop_front()
 	function pop_front() { return erase_at(0) }
-
-	///@function back()
-	function back() { return at(size() - 1) }
-
-	///@function front()
-	function front() { return at(0) }
 
 	///@function mark_list(index)
   function mark_list(Index) { ds_list_mark_as_list(raw, Index) }
@@ -102,18 +102,19 @@ function List(): Container() constructor {
 	///@function shuffle_builtin()
   function shuffle_builtin() { ds_list_shuffle(raw) }
 
-	///@function destroy()
-	function destroy() { ds_list_destroy(raw) gc_collect() }
-
 	///@function read(data_string)
 	function read(Str) { ds_list_read(raw, Str) }
 
 	///@function write()
 	function write() { return ds_list_write(raw) }
 
+	///@function destroy()
+	function destroy() { ds_list_destroy(raw) gc_collect() }
+
 	raw = ds_list_create()
 	type = List
-	iterator_type = Iterator
+	iterator_type = RandomIterator
+	const_iterator_type = ConstIterator
 
 	// ** Assigning **
 	if 0 < argument_count {
@@ -121,12 +122,10 @@ function List(): Container() constructor {
 			var Item = argument[0]
 			if is_array(Item) {
 				// (*) Built-in Array
-				for (var i = 0; i < array_length(Item); ++i)
-					push_back(Item[i])
+				for (var i = 0; i < array_length(Item); ++i) push_back(Item[i])
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
-				for (var i = 0; i < inner_size; ++i)
-					push_back(Item[| i])
+				for (var i = 0; i < inner_size; ++i) push_back(Item[| i])
 			} else if is_struct(Item) and is_iterable(Item) {
 				// (*) Container
 				assign(Item.first(), Item.last())
@@ -144,9 +143,7 @@ function List(): Container() constructor {
 				}
 			}
 			// (*) Arg0, Arg1, ...
-			for (var i = 0; i < argument_count; ++i) {
-				push_back(argument[i])
-			}
+			for (var i = 0; i < argument_count; ++i) push_back(argument[i])
 		}
 	}
 }

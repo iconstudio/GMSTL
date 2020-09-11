@@ -1,3 +1,4 @@
+///@function Priority_Queue(comparator, [stable=true])
 /*
 	Constructors:
 		Priority_Queue(comparator, stable)
@@ -23,17 +24,11 @@
 		// Above items of priority 80 would not mixed up, because it is a stable queue.
 	
 */
-///@function Priority_Queue(comparator, [stable=true])
 function Priority_Queue(Comparator, Is_Stable): Container() constructor {
-	type = Priority_Queue
-	raw = new List()
-	comparator = Comparator
-	is_stable = select_argument(Is_Stable, true)
-
+	///@function duplicate()
 	function duplicate() {
 		var Result = new Priority_Queue(self.comparator, self.is_stable)
-		for (var It = raw.first(); It != raw.last(); ++It)
-			Result.push(raw.get(It))
+		copy(raw.first(), raw.last(), Result.raw.first())
 		return Result
 	}
 
@@ -42,12 +37,12 @@ function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 		raw.push_back(Value)
 		var Size = raw.size()
 		if 1 < Size {
-			if is_stable
-				raw.stable_sort(0, Size, comparator)
-			else
-				raw.sort(0, Size, comparator)
+			sorter(raw.first(), raw.end(), comparator)
 		}
 	}
+
+	///@function insert(pair)
+	function insert(Pair) { push(raw, Pair[1], Pair[0]) }
 
 	///@function pop()
 	function pop() { raw.pop_front() }
@@ -61,14 +56,24 @@ function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 	///@function top()
   function top() { return raw.front() }
 
+	///@function size()
 	function size() { return raw.size() }
 
+	///@function empty()
 	function empty() { return raw.empty() }
 
+	///@function clear()
 	function clear() { raw.clear() }
 
 	///@function read(data_string)
 	function read(Str) { raw.read(Str) }
 
+	///@function write()
 	function write() { return raw.write() }
+
+	type = Priority_Queue
+	raw = new List()
+	comparator = Comparator
+	is_stable = select_argument(Is_Stable, true)
+	sorter = integral(is_stable, stable_sort, sort) 
 }

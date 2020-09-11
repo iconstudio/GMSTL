@@ -36,6 +36,12 @@ function Array(): Container() constructor {
 	///@function at(index)
   function at(Index) { return raw[Index] }
 
+  ///@function back()
+	function back() { return at(inner_size - 1) }
+
+  ///@function front()
+	function front() { return at(0) }
+
 	///@function erase_at(index)
 	function erase_at(Index) {
 		var Value = at(Index)
@@ -50,12 +56,10 @@ function Array(): Container() constructor {
 		return Value
 	}
 
-  function back() { return at(inner_size - 1) }
-
-  function front() { return at(0) }
-
+	///@function size()
 	function size() { return inner_size }
 
+	///@function destroy()
 	function destroy() { raw = 0 gc_collect() }
 
 	///@function allocate(size)
@@ -65,7 +69,8 @@ function Array(): Container() constructor {
 	}
 
 	type = Array
-	iterator_type = Iterator
+	iterator_type = RandomIterator
+	const_iterator_type = ConstIterator
 	inner_size = 0
 
 	// ** Assigning **
@@ -79,8 +84,7 @@ function Array(): Container() constructor {
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
 				allocate(ds_list_size(Item))
-				for (var i = 0; i < inner_size; ++i)
-					set(i, Item[| i])
+				for (var i = 0; i < inner_size; ++i) set(i, Item[| i])
 			} else if is_struct(Item) and is_iterable(Item) {
 				// (*) Container
 				allocate(Item.size())
@@ -101,9 +105,7 @@ function Array(): Container() constructor {
 			}
 			// (*) Arg0, Arg1, ...
 			allocate(argument_count)
-			for (var i = 0; i < argument_count; ++i) {
-				set(i, argument[i])
-			}
+			for (var i = 0; i < argument_count; ++i) set(i, argument[i])
 		}
 	}
 }

@@ -16,16 +16,17 @@ function Container() {
 	}
 
 	///@function make_element_from_array(array)
-	function make_element_from_array(datas) {
+	function make_element_from_array(data) {
 		var Data = array_create(16, undefined)
-		for (var i = 0; i < array_length(datas); ++i)
-			Data[i] = datas[i]
-		return new value_type(Data[0], Data[1]
+		var Size = array_length(Data)
+		for (var i = 0; i < Size; ++i)
+			Data[i] = data[i]
+		return make_element_from_tuple(Data[0], Data[1]
 					, Data[2], Data[3], Data[4]
 					, Data[5], Data[6], Data[7]
 					, Data[9], Data[9], Data[10]
 					, Data[11], Data[12], Data[13]
-					, Data[14], Data[15]) // A limit of GameMaker
+					, Data[14], Data[15])
 	}
 
 	///@function construct(data...)

@@ -79,7 +79,7 @@ function foreach(First, Last, Pred) {
 	return Pred
 }
 
-///@function find(begin, end, value, [comparator])
+///@function find(begin, end, value, [comparator=compare_equal])
 function find(First, Last, Value, Comparator) {
 	First = make_const_iterator(First)
 
@@ -355,7 +355,7 @@ function transform_binary(First, Last, PairFirst, Output, Pred) {
 	return Output
 }
 
-///@function min_element(begin, end, [comparator])
+///@function min_element(begin, end, [comparator=compare_less])
 function min_element(First, Last, Comparator) {
 	if First.equals(Last)
 		return Last
@@ -375,7 +375,7 @@ function min_element(First, Last, Comparator) {
 	return Result
 }
 
-///@function max_element(begin, end, [comparator])
+///@function max_element(begin, end, [comparator=compare_less])
 function max_element(First, Last, Comparator) {
 	if First.equals(Last)
 		return Last
@@ -395,7 +395,7 @@ function max_element(First, Last, Comparator) {
 	return Result
 }
 
-///@function lower_bound(begin, end, value, [comparator])
+///@function lower_bound(begin, end, value, [comparator=compare_less])
 function lower_bound(First, Last, Value, Comparator) { // return the first and largest element which less than value.
 	First = make_iterator(First)
 
@@ -416,7 +416,7 @@ function lower_bound(First, Last, Value, Comparator) { // return the first and l
 	return First
 }
 
-///@function upper_bound(begin, end, value, [comparator])
+///@function upper_bound(begin, end, value, [comparator=compare_less])
 function upper_bound(First, Last, Value, Comparator) { // return a greater element to the value.
 	First = make_iterator(First)
 
@@ -437,7 +437,7 @@ function upper_bound(First, Last, Value, Comparator) { // return a greater eleme
 	return First
 }
 
-///@function binary_search(begin, end, value, [comparator])
+///@function binary_search(begin, end, value, [comparator=compare_less])
 function binary_search(First, Last, Value, Comparator) {
 	First = make_iterator(First)
 
@@ -479,7 +479,7 @@ function sort(First, Last, Comparator) {
 	gc_collect()
 }
 
-///@function stable_sort(begin, end, [comparator])
+///@function stable_sort(begin, end, [comparator=compare_less])
 ///@description selection sort
 function stable_sort(First, Last, Comparator) {
 	First = make_iterator(First)
@@ -492,7 +492,7 @@ function stable_sort(First, Last, Comparator) {
 	}
 }
 
-///@function insertion_sort(begin, end, [comparator])
+///@function insertion_sort(begin, end, [comparator=compare_less])
 function insertion_sort(First, Last, Comparator) {
 	First = make_iterator(First).go()
 
@@ -508,7 +508,7 @@ function insertion_sort(First, Last, Comparator) {
 	}
 }
 
-///@function merge_sort(begin, end, [comparator])
+///@function merge_sort(begin, end, [comparator=compare_less])
 function merge_sort(First, Last, Comparator) {
 	First = make_iterator(First)
 	Last = make_iterator(Last)
@@ -525,51 +525,48 @@ function merge_sort(First, Last, Comparator) {
 
 ///@function IMPLEMENTED FROM VS
 ///@description sort median of three elements to middle
-function _Med3_unchecked(First, Middle, Last, Comparator) {
-	var Compare = select_argument(Comparator, compare_less)
-	if Compare(get(Middle), First.get()) {
-		swap(Middle, First)
+function sort_median(First, Middle, Last, Comparator) {
+	if Comparator(get(Middle), First.get()) {
+		Middle.swap(First)
 	}
 
-	if Compare(get(Last), get(Middle)) { // swap middle and last, then test first again
-		swap(Last, Middle)
+	if Comparator(Last.get(), Middle.get()) { // swap middle and last, then test first again
+		Last.swap(Middle)
 
-		if Compare(get(Middle), First.get())
-			swap(Middle, First)
+		if Comparator(Middle.get(), First.get())
+			Middle.swap(First)
 	}
 }
 
 ///@function IMPLEMENTED FROM VS
 ///@description sort median element to middle
-function _Guess_median_unchecked(First, Middle, Last, Comparator) {
+function predict_median(First, Middle, Last, Comparator) {
 	var _Count = iterator_distance(First, Last)
-	var Compare = select_argument(Comparator, compare_less)
 	if 40 < _Count { // Tukey's ninther
 		var Step     = (_Count + 1) >> 3 // +1 can't overflow because range was made inclusive in caller
 		var _Two_step = Step << 1 // note: intentionally discards low-order bit
-		_Med3_unchecked(First, First + Step, First + _Two_step, Compare)
-		_Med3_unchecked(Middle - Step, Middle, Middle + Step, Compare)
-		_Med3_unchecked(Last - _Two_step, Last - Step, Last, Compare)
-		_Med3_unchecked(First + Step, Middle, Last - Step, Compare)
+		sort_median(First, First + Step, First + _Two_step, Comparator)
+		sort_median(Middle - Step, Middle, Middle + Step, Comparator)
+		sort_median(Last - _Two_step, Last - Step, Last, Comparator)
+		sort_median(First + Step, Middle, Last - Step, Comparator)
 	} else {
-		_Med3_unchecked(First, Middle, Last, Compare)
+		sort_median(First, Middle, Last, Comparator)
 	}
 }
 
 ///@function IMPLEMENTED FROM VS
-///@description partition [First, Last), using Compare
-function _Partition_by_median_guess_unchecked(First, Last, Comparator) {
+///@description partition [First, Last), using Comparator
+function partition_by_median_guess(First, Last, Comparator) {
 	var Middle = First + (iterator_distance(First, Last) >> 1) // shift for codegen (== * 0.5)
-	var Compare = select_argument(Comparator, compare_less)
-	_Guess_median_unchecked(First, Middle, Last - 1, Compare)
+	predict_median(First, Middle, Last - 1, Comparator)
 
 	var _Pfirst = Middle
 	var _Plast  = _Pfirst + 1
-	while First < _Pfirst && !Compare(get(_Pfirst - 1), get(_Pfirst)) && !Compare(get(_Pfirst), get(_Pfirst - 1)) {
+	while First < _Pfirst && !Comparator(get(_Pfirst - 1), get(_Pfirst)) && !Comparator(get(_Pfirst), get(_Pfirst - 1)) {
 		--_Pfirst
 	}
 
-	while _Plast < Last && !Compare(get(_Plast), get(_Pfirst)) && !Compare(get(_Pfirst), get(_Plast)) {
+	while _Plast < Last && !Comparator(get(_Plast), get(_Pfirst)) && !Comparator(get(_Pfirst), get(_Plast)) {
 		++_Plast
 	}
 
@@ -577,8 +574,8 @@ function _Partition_by_median_guess_unchecked(First, Last, Comparator) {
 	var _Glast  = _Pfirst
 	for (;;) { // partition
 		for (; _Gfirst < Last; ++_Gfirst) {
-			if Compare(get(_Pfirst), get(_Gfirst)) {
-			} else if Compare(get(_Gfirst), get(_Pfirst)) {
+			if Comparator(get(_Pfirst), get(_Gfirst)) {
+			} else if Comparator(get(_Gfirst), get(_Pfirst)) {
 				break
 			} else if _Plast != _Gfirst {
 				swap(_Plast, _Gfirst)
@@ -589,8 +586,8 @@ function _Partition_by_median_guess_unchecked(First, Last, Comparator) {
 		}
 
 		for (; First < _Glast; --_Glast) {
-			if Compare(get(_Glast - 1), get(_Pfirst)) {
-			} else if Compare(get(_Pfirst), get(_Glast - 1)) {
+			if Comparator(get(_Glast - 1), get(_Pfirst)) {
+			} else if Comparator(get(_Pfirst), get(_Glast - 1)) {
 					break
 			} else if --_Pfirst != _Glast - 1 {
 					swap(_Pfirst, _Glast - 1)
@@ -607,7 +604,7 @@ function _Partition_by_median_guess_unchecked(First, Last, Comparator) {
 			}
 
 			_Plast++
-			swap(_Pfirst, _Gfirst)
+			_Pfirst.swap(_Gfirst)
 			_PFirst.go()
 			_GFirst.go()
 		} else if _Gfirst == Last { // no room at top, rotate pivot downward
@@ -623,7 +620,7 @@ function _Partition_by_median_guess_unchecked(First, Last, Comparator) {
 	}
 }
 
-///@function nth_element(begin, nth, end, [comparator])
+///@function nth_element(begin, nth, end, [comparator=compare_less])
 function nth_element(First, Nth, Last, Comparator) {
 	First = make_iterator(First)
 	Nth = make_iterator(Nth)
@@ -633,7 +630,7 @@ function nth_element(First, Nth, Last, Comparator) {
 
 	var Compare = select_argument(Comparator, compare_less)
 	while 32 < First.distance(Last) { // divide and conquer, ordering partition containing Nth
-		var Middle = _Partition_by_median_guess_unchecked(First, Last, Compare)
+		var Middle = partition_by_median_guess(First, Last, Compare)
 
 		if Middle.index <= Nth.index {
 			First = Middle
@@ -647,7 +644,7 @@ function nth_element(First, Nth, Last, Comparator) {
   insertion_sort(First, Last, Compare)
 }
 
-///@function is_sorted(begin, end, [comparator])
+///@function is_sorted(begin, end, [comparator=compare_less])
 function is_sorted(First, Last, Comparator) {
 	First = make_iterator(First)
 	if First.equals(Last)
@@ -664,7 +661,7 @@ function is_sorted(First, Last, Comparator) {
 	return true
 }
 
-///@function unguarded_partition(begin, end, pivot, [comparator])
+///@function unguarded_partition(begin, end, pivot, [comparator=compare_less])
 function unguarded_partition(First, Last, Pivot, Comparator) {
 	First = make_iterator(First)
 	Last = make_iterator(Last)
@@ -732,7 +729,7 @@ function is_partitioned(First, Last, Pred) {
 	return true
 }
 
-///@function merge(begin, end, other_begin, other_end, output, [comparator])
+///@function merge(begin, end, other_begin, other_end, output, [comparator=compare_less])
 function merge(First, Last, OtherFirst, OtherLast, Output, Comparator) {
 	First = make_iterator(First)
 	Last = make_iterator(Last)
@@ -762,7 +759,7 @@ function merge(First, Last, OtherFirst, OtherLast, Output, Comparator) {
 	return Output
 }
 
-///@function inplace_merge(begin, middle, end, [comparator])
+///@function inplace_merge(begin, middle, end, [comparator=compare_less])
 function inplace_merge(First, Middle, Last, Comparator) {
 	First = make_iterator(First)
 	Middle = make_iterator(Middle)
@@ -775,7 +772,7 @@ function inplace_merge(First, Middle, Last, Comparator) {
 	delete Temp
 }
 
-///@function shuffle(begin, end, [engine])
+///@function shuffle(begin, end, [engine=irandom_range])
 function shuffle(First, Last, Engine) {
 	First = make_iterator(First)
 
@@ -786,7 +783,7 @@ function shuffle(First, Last, Engine) {
 	}
 }
 
-///@function random_shuffle(begin, end, [generator])
+///@function random_shuffle(begin, end, [generator=irandom])
 function random_shuffle(First, Last, Generator) {
 	First = make_iterator(First)
 

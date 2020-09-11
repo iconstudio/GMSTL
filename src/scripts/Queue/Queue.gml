@@ -69,16 +69,14 @@ function Queue(): Container() constructor {
 					ds_queue_copy(raw, Item.data())
 				} else if is_iterable(Item) {
 					// (*) Iterable-Container
-					foreach(Item.first(), Item.last(), function(Val) { push(Val) })
+					foreach(Item.first(), Item.last(), function(Value) { push(Value) })
 				}
 			} else if is_array(Item) {
 				// (*) Built-in Array
 				for (var i = 0; i < array_length(Item); ++i) push(Item[i])
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
-				for (var i = 0; i < ds_list_size(Item); ++i) {
-					push(Item[| i])
-				}
+				for (var i = 0; i < ds_list_size(Item); ++i) push(Item[| i])
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_queue) {
 				// (*) Built-in Queue
 				ds_queue_copy(raw, Item)
