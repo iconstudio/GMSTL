@@ -33,7 +33,7 @@
 			myfunc(BucketIndex, first(BucketIndex), last(BucketIndex))
 		
 */
-#macro Unordered_Multimap Multimap
+#macro Ordered_Multimap Multimap
 function Multimap(): Container() constructor {
 	type = Multimap
 	raw = ds_map_create()
@@ -124,8 +124,8 @@ function Multimap(): Container() constructor {
 		get(BucketIndex).set(It, Value)
 	}
 
-	///@function bucket(key)
-  function bucket(K) {
+	///@function _bucket(key)
+  function _bucket(K) {
 		//Cannot return the iterator at end
 		return ds_list_find_index(key_memory.data(), K) // optimize
 	}
