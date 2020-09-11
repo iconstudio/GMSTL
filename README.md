@@ -30,8 +30,8 @@
 
 ###  Associative Containers
 
-  * [x] Ordered Map
-  * [x] Ordered Multiple Map
+  * [ ] Ordered Map
+  * [ ] Ordered Multiple Map
 
 ###  Graph Containers:
 
