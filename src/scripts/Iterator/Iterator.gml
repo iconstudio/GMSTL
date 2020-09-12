@@ -151,6 +151,20 @@ function RandomIterator(Cont, Index): BidirectionalIterator(Cont, Index) constru
 	}
 }
 
+///@function ConstMapIterator(container, index)
+function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
+	///@function get()
+	function get() { return container.at(container.cash.at(pointer)) }
+}
+
+///@function MapIterator(container, index)
+function MapIterator(Cont, Index): RandomIterator(Cont, Index) constructor {
+	function set(value) { container.set(container.cash.at(pointer), value) }
+
+	///@function get()
+	function get() { return container.at(container.cash.at(pointer)) }
+}
+
 ///@function iterator_distance(iterator_1, iterator_2)
 function iterator_distance(ItA, ItB) {
 	if is_real(ItA) and is_real(ItB)
@@ -167,7 +181,7 @@ function iterator_advance(It, Distance) {
 	if is_real(It) {
 		return It + Distance
 	} else if is_iterator(It) {
-		return It.duplicate().advance(Distance)
+		return make_iterator(It).advance(Distance)
 	}
 	return undefined
 }
