@@ -54,6 +54,11 @@ print(test_map.cash)
 show_debug_message("Contents of Map: ")
 print(test_map)
 
+show_debug_message("\nUnordered_Map")
+test_unomap = new Unordered_Map(test_mapped_list)
+print(test_unomap)
+
+/*
 show_debug_message("\nMultimap")
 test_multimap = new Multimap(test_sum)
 

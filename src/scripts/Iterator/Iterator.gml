@@ -156,7 +156,7 @@ function RandomIterator(Cont, Index): BidirectionalIterator(Cont, Index) constru
 ///@function ConstMapIterator(container, index)
 function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
 	///@function get()
-	function get() { return ds_map_find_value(container.data(), key) }
+	function get() { return container.at(key) }
 
 	///@function get_index()
 	function get_index() { return index }
@@ -211,7 +211,7 @@ function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
 		return self
 	}
 
-	key = ds_map_find_first(container)
+	key = ds_map_find_first(container.data())
 	if !is_undefined(key) and 0 < Index {
 		repeat Index
 			key = ds_map_find_next(container.data(), key)
@@ -220,7 +220,7 @@ function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
 
 ///@function MapIterator(container, index)
 function MapIterator(Cont, Index): ConstMapIterator(Cont, Index) constructor {
-	function set(value) { ds_map_set(container.data(), key, value) }
+	function set(value) { container.insert(make_pair(key, value)) }
 }
 
 ///@function iterator_distance(iterator_1, iterator_2)
