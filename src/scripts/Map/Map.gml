@@ -2,32 +2,22 @@
 	Constructors:
 		Map()
 		Map(Arg)
-		Map(Map)
-		Map(Iterable-PairedContainer)
-		Map(Builtin-PairedArray)
-		Map(Builtin-PairedList)
+		Map(Paired-Container)
+		Map(Builtin-Paired-Array)
+		Map(Builtin-Paired-List)
 		Map(Builtin-Map)
 		Map(Arg0, Arg1, ...)
 
 	Initialize:
-		new Map
+		new Map()
 		set_value_type(type)
 
 	Usage:
-		To Iterate with pair:
-			var BucketNumber = bucket_count()
-			for (var i = 0; i < BucketNumber; ++i) {
-				var Key = get_key(i)
-				var Value = at(Key)
-				myfunc(Key, Value)
-			}
-
-		To Iterate with keys:
+		To Iterate values:
 			for (var It = first(); It != last(); ++It)
-				myfunc(get(It))
+				myfunc(It.get()[0])
 		
 */
-#macro Ordered_Map Map
 #macro Dictionary Map
 function Map(): Container() constructor {
 	///@function first()
@@ -42,32 +32,41 @@ function Map(): Container() constructor {
 	///@function clast()
   function clast() { return (new const_iterator_type(self, size())).pure() }
 
-	///@function set(key, value)
-  function set(K, Value) { 
-		if !exists(K) {
-			cash.push_back(K)
-		}
-		ds_map_set(raw, K, Value)
-		return self
-	}
-
 	///@function insert(pair)
 	function insert(Pair) {
-		set(Pair[0], Pair[1])
+		cash_push(Pair[0])
+		ds_map_set(raw, Pair[0], Pair[1])
 		return self
 	}
 
-	///@function change(key, value)
-  function change(K, Value) { return ds_map_replace(raw, K, Value) }
+	///@function set(index, value)
+  function set(Index, Value) { 
+		var Key = cash.at(Index)
+		if !is_undefined(Key)
+			ds_map_set(raw, Key, Value)
+		return self
+	}
 
 	///@function set_list(key, builtin_list_id)
-  function set_list(K, Value) { ds_map_add_list(raw, K, Value) }
+  function set_list(K, Value) {
+		cash_push(K)
+		ds_map_add_list(raw, K, Value)
+	}
 
 	///@function set_map(key, builtin_map_id)
-  function set_map(K, Value) { ds_map_add_map(raw, K, Value) }
+  function set_map(K, Value) {
+		cash_push(K)
+		ds_map_add_map(raw, K, Value) 
+	}
 
-	///@function at(key)
-  function at(K) { return ds_map_find_value(raw, K) }
+	///@function seek(key)
+  function seek(K) { return ds_map_find_value(raw, K) }
+
+	///@function at(index)
+  function at(Index) {
+		var K = cash.at(Index)
+		return make_pair(K, seek(K))
+	}
 
   ///@function back()
 	function back() { return at(ds_map_find_last(raw)) }
@@ -79,7 +78,7 @@ function Map(): Container() constructor {
 	function erase_at(K) {
 		var Temp = at(K)
 		ds_map_delete(raw, K)
-		remove(cash.first(), cash.last(), Temp)
+		remove(cash.first(), cash.last(), K)
 		return Temp
 	}
 
@@ -104,6 +103,34 @@ function Map(): Container() constructor {
 	///@function clear()
 	function clear() { ds_map_clear(raw) }
 
+	///@function set_comparator(compare_function)
+	function set_comparator(Func) { cash_comparator = method(other, Func) }
+
+	///@function cash_push(key)
+	function cash_push(K) {
+		if !exists(K) {
+			if 1 < cash.size() {
+				cash.push_back(K)
+				cash.sort_builtin(true)
+			} else {
+				cash.push_back(K)
+			}
+		}
+	}
+
+	///@function key_change(key, value)
+  function key_change(K, Value) {
+		cash_push(K)
+		return ds_map_replace(raw, K, Value) 
+	}
+
+	///@function key_swap(key_1, key_2)
+  function key_swap(Key1, Key2) {
+		var Temp = seek(Key1)
+		ds_map_set(raw, Key1, seek(Key2))
+		ds_map_set(raw, Key2, Temp)
+	}
+
 	///@function read(data_string)
 	function read(Str) { ds_map_read(raw, Str) }
 
@@ -115,9 +142,10 @@ function Map(): Container() constructor {
 
 	type = Map
 	raw = ds_map_create()
-	iterator_type = MapIterator
-	const_iterator_type = ConstMapIterator
+	iterator_type = ForwardIterator
+	const_iterator_type = ConstIterator
 	cash = new List()
+	cash_comparator = compare_less
 
 	if 0 < argument_count {
 		if argument_count == 1 {
@@ -142,12 +170,11 @@ function Map(): Container() constructor {
 				}
 				//ds_map_copy(raw, Item)
 			} else if is_struct(Item) {
-				if instanceof(Item) == "Map" {
-					// (*) Map
-					ds_map_copy(raw, Item.data())
-				} else if is_iterable(Item) {
-					// (*) Paired-Container
-					for (var It = Item.first(); It != Item.last(); ++It) insert(Item.get(It))
+				if is_iterable(Item) {
+					// (*) Paired-Container and Map
+					foreach(Item.first(), Item.last(), function(Value) {
+						insert(Value)
+					})
 				}
 			} else {
 				// (*) Arg
@@ -158,18 +185,4 @@ function Map(): Container() constructor {
 			for (var i = 0; i < argument_count; ++i) insert(argument[i])
 		}
 	}
-}
-
-///@function ConstMapIterator(container, index)
-function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
-	///@function get()
-	function get() { return container.at(container.cash.at(pointer)) }
-}
-
-///@function MapIterator(container, index)
-function MapIterator(Cont, Index): RandomIterator(Cont, Index) constructor {
-	function set(value) { container.set(container.cash.at(pointer), value) }
-
-	///@function get()
-	function get() { return container.at(container.cash.at(pointer)) }
 }

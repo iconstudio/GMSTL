@@ -30,8 +30,7 @@ function erase(First, Last) {
 
 ///@function check_all(begin, end, predicate)
 function check_all(First, Last, Pred) {
-	First = make_const_iterator(First)
-	Pred = method(other, Pred)
+	First = make_iterator(First)
 
 	while First.not_equals(Last) {
 		if !Pred(First.get())
@@ -43,8 +42,7 @@ function check_all(First, Last, Pred) {
 
 ///@function check_any(begin, end, predicate)
 function check_any(First, Last, Pred) {
-	First = make_const_iterator(First)
-	Pred = method(other, Pred)
+	First = make_iterator(First)
 
 	while First.not_equals(Last) {
 		if Pred(First.get())
@@ -56,8 +54,7 @@ function check_any(First, Last, Pred) {
 
 ///@function check_none(begin, end, predicate)
 function check_none(First, Last, Pred) {
-	First = make_const_iterator(First)
-	Pred = method(other, Pred)
+	First = make_iterator(First)
 	
 	while First.not_equals(Last) {
 		if Pred(First.get())
@@ -69,8 +66,7 @@ function check_none(First, Last, Pred) {
 
 ///@function foreach(begin, end, predicate)
 function foreach(First, Last, Pred) {
-	First = make_const_iterator(First)
-	Pred = method(other, Pred)
+	First = make_iterator(First)
 	
 	while First.not_equals(Last) {
 		Pred(First.get())
@@ -81,7 +77,7 @@ function foreach(First, Last, Pred) {
 
 ///@function find(begin, end, value, [comparator=compare_equal])
 function find(First, Last, Value, Comparator) {
-	First = make_const_iterator(First)
+	First = make_iterator(First)
 
 	var Compare = select_argument(Comparator, compare_equal)
 	while First.not_equals(Last) {
@@ -94,8 +90,7 @@ function find(First, Last, Value, Comparator) {
 
 ///@function find_if(begin, end, predicate)
 function find_if(First, Last, Pred) {
-	First = make_const_iterator(First)
-	Pred = method(other, Pred)
+	First = make_iterator(First)
 
 	while First.not_equals(Last) {
 		var Value = First.get()
@@ -108,7 +103,7 @@ function find_if(First, Last, Pred) {
 
 ///@function count(begin, end, value)
 function count(First, Last, Value) {
-	First = make_const_iterator(First)
+	First = make_iterator(First)
 
 	var Result = 0
 	while First.not_equals(Last) {
@@ -121,8 +116,7 @@ function count(First, Last, Value) {
 
 ///@function count_if(begin, end, predicate)
 function count_if(First, Last, Pred) {
-	First = make_const_iterator(First)
-	Pred = method(other, Pred)
+	First = make_iterator(First)
 
 	var Result = 0
 	while First.not_equals(Last) {
@@ -183,7 +177,6 @@ function copy_n(First, Number, Output) {
 function copy_if(First, Last, Output, Pred) {
 	First = make_iterator(First)
 	Output = make_iterator(Output)
-	Pred = method(other, Pred)
 
 	var Value = 0
 	while First.not_equals(Last) {
@@ -210,7 +203,6 @@ function replace(First, Last, OldVal, NewVal) {
 ///@function replace_if(begin, end, predicate, new_value)
 function replace_if(First, Last, Pred, NewVal) {
 	First = make_iterator(First)
-	Pred = method(other, Pred)
 
 	while First.not_equals(Last) {
 		var Value = First.get()
@@ -255,7 +247,6 @@ function remove(First, Last, Value) {
 ///@function remove_if(begin, end, predicate)
 function remove_if(First, Last, Pred) {
 	First = make_iterator(First)
-	Pred = method(other, Pred)
 
 	var Result = First.duplicate()
 	while First.not_equals(Last) {
@@ -344,7 +335,6 @@ function transform_binary(First, Last, PairFirst, Output, Pred) {
 	First = make_iterator(First)
 	PairFirst = make_iterator(PairFirst)
 	Output = make_iterator(Output)
-	Pred = method(other, Pred)
 
 	while First.not_equals(Last) {
 		Output.set(Pred(First.get(), PairFirst.get()))
@@ -473,7 +463,7 @@ function sort(First, Last, Comparator) {
 
 	sort(First, Pivot.duplicate().subtract(First), Compare)
 	if Pivot.index < First.index + Last.index
-		sort(Pivot.next(), Last.subtract(Pivot.distance(First) + 1), Compare)
+		sort(Pivot.next().pure(), Last.subtract(Pivot.distance(First) + 1), Compare)
 	delete Pivot
 	delete Pivot_Next
 	gc_collect()
@@ -484,12 +474,14 @@ function sort(First, Last, Comparator) {
 function stable_sort(First, Last, Comparator) {
 	First = make_iterator(First)
 
-	var Compare = select_argument(Comparator, compare_less)
+	var selection, Compare = select_argument(Comparator, compare_less)
 	while First.not_equals(Last) {
-		var selection = min_element(First, Last, Compare)
+		selection = min_element(First, Last, Compare)
 		selection.swap(First)
 		First.go()
+		delete selection
 	}
+	gc_collect()
 }
 
 ///@function insertion_sort(begin, end, [comparator=compare_less])

@@ -40,6 +40,31 @@ print(test_sum)
 show_debug_message("Is parted: " + string(is_parted))
 show_debug_message("Parted on: " + string(part_point.get_index()))
 
+show_debug_message("\nMap")
+test_mapped_list = new Array("D", "E", "A", "T", "H", "K", "N", "I", "G", "H", "T")
+// Transform into paired-container
+transform(test_mapped_list.first(), test_mapped_list.last(), test_mapped_list.first(), function (Value) {
+	return [Value, irandom(3)]
+})
+print(test_mapped_list)
+
+test_map = new Map(test_mapped_list)
+show_debug_message("Cashes of Map: ")
+print(test_map.cash)
+show_debug_message("Contents of Map: ")
+print(test_map)
+
+show_debug_message("\nMultimap")
+test_multimap = new Multimap(test_sum)
+
+for (var KIt = test_multimap.first(); KIt != test_multimap.last(); KIt.go()) {
+	var TempKey = test_multimap.get_key(KIt)
+	var TempList = test_multimap.get(KIt)
+	show_debug_message("Values with key " + string(TempKey) + ": ")
+	print(TempList)
+}
+
+/*
 var nth = 10
 show_debug_message("\nNth Sorting (" + string(nth) + ")")
 random_shuffle(test_sum.first(), test_sum.last())
@@ -62,12 +87,3 @@ transform(test_sum.first(), test_sum.last(), test_sum.first(), function (Value) 
 })
 print(test_sum)
 
-show_debug_message("\nMultimap")
-test_multimap = new Multimap(test_sum)
-/*
-for (var KIt = test_multimap.first(); KIt != test_multimap.last(); ++KIt) {
-	var TempKey = test_multimap.get_key(KIt)
-	var TempList = test_multimap.get(KIt)
-	show_debug_message("Values with key " + string(TempKey) + ": ")
-	print(TempList)
-}

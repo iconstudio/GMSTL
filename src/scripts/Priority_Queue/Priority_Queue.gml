@@ -1,13 +1,13 @@
-///@function Priority_Queue(comparator, [stable=true])
+///@function Priority_Queue([comparator=compare_less], [stable=true])
 /*
 	Constructors:
-		Priority_Queue(comparator, stable)
+		Priority_Queue(cmpfunc, boolean)
 
 	Initialize:
-		new Priority_Queue(cmpfunc, boolean)
+		new Priority_Queue(cmpfunc, flag)
 
 	Usage:
-		function Build(Type, Priority, Upgradable) {
+		function Build(Type, Priority, Upgradable) constructor {
 			type = Type
 			priority = Priority
 			upg_enabled = Upgradable
@@ -27,17 +27,29 @@
 function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 	///@function duplicate()
 	function duplicate() {
-		var Result = new Priority_Queue(self.comparator, self.is_stable)
+		var Result = new Priority_Queue(comparator, self.is_stable)
 		copy(raw.first(), raw.last(), Result.raw.first())
 		return Result
 	}
 
+	///@function cfirst()
+  function cfirst() { return (new const_iterator_type(self, 0)).pure() }
+
+	///@function clast()
+  function clast() { return (new const_iterator_type(self, size())).pure() }
+
 	///@function push(value)
 	function push(Value) { 
-		raw.push_back(Value)
-		var Size = raw.size()
-		if 1 < Size {
-			sorter(raw.first(), raw.end(), comparator)
+		if 1 < raw.size() {
+			var Last = raw.last()
+			var Position = lower_bound(raw.first(), Last, Value, comparator)
+			if Position.not_equals(Last) and !comparator(Value, Position.get())
+				raw.insert(Position.get_index(), Value)
+			else
+				raw.push_back(Value)
+			//sorter(raw.first(), raw.last(), comparator)
+		} else {
+			raw.push_back(Value)
 		}
 	}
 
@@ -73,7 +85,7 @@ function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 
 	type = Priority_Queue
 	raw = new List()
-	comparator = Comparator
+	comparator = select_argument(Comparator, compare_less)
 	is_stable = select_argument(Is_Stable, true)
 	sorter = integral(is_stable, stable_sort, sort) 
 }

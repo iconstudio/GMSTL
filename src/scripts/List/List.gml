@@ -9,7 +9,7 @@
 		List(Iterator-Begin, Iterator-End)
 
 	Initialize:
-		new List();
+		new List()
 
 	Usage:
 		
