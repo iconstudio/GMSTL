@@ -473,7 +473,7 @@ function sort(First, Last, Comparator) {
 
 	sort(First, Pivot.duplicate().subtract(First), Compare)
 	if Pivot.index < First.index + Last.index
-		sort(Pivot.next(), Last.subtract(Pivot.distance(First) + 1), Compare)
+		sort(Pivot.next().pure(), Last.subtract(Pivot.distance(First) + 1), Compare)
 	delete Pivot
 	delete Pivot_Next
 	gc_collect()
@@ -484,12 +484,14 @@ function sort(First, Last, Comparator) {
 function stable_sort(First, Last, Comparator) {
 	First = make_iterator(First)
 
-	var Compare = select_argument(Comparator, compare_less)
+	var selection, Compare = select_argument(Comparator, compare_less)
 	while First.not_equals(Last) {
-		var selection = min_element(First, Last, Compare)
+		selection = min_element(First, Last, Compare)
 		selection.swap(First)
 		First.go()
+		delete selection
 	}
+	gc_collect()
 }
 
 ///@function insertion_sort(begin, end, [comparator=compare_less])

@@ -61,7 +61,7 @@ transform(test_sum.first(), test_sum.last(), test_sum.first(), function (Value) 
 	return [irandom(2), Value]
 })
 print(test_sum)
-
+/*
 show_debug_message("\nMultimap")
 test_multimap = new Multimap(test_sum)
 /*
