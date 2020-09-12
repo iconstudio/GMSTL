@@ -162,7 +162,7 @@ function Map(): Container() constructor {
 				if 0 < Size {
 					var MIt = ds_map_find_first(Item)
 					while true {
-						set(MIt, ds_map_find_value(Item, MIt))
+						insert(make_pair(MIt, ds_map_find_value(Item, MIt)))
 						MIt = ds_map_find_next(Item, MIt)
 						if is_undefined(MIt)
 							break

@@ -29,9 +29,9 @@
 
 ###  Associative Containers
 
-  * [ ] Ordered Map
+  * [x] Ordered Map
   * [ ] Ordered Multiple Map
-  * [ ] Unordered Map
+  * [x] Unordered Map
   * [ ] Unordered Multiple Map
 
 ###  Graph Containers:
