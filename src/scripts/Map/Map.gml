@@ -10,24 +10,15 @@
 		Map(Arg0, Arg1, ...)
 
 	Initialize:
-		new Map
+		new Map()
 		set_value_type(type)
 
 	Usage:
-		To Iterate with pair:
-			var BucketNumber = bucket_count()
-			for (var i = 0; i < BucketNumber; ++i) {
-				var Key = get_key(i)
-				var Value = at(Key)
-				myfunc(Key, Value)
-			}
-
 		To Iterate with keys:
 			for (var It = first(); It != last(); ++It)
-				myfunc(get(It))
+				myfunc(It.get())
 		
 */
-#macro Ordered_Map Map
 #macro Dictionary Map
 function Map(): Container() constructor {
 	///@function first()
@@ -44,9 +35,7 @@ function Map(): Container() constructor {
 
 	///@function set(key, value)
   function set(K, Value) { 
-		if !exists(K) {
-			cash.push_back(K)
-		}
+		cash_push(K)
 		ds_map_set(raw, K, Value)
 		return self
 	}
@@ -58,13 +47,22 @@ function Map(): Container() constructor {
 	}
 
 	///@function change(key, value)
-  function change(K, Value) { return ds_map_replace(raw, K, Value) }
+  function change(K, Value) {
+		cash_push(K)
+		return ds_map_replace(raw, K, Value) 
+	}
 
 	///@function set_list(key, builtin_list_id)
-  function set_list(K, Value) { ds_map_add_list(raw, K, Value) }
+  function set_list(K, Value) {
+		cash_push(K)
+		ds_map_add_list(raw, K, Value)
+	}
 
 	///@function set_map(key, builtin_map_id)
-  function set_map(K, Value) { ds_map_add_map(raw, K, Value) }
+  function set_map(K, Value) {
+		cash_push(K)
+		ds_map_add_map(raw, K, Value) 
+	}
 
 	///@function at(key)
   function at(K) { return ds_map_find_value(raw, K) }
@@ -79,7 +77,7 @@ function Map(): Container() constructor {
 	function erase_at(K) {
 		var Temp = at(K)
 		ds_map_delete(raw, K)
-		remove(cash.first(), cash.last(), Temp)
+		remove(cash.first(), cash.last(), K)
 		return Temp
 	}
 
@@ -104,6 +102,26 @@ function Map(): Container() constructor {
 	///@function clear()
 	function clear() { ds_map_clear(raw) }
 
+	///@function set_comparator(compare_function)
+	function set_comparator(Func) { cash_comparator = method(other, Func) }
+
+	///@function cash_push(key)
+	function cash_push(K) {
+		if !exists(K) {
+			var filtered_key = is_numeric(K) ? K : is_string(K) ? string_weak_hash(K) : 0
+			if 1 < cash.size() {
+				var Last = cash.last()
+				var Position = lower_bound(cash.first(), Last, filtered_key, cash_comparator)
+				if Position.not_equals(Last) and !cash_comparator(filtered_key, Position.get())
+					cash.insert(Position.get_index(), filtered_key)
+				else
+					cash.push_back(filtered_key)
+			} else {
+				cash.push_back(filtered_key)
+			}
+		}
+	}
+
 	///@function read(data_string)
 	function read(Str) { ds_map_read(raw, Str) }
 
@@ -118,6 +136,7 @@ function Map(): Container() constructor {
 	iterator_type = MapIterator
 	const_iterator_type = ConstMapIterator
 	cash = new List()
+	cash_comparator = compare_less
 
 	if 0 < argument_count {
 		if argument_count == 1 {
@@ -147,7 +166,9 @@ function Map(): Container() constructor {
 					ds_map_copy(raw, Item.data())
 				} else if is_iterable(Item) {
 					// (*) Paired-Container
-					for (var It = Item.first(); It != Item.last(); ++It) insert(Item.get(It))
+					foreach(Item.first(), Item.last(), function(Value) {
+						insert(Value)
+					})
 				}
 			} else {
 				// (*) Arg
@@ -158,18 +179,4 @@ function Map(): Container() constructor {
 			for (var i = 0; i < argument_count; ++i) insert(argument[i])
 		}
 	}
-}
-
-///@function ConstMapIterator(container, index)
-function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
-	///@function get()
-	function get() { return container.at(container.cash.at(pointer)) }
-}
-
-///@function MapIterator(container, index)
-function MapIterator(Cont, Index): RandomIterator(Cont, Index) constructor {
-	function set(value) { container.set(container.cash.at(pointer), value) }
-
-	///@function get()
-	function get() { return container.at(container.cash.at(pointer)) }
 }

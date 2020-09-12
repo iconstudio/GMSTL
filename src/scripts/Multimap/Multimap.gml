@@ -33,12 +33,11 @@
 			myfunc(BucketIndex, first(BucketIndex), last(BucketIndex))
 		
 */
-#macro Ordered_Multimap Multimap
 function Multimap(): Container() constructor {
 	type = Multimap
 	raw = ds_map_create()
-	key_memory = new List()
-	key_memory.clear() // To avoid the 0-populate-value problem.
+	cash = new List()
+	cash.clear() // To avoid the 0-populate-value problem.
 
 	///@function first([bucket_iterator])
   function first() {
@@ -112,7 +111,7 @@ function Multimap(): Container() constructor {
 	///@function get_key(bucket_iterator)
   function get_key(BucketIndex) {
 		if 0 <= BucketIndex and BucketIndex < bucket_count() // key
-			return key_memory.get(BucketIndex)
+			return cash.get(BucketIndex)
 		return undefined
 	}
 
@@ -121,18 +120,18 @@ function Multimap(): Container() constructor {
 
 	///@function bucket_set(bucket_iterator, iterator, value)
   function bucket_set(BucketIndex, It, Value) {
-		get(BucketIndex).set(It, Value)
+		BucketIndex.get().set(It, Value)
 	}
 
-	///@function _bucket(key)
-  function _bucket(K) {
+	///@function bucket(key)
+  function bucket(K) {
 		//Cannot return the iterator at end
-		return ds_list_find_index(key_memory.data(), K) // optimize
+		return ds_list_find_index(cash.data(), K) // optimize
 	}
 
 	///@function bucket_count()
   function bucket_count() {
-		return key_memory.size()
+		return cash.size()
 	}
 
 	///@function bucket_size(bucket_iterator)
@@ -146,7 +145,7 @@ function Multimap(): Container() constructor {
 			return [0, 0]
 		} else {
 			var BucketIndex = bucket(K)
-			return [first(BucketIndex), last(BucketIndex)]
+			return [BucketIndex.first(), BucketIndex.last()]
 		}
 	}
 
@@ -303,7 +302,7 @@ function Multimap(): Container() constructor {
 
 	///@function bucket_iter_swap(bucket_iterator, iterator, destination, destination_bucket_iterator, destination_bucket_iterator_output)
 	function bucket_iter_swap(BucketIndex, It, Dst, OutIndex, Output) {
-		var Temp = get(BucketIndex, It)
+		var Temp = BucketIndex.get(It)
 		bucket_set(BucketIndex, It, Dst.get(OutIndex, Output))
 		Dst.bucket_set(OutIndex, Output, Temp)
 	}
@@ -448,8 +447,8 @@ function Multimap(): Container() constructor {
 				delete TempList
 			}
 			ds_map_clear(raw)
-			key_memory.destroy()
-			delete key_memory
+			cash.destroy()
+			delete cash
 		}
 		ds_map_destroy(raw)
 		raw = undefined
@@ -511,13 +510,13 @@ function Multimap(): Container() constructor {
 
 	///@function __cash(key) 
 	function __cash(K) {
-		key_memory.push_back(K)
+		cash.push_back(K)
 	}
 
 	///@function __try_decash(key)
 	function __try_decash(K) {
-		if 0 < key_memory.size() {
-			if key_memory.remove(key_memory.first(), key_memory.last(), K) != key_memory.last()
+		if 0 < cash.size() {
+			if cash.remove(cash.first(), cash.last(), K) != cash.last()
 				return true
 		}
 		return false
@@ -526,19 +525,28 @@ function Multimap(): Container() constructor {
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]
-
-			if is_struct(Item) {
-				if is_iterable(Item) {
-					// (*) Iterable Paired Container
-					for (var It = Item.first(); It != Item.last(); ++It) {
-						var PairedVal = Item.get(It)
-						insert(PairedVal[0], PairedVal[1])
+			if is_array(Item) {
+				// (*) Built-in Paired-Array
+				for (var i = 0; i < array_length(Item); ++i) insert(Item[i])
+			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
+				// (*) Built-in Paired-List
+				for (var i = 0; i < ds_list_size(Item); ++i) insert(Item[| i])
+			} else if !is_nan(Item) and ds_exists(Item, ds_type_map) {
+				// (*) Built-in Map
+				var Size = ds_map_size(Item)
+				if 0 < Size {
+					var MIt = ds_map_find_first(Item)
+					while true {
+						set(MIt, ds_map_find_value(Item, MIt))
+						MIt = ds_map_find_next(Item, MIt)
+						if is_undefined(MIt)
+							break
 					}
-				} else if instanceof(Item) == "Map" {
-					// (*) Map
-					ds_map_copy(raw, Item.data())
-					ds_list_copy(key_memory, Item.key_memory)
-				} else if instanceof(Item) == "Multimap" {
+				}
+				//ds_map_copy(raw, Item)
+			} else if is_struct(Item) {
+				var Type = instanceof(Item)
+				if Type == "Multimap" {
 					// (*) Multimap
 					if 0 < Item.size() {
 						for (var KIt = Item.first(); KIt != Item.last(); ++KIt) {
@@ -549,36 +557,23 @@ function Multimap(): Container() constructor {
 							}
 						}
 					}
-				}
-			} else if is_array(Item) {
-				// (*) Built-in Paired Array
-				for (var i = 0; i < array_length(Item); ++i) {
-					insert(Item[i])
-				}
-			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
-				// (*) Built-in Paired List
-				for (var i = 0; i < ds_list_size(Item); ++i) {
-					insert(Item[| i])
-				}
-			} else if !is_nan(Item) and ds_exists(Item, ds_type_map) {
-				// (*) Built-in Map
-				var Size = ds_map_size(Item)
-				if 0 < Size {
-					var MIt = ds_map_find_first(Item)
-					for (var i = 0; i < Size; ++i) {
-						set(MIt, ds_map_find_value(Item, MIt))
-						MIt = ds_map_find_next(Item, MIt)
-					}
+				} else if Type == "Map" {
+					// (*) Map
+					ds_map_copy(raw, Item.data())
+					ds_list_copy(cash, Item.cash)
+				} else if is_iterable(Item) {
+					// (*) Paired-Container
+					foreach(Item.first(), Item.last(), function(Value) {
+						insert(Value)
+					})
 				}
 			} else {
 				// (*) Arg
-				set(Item)
+				insert(Item)
 			}
 		} else {
 			// (*) Arg0, Arg1, ...
-			for (var i = 0; i < argument_count; ++i) {
-				insert(argument[i])
-			}
+			for (var i = 0; i < argument_count; ++i) insert(argument[i])
 		}
 	}
 }
