@@ -9,7 +9,7 @@
 		Array(Iterator-Begin, Iterator-End)
 
 	Initialize:
-		new Array();
+		new Array()
 
 	Usage:
 		
