@@ -2,10 +2,9 @@
 	Constructors:
 		Map()
 		Map(Arg)
-		Map(Map)
-		Map(Iterable-PairedContainer)
-		Map(Builtin-PairedArray)
-		Map(Builtin-PairedList)
+		Map(Paired-Container)
+		Map(Builtin-Paired-Array)
+		Map(Builtin-Paired-List)
 		Map(Builtin-Map)
 		Map(Arg0, Arg1, ...)
 
@@ -14,9 +13,9 @@
 		set_value_type(type)
 
 	Usage:
-		To Iterate with keys:
+		To Iterate values:
 			for (var It = first(); It != last(); ++It)
-				myfunc(It.get())
+				myfunc(It.get()[0])
 		
 */
 #macro Dictionary Map
@@ -33,23 +32,19 @@ function Map(): Container() constructor {
 	///@function clast()
   function clast() { return (new const_iterator_type(self, size())).pure() }
 
-	///@function set(key, value)
-  function set(K, Value) { 
-		cash_push(K)
-		ds_map_set(raw, K, Value)
-		return self
-	}
-
 	///@function insert(pair)
 	function insert(Pair) {
-		set(Pair[0], Pair[1])
+		cash_push(Pair[0])
+		ds_map_set(raw, Pair[0], Pair[1])
 		return self
 	}
 
-	///@function change(key, value)
-  function change(K, Value) {
-		cash_push(K)
-		return ds_map_replace(raw, K, Value) 
+	///@function set(index, value)
+  function set(Index, Value) { 
+		var Key = cash.at(Index)
+		if !is_undefined(Key)
+			ds_map_set(raw, Key, Value)
+		return self
 	}
 
 	///@function set_list(key, builtin_list_id)
@@ -64,8 +59,14 @@ function Map(): Container() constructor {
 		ds_map_add_map(raw, K, Value) 
 	}
 
-	///@function at(key)
-  function at(K) { return ds_map_find_value(raw, K) }
+	///@function seek(key)
+  function seek(K) { return ds_map_find_value(raw, K) }
+
+	///@function at(index)
+  function at(Index) {
+		var K = cash.at(Index)
+		return make_pair(K, seek(K))
+	}
 
   ///@function back()
 	function back() { return at(ds_map_find_last(raw)) }
@@ -108,18 +109,26 @@ function Map(): Container() constructor {
 	///@function cash_push(key)
 	function cash_push(K) {
 		if !exists(K) {
-			var filtered_key = is_numeric(K) ? K : is_string(K) ? string_weak_hash(K) : 0
 			if 1 < cash.size() {
-				var Last = cash.last()
-				var Position = lower_bound(cash.first(), Last, filtered_key, cash_comparator)
-				if Position.not_equals(Last) and !cash_comparator(filtered_key, Position.get())
-					cash.insert(Position.get_index(), filtered_key)
-				else
-					cash.push_back(filtered_key)
+				cash.push_back(K)
+				cash.sort_builtin(true)
 			} else {
-				cash.push_back(filtered_key)
+				cash.push_back(K)
 			}
 		}
+	}
+
+	///@function key_change(key, value)
+  function key_change(K, Value) {
+		cash_push(K)
+		return ds_map_replace(raw, K, Value) 
+	}
+
+	///@function key_swap(key_1, key_2)
+  function key_swap(Key1, Key2) {
+		var Temp = seek(Key1)
+		ds_map_set(raw, Key1, seek(Key2))
+		ds_map_set(raw, Key2, Temp)
 	}
 
 	///@function read(data_string)
@@ -133,8 +142,8 @@ function Map(): Container() constructor {
 
 	type = Map
 	raw = ds_map_create()
-	iterator_type = MapIterator
-	const_iterator_type = ConstMapIterator
+	iterator_type = ForwardIterator
+	const_iterator_type = ConstIterator
 	cash = new List()
 	cash_comparator = compare_less
 
@@ -161,11 +170,8 @@ function Map(): Container() constructor {
 				}
 				//ds_map_copy(raw, Item)
 			} else if is_struct(Item) {
-				if instanceof(Item) == "Map" {
-					// (*) Map
-					ds_map_copy(raw, Item.data())
-				} else if is_iterable(Item) {
-					// (*) Paired-Container
+				if is_iterable(Item) {
+					// (*) Paired-Container and Map
 					foreach(Item.first(), Item.last(), function(Value) {
 						insert(Value)
 					})
