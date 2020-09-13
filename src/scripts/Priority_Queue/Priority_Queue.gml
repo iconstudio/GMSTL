@@ -33,10 +33,10 @@ function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 	}
 
 	///@function cfirst()
-  function cfirst() { return (new const_iterator_type(self, 0)).pure() }
+  function cfirst() { return raw.cfirst() }
 
 	///@function clast()
-  function clast() { return (new const_iterator_type(self, size())).pure() }
+  function clast() { return raw.clast() }
 
 	///@function push(value)
 	function push(Value) { 
@@ -52,9 +52,6 @@ function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 			raw.push_back(Value)
 		}
 	}
-
-	///@function insert(pair)
-	function insert(Pair) { push(raw, Pair[1], Pair[0]) }
 
 	///@function pop()
 	function pop() { raw.pop_front() }
