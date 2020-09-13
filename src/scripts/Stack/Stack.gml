@@ -11,7 +11,6 @@
 
 	Initialize:
 		new Stack
-		set_value_type(type)
 
 	Usage:
 		
@@ -28,9 +27,6 @@ function Stack(): Container() constructor {
 
 	///@function pop_back()
 	function pop_back() { return ds_stack_pop(raw) }
-
-	///@function emplace(tuple)
-	function emplace(Params) { push(construct(Params)) }
 
   ///@function top()
 	function top() { return ds_stack_top(raw) }

@@ -12,7 +12,6 @@
 
 	Initialize:
 		new Multimap()
-		set_value_type(type)
 
 	Usage:
 		To Iterate on keys:

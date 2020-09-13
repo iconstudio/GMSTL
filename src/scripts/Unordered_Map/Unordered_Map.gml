@@ -12,7 +12,6 @@
 
 	Initialize:
 		new Unordered_Map()
-		set_value_type(type)
 
 	Usage:
 		To Iterate with keys:

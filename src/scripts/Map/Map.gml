@@ -12,7 +12,6 @@
 
 	Initialize:
 		new Map()
-		set_value_type(type)
 
 	Usage:
 		To Iterate values:

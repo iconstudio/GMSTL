@@ -8,7 +8,6 @@ test2 = new Array(3, 3.5, 26, 7, 10, 15, 5, 4.5) // 8
 
 test_sum = new List()
 show_debug_message("\nThe First List")
-test1.emplace_front(40)
 sort(test1.first(), test1.last())
 print(test1)
 show_debug_message("Is sorted: " + string(is_sorted(test1.first(), test1.last())))

@@ -39,12 +39,6 @@ function List(): Container() constructor {
 	///@function push_front(value)
 	function push_front(Value) { index_insert(0, Value) }
 
-	///@function emplace_back(tuple)
-	function emplace_back(Params) { push_back(construct(Params)) }
-
-	///@function emplace_front(tuple)
-	function emplace_front(Params) { push_front(construct(Params)) }
-
 	///@function at(index)
   function at(Index) { return ds_list_find_value(raw, Index) }
 

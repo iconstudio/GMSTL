@@ -59,9 +59,6 @@ function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 	///@function pop_front()
 	function pop_front() { return raw.pop_front() }
 
-	///@function emplace(tuple)
-	function emplace(Params) { push(construct(Params)) }
-
 	///@function top()
   function top() { return raw.front() }
 

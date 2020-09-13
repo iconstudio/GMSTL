@@ -13,7 +13,7 @@
 		Priority_Deque(Arg0, Arg1, ...)
 
 	Initialize:
-		new Priority_Deque();
+		new Priority_Deque()
 
 	Usage:
 		AI_Target_Filter = new Priority_Deque()
@@ -42,9 +42,6 @@ function Priority_Deque(): Container() constructor {
 		}
 		ds_priority_add(raw, Value, Pri)
 	}
-
-	///@function emplace(tuple)
-	function emplace(Params) { insert(construct(Params)) }
 
 	///@function pop()
 	function pop() { ds_priority_delete_max(raw) }

@@ -4,7 +4,6 @@
 
 	Initialize:
 		new Grid(width, height)
-		set_value_type(type)
 
 	Usage:
 		Recommend using internal functions to control the Grid.
