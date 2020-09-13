@@ -14,9 +14,11 @@
 		new Unordered_Map()
 
 	Usage:
-		To Iterate with keys:
-			for (var It = first(); It != last(); ++It)
-				myfunc(It.get())
+		To Iterate with pairs:
+			for (var It = Container.first(); It.not_equals(Container.last()); It.go()) {
+				var Pair = It.get()
+				myfunc(Pair[1])
+			}
 		
 */
 function Unordered_Map(): Container() constructor {

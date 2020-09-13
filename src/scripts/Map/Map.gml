@@ -14,10 +14,11 @@
 		new Map()
 
 	Usage:
-		To Iterate values:
-			foreach(Container.first(), Container.last(), function(Value) {
-				myfunc(Value[1])
-			})
+		To Iterate with pairs:
+			for (var It = Container.first(); It.not_equals(Container.last()); It.go()) {
+				var Pair = It.get()
+				myfunc(Pair[1])
+			}
 		
 */
 #macro Dictionary Map
@@ -53,7 +54,7 @@ function Map(): Container() constructor {
 			Key = Pair[0]
 			Value = Pair[1]
 		}
-		if !contains(K) cash_push(Key)
+		if !contains(Key) cash_push(Key)
 		ds_map_set(raw, Key, Value)
 		return self
 	}
