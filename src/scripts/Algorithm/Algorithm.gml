@@ -12,14 +12,14 @@ function assign(First, Last) {
 }
 
 ///@function erase(begin, [end])
-function erase(First, Last) {
-	First = make_iterator(First)
+function erase() {
+	var First = make_iterator(argument[0])
 
 	if argument_count == 1 {
 		erase_one(First)
 	} else if argument_count == 2 {
 		var Result = First.duplicate()
-		while First.not_equals(Last) {
+		while First.not_equals(argument[1]) {
 			erase_one(First)
 			First.go()
 			Result.go() // last
@@ -76,10 +76,10 @@ function foreach(First, Last, Pred) {
 }
 
 ///@function find(begin, end, value, [comparator=compare_equal])
-function find(First, Last, Value, Comparator) {
+function find(First, Last, Value) {
 	First = make_iterator(First)
 
-	var Compare = select_argument(Comparator, compare_equal)
+	var Compare = 3 < argument_count ? argument[3] : compare_equal
 	while First.not_equals(Last) {
 		if Compare(First.get(), Value)
 			return First
@@ -94,7 +94,7 @@ function find_if(First, Last, Pred) {
 
 	while First.not_equals(Last) {
 		var Value = First.get()
-		if !is_undefined(Value) and Pred(Value)
+		if Pred(Value)
 			return First
 		First.go()
 	}
@@ -181,7 +181,7 @@ function copy_if(First, Last, Output, Pred) {
 	var Value = 0
 	while First.not_equals(Last) {
 		Value = First.get()
-		if !is_undefined(Value) and Pred(Value)
+		if Pred(Value)
 			Output.set(Value)
 		First.go()
 		Output.go()
@@ -206,7 +206,7 @@ function replace_if(First, Last, Pred, NewVal) {
 
 	while First.not_equals(Last) {
 		var Value = First.get()
-		if !is_undefined(Value) and Pred(Value)
+		if Pred(Value)
 			First.set(NewVal)
 		First.go()
 	}
@@ -346,13 +346,13 @@ function transform_binary(First, Last, PairFirst, Output, Pred) {
 }
 
 ///@function min_element(begin, end, [comparator=compare_less])
-function min_element(First, Last, Comparator) {
+function min_element(First, Last) {
 	if First.equals(Last)
 		return Last
 
 	var Result = First.duplicate()
 	var Cursor = First.next()
-	var Compare = select_argument(Comparator, compare_less)
+	var Compare = 2 < argument_count ? argument[2] : compare_less
 	while Cursor.not_equals(Last) {
 		if Compare(Cursor.get(), Result.get()) {
 			delete Result
@@ -366,13 +366,13 @@ function min_element(First, Last, Comparator) {
 }
 
 ///@function max_element(begin, end, [comparator=compare_less])
-function max_element(First, Last, Comparator) {
+function max_element(First, Last) {
 	if First.equals(Last)
 		return Last
 
 	var Result = First.duplicate()
 	var Cursor = First.next()
-	var Compare = select_argument(Comparator, compare_less)
+	var Compare = 2 < argument_count ? argument[2] : compare_less
 	while Cursor.not_equals(Last) {
 		if Compare(Result.get(), Cursor.get()) {
 			delete Result
@@ -386,10 +386,10 @@ function max_element(First, Last, Comparator) {
 }
 
 ///@function lower_bound(begin, end, value, [comparator=compare_less])
-function lower_bound(First, Last, Value, Comparator) { // return the first and largest element which less than value.
+function lower_bound(First, Last, Value) { // return the first and largest element which less than value.
 	First = make_iterator(First)
 
-	var Compare = select_argument(Comparator, compare_less)
+	var Compare = 3 < argument_count ? argument[3] : compare_less
 	var It, Step, count = First.distance(Last)
 	while 0 < count {
 		Step = count * 0.5
@@ -407,10 +407,10 @@ function lower_bound(First, Last, Value, Comparator) { // return the first and l
 }
 
 ///@function upper_bound(begin, end, value, [comparator=compare_less])
-function upper_bound(First, Last, Value, Comparator) { // return a greater element to the value.
+function upper_bound(First, Last, Value) { // return a greater element to the value.
 	First = make_iterator(First)
 
-	var Compare = select_argument(Comparator, compare_less)
+	var Compare = 3 < argument_count ? argument[3] : compare_less
 	var It, Step, count = First.distance(Last)
 	while 0 < count {
 		Step = count * 0.5
@@ -428,10 +428,10 @@ function upper_bound(First, Last, Value, Comparator) { // return a greater eleme
 }
 
 ///@function binary_search(begin, end, value, [comparator=compare_less])
-function binary_search(First, Last, Value, Comparator) {
+function binary_search(First, Last, Value) {
 	First = make_iterator(First)
 
-	var Compare = select_argument(Comparator, compare_less)
+	var Compare = 3 < argument_count ? argument[3] : compare_less
 	First = lower_bound(First, Last, Value, Compare)
 	var FirstVal = First.get()
 	return First.not_equals(Last) and !Compare(Value, FirstVal)
@@ -439,13 +439,13 @@ function binary_search(First, Last, Value, Comparator) {
 
 ///@function sort(begin, end, [comparator])
 ///@description quick sort
-function sort(First, Last, Comparator) {
+function sort(First, Last) {
 	First = make_iterator(First)
 	Last = make_iterator(Last)
 	if Last.index <= 1
 		exit
 
-	var Compare = select_argument(Comparator, compare_less)
+	var Compare = 2 < argument_count ? argument[2] : compare_less
 	var Pivot = First.duplicate(), Pivot_Next, Value = 0
 	for (var It = First.next(); It.index < First.index + Last.index; It.go()) {
 		Value = It.get()
@@ -471,10 +471,10 @@ function sort(First, Last, Comparator) {
 
 ///@function stable_sort(begin, end, [comparator=compare_less])
 ///@description selection sort
-function stable_sort(First, Last, Comparator) {
+function stable_sort(First, Last) {
 	First = make_iterator(First)
 
-	var selection, Compare = select_argument(Comparator, compare_less)
+	var selection, Compare = 2 < argument_count ? argument[2] : compare_less
 	while First.not_equals(Last) {
 		selection = min_element(First, Last, Compare)
 		selection.swap(First)
@@ -485,10 +485,10 @@ function stable_sort(First, Last, Comparator) {
 }
 
 ///@function insertion_sort(begin, end, [comparator=compare_less])
-function insertion_sort(First, Last, Comparator) {
+function insertion_sort(First, Last) {
 	First = make_iterator(First).go()
 
-	var Compare = select_argument(Comparator, compare_less)
+	var Compare = 2 < argument_count ? argument[2] : compare_less
 	while First.not_equals(Last) {
 		var Value = First.get()
 		for(var It = First.previous(); 0 <= It.get_index() and Compare(Value, It.get()); It.back()) {
@@ -497,18 +497,20 @@ function insertion_sort(First, Last, Comparator) {
 		It.next().set(Value)
 
 		First.go()
+		delete It
 	}
+	gc_collect()
 }
 
 ///@function merge_sort(begin, end, [comparator=compare_less])
-function merge_sort(First, Last, Comparator) {
+function merge_sort(First, Last) {
 	First = make_iterator(First)
 	Last = make_iterator(Last)
 	var Dist = First.distance(Last)
 	if Dist <= 1
 		exit
 
-	var Compare = select_argument(Comparator, compare_less)
+	var Compare = 2 < argument_count ? argument[2] : compare_less
 	var Middle = iterator_advance(First, Dist * 0.5)
 	merge_sort(First, Middle, Compare)
 	merge_sort(Middle, Last, Compare)
@@ -518,9 +520,8 @@ function merge_sort(First, Last, Comparator) {
 ///@function IMPLEMENTED FROM VS
 ///@description sort median of three elements to middle
 function sort_median(First, Middle, Last, Comparator) {
-	if Comparator(get(Middle), First.get()) {
+	if Comparator(Middle.get(), First.get())
 		Middle.swap(First)
-	}
 
 	if Comparator(Last.get(), Middle.get()) { // swap middle and last, then test first again
 		Last.swap(Middle)
@@ -533,9 +534,12 @@ function sort_median(First, Middle, Last, Comparator) {
 ///@function IMPLEMENTED FROM VS
 ///@description sort median element to middle
 function predict_median(First, Middle, Last, Comparator) {
-	var _Count = iterator_distance(First, Last)
-	if 40 < _Count { // Tukey's ninther
-		var Step     = (_Count + 1) >> 3 // +1 can't overflow because range was made inclusive in caller
+	First = make_iterator(First)
+	Middle = make_iterator(Middle)
+
+	var Distance = iterator_distance(First, Last)
+	if 40 < Distance { // Tukey's ninther
+		var Step = (Distance + 1) >> 3 // +1 can't overflow because range was made inclusive in caller
 		var _Two_step = Step << 1 // note: intentionally discards low-order bit
 		sort_median(First, First + Step, First + _Two_step, Comparator)
 		sort_median(Middle - Step, Middle, Middle + Step, Comparator)
@@ -549,78 +553,91 @@ function predict_median(First, Middle, Last, Comparator) {
 ///@function IMPLEMENTED FROM VS
 ///@description partition [First, Last), using Comparator
 function partition_by_median_guess(First, Last, Comparator) {
-	var Middle = First + (iterator_distance(First, Last) >> 1) // shift for codegen (== * 0.5)
-	predict_median(First, Middle, Last - 1, Comparator)
+	First = make_iterator(First)
+	Last = make_iterator(Last)
 
-	var _Pfirst = Middle
-	var _Plast  = _Pfirst + 1
-	while First < _Pfirst && !Comparator(get(_Pfirst - 1), get(_Pfirst)) && !Comparator(get(_Pfirst), get(_Pfirst - 1)) {
-		--_Pfirst
+	var Middle = iterator_advance(First, (iterator_distance(First, Last) >> 1)) // shift for codegen (== * 0.5)
+	predict_median(First, Middle, Last.previous(), Comparator)
+
+	var _Pfirst = Middle.duplicate()
+	var _Pbefore = _Pfirst.previous()
+	var _Plast = _Pfirst.next()
+	while First.get_index() < _Pfirst.get_index() && !Comparator(_Pbefore.get(), _Pfirst.get()) && !Comparator(_Pfirst.get(), _Pbefore.get()) {
+		_Pfirst.back()
+		_Pbefore.back()
+	}
+	delete _Pbefore
+
+	while _Plast.get_index() < Last.get_index() && !Comparator(_Plast.get(), _Pfirst.get()) && !Comparator(_Pfirst.get(), _Plast.get()) {
+		_Plast.go()
 	}
 
-	while _Plast < Last && !Comparator(get(_Plast), get(_Pfirst)) && !Comparator(get(_Pfirst), get(_Plast)) {
-		++_Plast
-	}
-
-	var _Gfirst = _Plast
-	var _Glast  = _Pfirst
+	var _Gfirst = _Plast.duplicate()
+	var _Glast = _Pfirst.duplicate()
 	for (;;) { // partition
-		for (; _Gfirst < Last; ++_Gfirst) {
-			if Comparator(get(_Pfirst), get(_Gfirst)) {
-			} else if Comparator(get(_Gfirst), get(_Pfirst)) {
+		for (; _Gfirst < Last; _Gfirst.go()) {
+			if Comparator(_Pfirst.get(), _Gfirst.get()) {
+			} else if Comparator(_Gfirst.get(), _Pfirst.get()) {
 				break
-			} else if _Plast != _Gfirst {
+			} else if _Plast.not_equals(_Gfirst) {
 				swap(_Plast, _Gfirst)
-				_Plast++
+				_Plast.go()
 			} else {
-				_Plast++
+				_Plast.go()
 			}
 		}
 
-		for (; First < _Glast; --_Glast) {
-			if Comparator(get(_Glast - 1), get(_Pfirst)) {
-			} else if Comparator(get(_Pfirst), get(_Glast - 1)) {
-					break
-			} else if --_Pfirst != _Glast - 1 {
-					swap(_Pfirst, _Glast - 1)
+		for (; First.get_index() < _Glast.get_index(); _Glast.back()) {
+			var _Gfore = _Glast.previous()
+			if Comparator(_Gfore.get(), _Pfirst.get()) {
+			} else if Comparator(_Pfirst.get(), _Gfore.get()) {
+				break
+			} else if _Pfirst.back().not_equals(_Gfore) {
+				swap(_Pfirst, _Gfore)
 			}
+			delete _Gfore
 		}
 
-		if _Glast == First and _Gfirst == Last {
+		if _Glast.equals(First) and _Gfirst.equals(Last) {
 			return [_Pfirst, _Plast]
 		}
 
-		if _Glast == First { // no room at bottom, rotate pivot upward
-			if _Plast != _Gfirst {
-					swap(_Pfirst, _Plast)
+		if _Glast.equals(First) { // no room at bottom, rotate pivot upward
+			if _Plast.not_equals(_Gfirst) {
+				swap(_Pfirst, _Plast)
 			}
 
-			_Plast++
+			_Plast.go()
 			_Pfirst.swap(_Gfirst)
-			_PFirst.go()
-			_GFirst.go()
-		} else if _Gfirst == Last { // no room at top, rotate pivot downward
-			if --_Glast != --_Pfirst {
-					swap(_Glast, _Pfirst)
+			_Pfirst.go()
+			_Gfirst.go()
+		} else if _Gfirst.equals(Last) { // no room at top, rotate pivot downward
+			if _Glast.back().not_equals(_Pfirst.back()) {
+				swap(_Glast, _Pfirst)
 			}
 
-			swap(_Pfirst, --_Plast)
+			swap(_Pfirst, _Plast.back())
 		} else {
-			swap(_Gfirst, --_Glast)
-			_GFirst.go()
+			swap(_Gfirst, _Glast.back())
+			_Gfirst.go()
 		}
 	}
+	delete _Pfirst
+	delete _Plast
+	delete _Gfirst
+	delete _Glast
+	gc_collect()
 }
 
 ///@function nth_element(begin, nth, end, [comparator=compare_less])
-function nth_element(First, Nth, Last, Comparator) {
+function nth_element(First, Nth, Last) {
 	First = make_iterator(First)
 	Nth = make_iterator(Nth)
 	Last = make_iterator(Last)
 	if First.equals(Last) or Nth.equals(Last)
 		exit
 
-	var Compare = select_argument(Comparator, compare_less)
+	var Compare = 3 < argument_count ? argument[3] : compare_less
 	while 32 < First.distance(Last) { // divide and conquer, ordering partition containing Nth
 		var Middle = partition_by_median_guess(First, Last, Compare)
 
@@ -637,28 +654,33 @@ function nth_element(First, Nth, Last, Comparator) {
 }
 
 ///@function is_sorted(begin, end, [comparator=compare_less])
-function is_sorted(First, Last, Comparator) {
+function is_sorted(First, Last) {
 	First = make_iterator(First)
 	if First.equals(Last)
 		return true
 
-	var Compare = select_argument(Comparator, compare_less)
+	var Compare = 2 < argument_count ? argument[2] : compare_less
 	var Next = First.next()
 	while Next.not_equals(Last) {
-		if Compare(Next.get(), First.get())
+		if Compare(Next.get(), First.get()) {
+			delete Next
+			gc_collect()
 		  return false
+		}
 		First.go()
 		Next.go()
 	}
+	delete Next
+	gc_collect()
 	return true
 }
 
 ///@function unguarded_partition(begin, end, pivot, [comparator=compare_less])
-function unguarded_partition(First, Last, Pivot, Comparator) {
+function unguarded_partition(First, Last, Pivot) {
 	First = make_iterator(First)
 	Last = make_iterator(Last)
 
-	var Compare = select_argument(Comparator, compare_less)
+	var Compare = 3 < argument_count ? argument[3] : compare_less
 	while true {
 	  while Compare(First.get(), Pivot.get())
 			First.go()
@@ -722,13 +744,13 @@ function is_partitioned(First, Last, Pred) {
 }
 
 ///@function merge(begin, end, other_begin, other_end, output, [comparator=compare_less])
-function merge(First, Last, OtherFirst, OtherLast, Output, Comparator) {
+function merge(First, Last, OtherFirst, OtherLast, Output) {
 	First = make_iterator(First)
 	Last = make_iterator(Last)
 	OtherFirst = make_iterator(OtherFirst)
 	OtherLast = make_iterator(OtherLast)
 
-	var Compare = select_argument(Comparator, compare_less)
+	var Compare = 5 < argument_count ? argument[5] : compare_less
 	while true {
 		if First.equals(Last)
 			return copy(OtherFirst, OtherLast, Output)
@@ -752,12 +774,12 @@ function merge(First, Last, OtherFirst, OtherLast, Output, Comparator) {
 }
 
 ///@function inplace_merge(begin, middle, end, [comparator=compare_less])
-function inplace_merge(First, Middle, Last, Comparator) {
+function inplace_merge(First, Middle, Last) {
 	First = make_iterator(First)
 	Middle = make_iterator(Middle)
 	Last = make_iterator(Last)
 
-	var Compare = select_argument(Comparator, compare_less)
+	var Compare = 3 < argument_count ? argument[3] : compare_less
 	var Temp = duplicate()
 	Temp.merge(self, First, Middle, self, Middle, Last, First, Compare)
 	copy(Temp.first(), Temp.last(), First)
@@ -765,10 +787,10 @@ function inplace_merge(First, Middle, Last, Comparator) {
 }
 
 ///@function shuffle(begin, end, [engine=irandom_range])
-function shuffle(First, Last, Engine) {
+function shuffle(First, Last) {
 	First = make_iterator(First)
 
-	var Urng = select_argument(Engine, irandom_range)
+	var Urng = select_argument(argument[2], irandom_range)
 	var Dist = iterator_distance(First, Last)
 	for (var i = Dist - 1; 0 < i; --i) {
 	  swap(iterator_advance(First, i), iterator_advance(First, Urng(0, i)))
@@ -776,10 +798,10 @@ function shuffle(First, Last, Engine) {
 }
 
 ///@function random_shuffle(begin, end, [generator=irandom])
-function random_shuffle(First, Last, Generator) {
+function random_shuffle(First, Last) {
 	First = make_iterator(First)
 
-	var Gen = select_argument(Generator, irandom)
+	var Gen = select_argument(argument[2], irandom)
 	var Dist = iterator_distance(First, Last)
 	for (var i = Dist - 1; 0 < i; --i) {
 	  swap(iterator_advance(First, i), iterator_advance(First, Gen(i + 1)))
