@@ -40,19 +40,17 @@ print(test_sum)
 show_debug_message("Is parted: " + string(is_parted))
 show_debug_message("Parted on: " + string(part_point.get_index()))
 
-show_debug_message("\nMap")
 test_mapped_list = new Array("D", "E", "A", "T", "H", "K", "N", "I", "G", "H", "T")
 // Transform into paired-container
 transform(test_mapped_list.first(), test_mapped_list.last(), test_mapped_list.first(), function (Value) {
 	return [Value, irandom(3)]
 })
-print(test_mapped_list)
 
+show_debug_message("\nMap")
 test_map = new Map(test_mapped_list)
+print(test_map)
 show_debug_message("Cashes of Map: ")
 print(test_map.cash)
-show_debug_message("Contents of Map: ")
-print(test_map)
 
 show_debug_message("\nUnordered_Map")
 test_unomap = new Unordered_Map(test_mapped_list)

@@ -30,14 +30,14 @@ function List(): Container() constructor {
 	///@function set(index, value)
   function set(Index, Value) { ds_list_set(raw, Index, Value) return self }
 
-	///@function insert(index, value)
-  function insert(Index, Value) { ds_list_insert(raw, Index, Value) }
+	///@function index_insert(index, value)
+  function index_insert(Index, Value) { ds_list_insert(raw, Index, Value) }
 
 	///@function push_back(value)
 	function push_back(Value) { ds_list_add(raw, Value) }
 
 	///@function push_front(value)
-	function push_front(Value) { insert(0, Value) }
+	function push_front(Value) { index_insert(0, Value) }
 
 	///@function emplace_back(tuple)
 	function emplace_back(Params) { push_back(construct(Params)) }
@@ -54,8 +54,8 @@ function List(): Container() constructor {
 	///@function front()
 	function front() { return at(0) }
 
-	///@function erase_at(index)
-	function erase_at(Index) {
+	///@function erase_index(index)
+	function erase_index(Index) {
 		var Value = at(Index)
 		ds_list_delete(raw, Index)
 		return Value
@@ -70,10 +70,10 @@ function List(): Container() constructor {
 	}
 
 	///@function pop_back()
-	function pop_back() { return erase_at(size() - 1) }
+	function pop_back() { return erase_index(size() - 1) }
 
 	///@function pop_front()
-	function pop_front() { return erase_at(0) }
+	function pop_front() { return erase_index(0) }
 
 	///@function mark_list(index)
   function mark_list(Index) { ds_list_mark_as_list(raw, Index) }
@@ -115,6 +115,7 @@ function List(): Container() constructor {
 	type = List
 	iterator_type = RandomIterator
 	const_iterator_type = ConstIterator
+	clear() // To avoid the 0-populate-value problem.
 
 	// ** Assigning **
 	if 0 < argument_count {
@@ -131,7 +132,7 @@ function List(): Container() constructor {
 				assign(Item.first(), Item.last())
 			} else {
 				// (*) Arg
-				push_back(0, Item)
+				push_back(Item)
 			}
 		} else {
 			// (*) Iterator-Begin, Iterator-End

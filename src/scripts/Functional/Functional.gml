@@ -52,8 +52,8 @@ function compare_string_less(a, b) {
 }
 
 ///@function select_argument(parameter, default)
-function select_argument(arg, def) {
-	return integral(is_undefined(arg), def, arg)
+function select_argument(Param, Default) {
+	return integral(is_undefined(Param), Default, Param)
 }
 
 ///@function choice(index, ...)
