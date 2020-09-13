@@ -76,19 +76,6 @@ function Grid(Width, Height): Container() constructor {
 		return self
 	}
 
-  ///@function insert(iterator, value)
-	function insert(It, Value) {
-		set(It.x, It.y, Value)
-		return self
-	}
-
-  ///@function insert_on(index, value)
-	function insert_on(Index, Value) {
-		inner_iterator.set_index(Index)
-		set(inner_iterator.x, inner_iterator.y, Value)
-		return self
-	}
-
   ///@function set_region(x1, y1, x2, y2, value)
 	function set_region(X1, Y1, X2, Y2, Value) {
 		ds_grid_set_region(raw, X1, Y1, X2, Y2, Value)

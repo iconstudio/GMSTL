@@ -2,6 +2,8 @@
 	Constructors:
 		Map()
 		Map(Arg)
+		Map(Maps)
+		Map(Unordered_Maps)
 		Map(Paired-Container)
 		Map(Builtin-Paired-Array)
 		Map(Builtin-Paired-List)
@@ -33,13 +35,6 @@ function Map(): Container() constructor {
 	///@function clast()
   function clast() { return (new const_iterator_type(self, size())).pure() }
 
-	///@function insert(pair)
-	function insert(Pair) {
-		cash_push(Pair[0])
-		ds_map_set(raw, Pair[0], Pair[1])
-		return self
-	}
-
 	///@function set(index, value)
   function set(Index, Value) { 
 		var Key = cash.at(Index)
@@ -48,15 +43,31 @@ function Map(): Container() constructor {
 		return self
 	}
 
+	///@function insert(item)
+	function insert() {
+		var Key, Value
+		if argument_count == 2 {
+			Key = argument[0]
+			Value = argument[1]
+		} else {
+			var Pair = argument[0]
+			Key = Pair[0]
+			Value = Pair[1]
+		}
+		if !contains(K) cash_push(Key)
+		ds_map_set(raw, Key, Value)
+		return self
+	}
+
 	///@function set_list(key, builtin_list_id)
   function set_list(K, Value) {
-		cash_push(K)
+		if !contains(K) cash_push(K)
 		ds_map_add_list(raw, K, Value)
 	}
 
 	///@function set_map(key, builtin_map_id)
   function set_map(K, Value) {
-		cash_push(K)
+		if !contains(K) cash_push(K)
 		ds_map_add_map(raw, K, Value) 
 	}
 
@@ -75,16 +86,16 @@ function Map(): Container() constructor {
   ///@function front()
 	function front() { return at(0) }
 
-	///@function erase_at(key)
-	function erase_at(K) {
-		var Temp = at(K)
+	///@function erase_index(key)
+	function erase_index(K) {
+		var Temp = seek(K)
 		ds_map_delete(raw, K)
 		remove(cash.first(), cash.last(), K)
 		return Temp
 	}
 
 	///@function erase_one(iterator)
-	function erase_one(It) { return erase_at(It.get_index()) }
+	function erase_one(It) { return erase_index(It.get_index()) }
 
 	///@function key_change(key, value)
   function key_change(K, Value) {
@@ -99,10 +110,10 @@ function Map(): Container() constructor {
 		ds_map_set(raw, Key2, Temp)
 	}
 
-	///@function is_list(K)
+	///@function is_list(key)
   function is_list(K) { return ds_map_is_list(raw, K) }
 
-	///@function is_map(K)
+	///@function is_map(key)
   function is_map(K) { return ds_map_is_map(raw, K) }
 
 	///@function contains(key)
@@ -119,23 +130,22 @@ function Map(): Container() constructor {
 
 	///@function cash_push(key)
 	function cash_push(K) {
-		if !contains(K) {
-			if 1 < cash.size() {
-				cash.push_back(K)
-				cash.sort_builtin(true)
-			} else {
-				cash.push_back(K)
-			}
+		if 1 < cash.size() {
+			cash.push_back(K)
+			cash.sort_builtin(true)
+		} else {
+			cash.push_back(K)
 		}
 	}
 
 	///@function read(data_string)
 	function read(Str) {
 		var loaded = ds_map_create()
+		ds_map_read(loaded, Str)
 		if 0 < ds_map_size(loaded) {
 			var MIt = ds_map_find_first(loaded)
 			while true {
-				insert(make_pair(MIt, ds_map_find_value(loaded, MIt)))
+				insert(MIt, ds_map_find_value(loaded, MIt))
 				MIt = ds_map_find_next(loaded, MIt)
 				if is_undefined(MIt)
 					break
@@ -154,8 +164,7 @@ function Map(): Container() constructor {
 	iterator_type = ForwardIterator
 	const_iterator_type = ConstIterator
 	cash = new List()
-	cash.clear() // To avoid the 0-populate-value problem.
-
+	
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]
@@ -171,15 +180,22 @@ function Map(): Container() constructor {
 				if 0 < Size {
 					var MIt = ds_map_find_first(Item)
 					while true {
-						insert(make_pair(MIt, ds_map_find_value(Item, MIt)))
+						insert(MIt, ds_map_find_value(Item, MIt))
 						MIt = ds_map_find_next(Item, MIt)
 						if is_undefined(MIt)
 							break
 					}
 				}
-				//ds_map_copy(raw, Item)
 			} else if is_struct(Item) {
-				if is_iterable(Item) {
+				var Type = instanceof(Item)
+				if Type == "Map" or Type == "Multimap" {
+					// (*) Maps
+					ds_map_copy(raw, Item.data())
+					copy(cash.first(), cash.last(), Item.cash.first())
+				} else if Type == "Unordered_Map" or Type == "Unordered_Multimap" {
+					// (*) Unordered_Maps
+					
+				} else if is_iterable(Item) {
 					// (*) Paired-Container
 					foreach(Item.first(), Item.last(), function(Value) {
 						insert(Value)
