@@ -18,7 +18,7 @@
 	Usage:
 		AI_Target_Filter = new Priority_Deque()
 		AI_Target_Filter.set_procedure(function(Target) {
-			return b(Target.hp / Target.hp_max) * 20
+			return (Target.hp / Target.hp_max) * 20
 		})
 	
 */
