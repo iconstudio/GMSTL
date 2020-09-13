@@ -790,7 +790,7 @@ function inplace_merge(First, Middle, Last) {
 function shuffle(First, Last) {
 	First = make_iterator(First)
 
-	var Urng = select_argument(argument[2], irandom_range)
+	var Urng = 2 < argument_count ? argument[2] : irandom_range
 	var Dist = iterator_distance(First, Last)
 	for (var i = Dist - 1; 0 < i; --i) {
 	  swap(iterator_advance(First, i), iterator_advance(First, Urng(0, i)))
@@ -801,7 +801,7 @@ function shuffle(First, Last) {
 function random_shuffle(First, Last) {
 	First = make_iterator(First)
 
-	var Gen = select_argument(argument[2], irandom)
+	var Gen = 2 < argument_count ? argument[2] : irandom
 	var Dist = iterator_distance(First, Last)
 	for (var i = Dist - 1; 0 < i; --i) {
 	  swap(iterator_advance(First, i), iterator_advance(First, Gen(i + 1)))

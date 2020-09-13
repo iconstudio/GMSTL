@@ -14,27 +14,37 @@
 		new Multimap()
 
 	Usage:
-		To Iterate on keys:
-			for (var It = first(); It != last(); ++It)
-				myfunc(get_key(It))
+		To Iterate values on lists:
+			for (var It = Container.first(); It.not_equal(Container.last()); It.go()) {
+				var KList = It.get()
+				foreach(KList.first(), KList.first(), function(Value) {
+					myfunc(Value)
+				})
+			}
 
-		To Iterate on lists:
-			for (var It = first(); It != last(); ++It)
-				myfunc(get(It))
+		To Iterate values in a key:
+			var Bucket = Container.bucket("KEY")
+			for (var It = Container.first(Bucket); It.not_equal(Container.last(Bucket)); It.go())
+				myfunc(It.get())
 
-		To Iterate values with a key:
-			var BucketIndex = bucket(Key)
-			for (var It = first(BucketIndex); It != last(BucketIndex); ++It)
-				myfunc(get(BucketIndex, It))
+		To Iterate values with bucket indexes:
+			var Pair, Key, Values
+			for (var i = 0; i < Container.bucket_count(); ++i) {
+				Pair = Container.at(i) // a Pair
+				Key = TempPair[0]
+				Values = TempPair[1] // a List
+				for (var It = Values.first(); It.not_equal(Values.last()); It.go())
+					myfunc(It.get())
+			}
 
 		To Iterate values within methods:
-			var BucketIndex = bucket(Key)
-			myfunc(BucketIndex, first(BucketIndex), last(BucketIndex))
+			var Bucket = Container.bucket("KEY")
+			myfunc(Container.first(Bucket), Container.last(Bucket))
 		
 */
 function Multimap(): Container() constructor {
 	///@function bucket(key)
-  function bucket(K) { return seek(K) }
+  function bucket(K) { return ds_list_find_index(cash.raw, K) }
 
 	///@function bucket_find(bucket_index)
   function bucket_find(Index) { return seek(cash.at(Index)) }
@@ -83,7 +93,9 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function set(bucket_index, list)
-  function set(Index, Value) { 
+  function set(Index, Value) {
+		if !is_struct(Value)
+			throw "Cannot bind a non-struct item to Multimap!"
 		var Key = cash.at(Index)
 		if !is_undefined(Key)
 			ds_map_set(raw, Key, Value)
@@ -105,9 +117,9 @@ function Multimap(): Container() constructor {
 			cash_push(Key)
 			bucket_create(Key, Value)
 		} else {
-			var KList = bucket(Key)
+			var KList = seek(Key)
 			KList.push_back(Value)
-			sort(KList.first(), KList.last(), value_comparator)
+			stable_sort(KList.first(), KList.last(), value_comparator)
 		}
 		return self
 	}
@@ -144,12 +156,6 @@ function Multimap(): Container() constructor {
 		ds_map_set(raw, Key1, seek(Key2))
 		ds_map_set(raw, Key2, Temp)
 	}
-
-	///@function is_list(K)
-  function is_list(K) { return ds_map_is_list(raw, K) }
-
-	///@function is_map(K)
-  function is_map(K) { return ds_map_is_map(raw, K) }
 
 	///@function contains(key)
   function contains(K) { return ds_map_exists(raw, K) }
