@@ -60,6 +60,11 @@ print(test_unomap)
 
 /*
 show_debug_message("\nMultimap")
+show_debug_message("\nTransform a List into a Multimap")
+// Transform into paired-container
+transform(test_sum.first(), test_sum.last(), test_sum.first(), function (Value) {
+	return [irandom(2), Value]
+})
 test_multimap = new Multimap(test_sum)
 
 for (var KIt = test_multimap.first(); KIt != test_multimap.last(); KIt.go()) {
@@ -85,10 +90,5 @@ show_debug_message("The " + string(nth) + "th Iterator: " + string(nth_result_it
 show_debug_message("The " + string(nth) + "th Value: " + string(nth_result_value))
 print(test_sum)
 
-show_debug_message("\nTransform a List into a Multimap")
-// Transform into paired-container
-transform(test_sum.first(), test_sum.last(), test_sum.first(), function (Value) {
-	return [irandom(2), Value]
-})
-print(test_sum)
+
 
