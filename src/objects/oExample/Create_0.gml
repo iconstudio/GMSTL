@@ -94,12 +94,11 @@ test_multimap.insert(1, new Wrapper("1-1st"))
 test_multimap.insert(1, new Wrapper("1-2nd"))
 test_multimap.insert(1, new Wrapper("1-3rd"))
 
-var i, TempPair, Key, Value
+var i, TempPair, Key, Values
 for (i = 0; i < test_multimap.bucket_count(); ++i) {
 	TempPair = test_multimap.at(i)
 	Key = TempPair[0]
-	Value = TempPair[1] // List
+	Values = TempPair[1] // List
 	show_debug_message("Values with key " + string(Key) + ": ")
-	print(Value)
+	print(Values)
 }
-
