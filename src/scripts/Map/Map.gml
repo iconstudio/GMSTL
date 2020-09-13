@@ -14,8 +14,9 @@
 
 	Usage:
 		To Iterate values:
-			for (var It = first(); It != last(); ++It)
-				myfunc(It.get()[0])
+			foreach(Container.first(), Container.last(), function(Value) {
+				myfunc(Value[1])
+			})
 		
 */
 #macro Dictionary Map
@@ -69,10 +70,10 @@ function Map(): Container() constructor {
 	}
 
   ///@function back()
-	function back() { return at(ds_map_find_last(raw)) }
+	function back() { return at(size() - 1) }
 
   ///@function front()
-	function front() {  return at(ds_map_find_first(raw)) }
+	function front() { return at(0) }
 
 	///@function erase_at(key)
 	function erase_at(K) {
@@ -84,39 +85,6 @@ function Map(): Container() constructor {
 
 	///@function erase_one(iterator)
 	function erase_one(It) { return erase_at(It.get_index()) }
-
-	///@function is_list(K)
-  function is_list(K) { return ds_map_is_list(raw, K) }
-
-	///@function is_map(K)
-  function is_map(K) { return ds_map_is_map(raw, K) }
-
-	///@function exists(key)
-  function exists(K) { return ds_map_exists(raw, K) }
-
-	///@function size()
-	function size() { return ds_map_size(raw) }
-
-	///@function empty()
-	function empty() { return ds_map_empty(raw) }
-
-	///@function clear()
-	function clear() { ds_map_clear(raw) }
-
-	///@function set_comparator(compare_function)
-	function set_comparator(Func) { cash_comparator = method(other, Func) }
-
-	///@function cash_push(key)
-	function cash_push(K) {
-		if !exists(K) {
-			if 1 < cash.size() {
-				cash.push_back(K)
-				cash.sort_builtin(true)
-			} else {
-				cash.push_back(K)
-			}
-		}
-	}
 
 	///@function key_change(key, value)
   function key_change(K, Value) {
@@ -131,8 +99,49 @@ function Map(): Container() constructor {
 		ds_map_set(raw, Key2, Temp)
 	}
 
+	///@function is_list(K)
+  function is_list(K) { return ds_map_is_list(raw, K) }
+
+	///@function is_map(K)
+  function is_map(K) { return ds_map_is_map(raw, K) }
+
+	///@function contains(key)
+  function contains(K) { return ds_map_exists(raw, K) }
+
+	///@function size()
+	function size() { return ds_map_size(raw) }
+
+	///@function empty()
+	function empty() { return ds_map_empty(raw) }
+
+	///@function clear()
+	function clear() { ds_map_clear(raw) }
+
+	///@function cash_push(key)
+	function cash_push(K) {
+		if !contains(K) {
+			if 1 < cash.size() {
+				cash.push_back(K)
+				cash.sort_builtin(true)
+			} else {
+				cash.push_back(K)
+			}
+		}
+	}
+
 	///@function read(data_string)
-	function read(Str) { ds_map_read(raw, Str) }
+	function read(Str) {
+		var loaded = ds_map_create()
+		if 0 < ds_map_size(loaded) {
+			var MIt = ds_map_find_first(loaded)
+			while true {
+				insert(make_pair(MIt, ds_map_find_value(loaded, MIt)))
+				MIt = ds_map_find_next(loaded, MIt)
+				if is_undefined(MIt)
+					break
+			}
+		}
+	}
 
 	///@function write()
 	function write() { return ds_map_write(raw) }
@@ -145,7 +154,7 @@ function Map(): Container() constructor {
 	iterator_type = ForwardIterator
 	const_iterator_type = ConstIterator
 	cash = new List()
-	cash_comparator = compare_less
+	cash.clear() // To avoid the 0-populate-value problem.
 
 	if 0 < argument_count {
 		if argument_count == 1 {
@@ -171,7 +180,7 @@ function Map(): Container() constructor {
 				//ds_map_copy(raw, Item)
 			} else if is_struct(Item) {
 				if is_iterable(Item) {
-					// (*) Paired-Container and Map
+					// (*) Paired-Container
 					foreach(Item.first(), Item.last(), function(Value) {
 						insert(Value)
 					})

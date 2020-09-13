@@ -239,7 +239,7 @@ function iterator_advance(It, Distance) {
 	if is_real(It) {
 		return It + Distance
 	} else if is_iterator(It) {
-		return make_iterator(It).advance(Distance)
+		return It.duplicate().advance(Distance)
 	}
 	return undefined
 }

@@ -65,24 +65,6 @@ function Unordered_Map(): Container() constructor {
 	///@function erase_one(iterator)
 	function erase_one(It) { return erase_at(It.get_key()) }
 
-	///@function is_list(K)
-  function is_list(K) { return ds_map_is_list(raw, K) }
-
-	///@function is_map(K)
-  function is_map(K) { return ds_map_is_map(raw, K) }
-
-	///@function exists(key)
-  function exists(K) { return ds_map_exists(raw, K) }
-
-	///@function size()
-	function size() { return ds_map_size(raw) }
-
-	///@function empty()
-	function empty() { return ds_map_empty(raw) }
-
-	///@function clear()
-	function clear() { ds_map_clear(raw) }
-
 	///@function key_change(key, value)
   function key_change(K, Value) { return ds_map_replace(raw, K, Value) }
 
@@ -93,6 +75,24 @@ function Unordered_Map(): Container() constructor {
 		ds_map_set(raw, Key2, Temp)
 	}
 
+	///@function is_list(K)
+  function is_list(K) { return ds_map_is_list(raw, K) }
+
+	///@function is_map(K)
+  function is_map(K) { return ds_map_is_map(raw, K) }
+
+	///@function contains(key)
+  function contains(K) { return ds_map_exists(raw, K) }
+
+	///@function size()
+	function size() { return ds_map_size(raw) }
+
+	///@function empty()
+	function empty() { return ds_map_empty(raw) }
+
+	///@function clear()
+	function clear() { ds_map_clear(raw) }
+
 	///@function read(data_string)
 	function read(Str) { ds_map_read(raw, Str) }
 
@@ -102,7 +102,7 @@ function Unordered_Map(): Container() constructor {
 	///@function destroy()
 	function destroy() { ds_map_destroy(raw); gc_collect() }
 
-	type = Map
+	type = Unordered_Map
 	raw = ds_map_create()
 	iterator_type = MapIterator
 	const_iterator_type = ConstMapIterator
