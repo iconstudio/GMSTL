@@ -42,8 +42,8 @@ function Array(): Container() constructor {
   ///@function front()
 	function front() { return at(0) }
 
-	///@function erase_at(index)
-	function erase_at(Index) {
+	///@function erase_index(index)
+	function erase_index(Index) {
 		var Value = at(Index)
 		set(Index, undefined)
 		return Value

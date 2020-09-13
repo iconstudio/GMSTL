@@ -109,7 +109,8 @@ function ConstIterator(Cont, Index): Iterator(Cont, Index) constructor {
 function ForwardIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	type = ForwardIterator
 
-	function set(value) { container.set(pointer, value) }
+	///@function set(value)
+	function set() { container.set(pointer, argument[0]) }
 
 	///@function swap(iterator)
 	function swap(Other) {
@@ -220,7 +221,7 @@ function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
 
 ///@function MapIterator(container, index)
 function MapIterator(Cont, Index): ConstMapIterator(Cont, Index) constructor {
-	function set(value) { container.insert(make_pair(key, value)) }
+	function set(value) { container.insert(key, value) }
 }
 
 ///@function iterator_distance(iterator_1, iterator_2)

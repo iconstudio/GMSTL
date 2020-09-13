@@ -4,7 +4,6 @@
 
 	Initialize:
 		new Grid(width, height)
-		set_value_type(type)
 
 	Usage:
 		Recommend using internal functions to control the Grid.
@@ -73,19 +72,6 @@ function Grid(Width, Height): Container() constructor {
   ///@function set(x, y, value)
 	function set(X, Y, Value) {
 		raw[# X, Y] = Value
-		return self
-	}
-
-  ///@function insert(iterator, value)
-	function insert(It, Value) {
-		set(It.x, It.y, Value)
-		return self
-	}
-
-  ///@function insert_on(index, value)
-	function insert_on(Index, Value) {
-		inner_iterator.set_index(Index)
-		set(inner_iterator.x, inner_iterator.y, Value)
 		return self
 	}
 

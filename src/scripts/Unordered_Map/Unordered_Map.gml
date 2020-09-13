@@ -2,6 +2,8 @@
 	Constructors:
 		Unordered_Map()
 		Unordered_Map(Arg)
+		Unordered_Map(Maps)
+		Unordered_Map(Unordered_Maps)
 		Unordered_Map(Paired-Container)
 		Unordered_Map(Builtin-Paired-Array)
 		Unordered_Map(Builtin-Paired-List)
@@ -10,12 +12,13 @@
 
 	Initialize:
 		new Unordered_Map()
-		set_value_type(type)
 
 	Usage:
-		To Iterate with keys:
-			for (var It = first(); It != last(); ++It)
-				myfunc(It.get())
+		To Iterate with pairs:
+			for (var It = Container.first(); It.not_equals(Container.last()); It.go()) {
+				var Pair = It.get()
+				myfunc(Pair[1])
+			}
 		
 */
 function Unordered_Map(): Container() constructor {
@@ -31,11 +34,23 @@ function Unordered_Map(): Container() constructor {
 	///@function clast()
   function clast() { return (new const_iterator_type(self, size())).pure() }
 
-	///@function insert(pair)
-	function insert(Pair) { ds_map_set(raw, Pair[0], Pair[1]) return self }
-
 	///@function set(key, value)
-  function set(K, Value) {  ds_map_set(raw, K, Value) return self }
+  function set(K, Value) { ds_map_set(raw, K, Value) return self }
+
+	///@function insert(item)
+	function insert() {
+		var Key, Value
+		if argument_count == 2 {
+			Key = argument[0]
+			Value = argument[1]
+		} else {
+			var Pair = argument[0]
+			Key = Pair[0]
+			Value = Pair[1]
+		}
+		ds_map_set(raw, Pair[0], Pair[1])
+		return self
+	}
 
 	///@function set_list(key, builtin_list_id)
   function set_list(K, Value) { ds_map_add_list(raw, K, Value) }
@@ -55,18 +70,15 @@ function Unordered_Map(): Container() constructor {
   ///@function front()
 	function front() {  return at(ds_map_find_first(raw)) }
 
-	///@function erase_at(key)
-	function erase_at(K) {
-		var Temp = at(K)
+	///@function erase_index(key)
+	function erase_index(K) {
+		var Temp = seek(K)
 		ds_map_delete(raw, K)
 		return Temp
 	}
 
 	///@function erase_one(iterator)
-	function erase_one(It) { return erase_at(It.get_key()) }
-
-	///@function key_change(key, value)
-  function key_change(K, Value) { return ds_map_replace(raw, K, Value) }
+	function erase_one(It) { return erase_index(It.get_key()) }
 
 	///@function key_swap(key_1, key_2)
   function key_swap(Key1, Key2) {
@@ -75,10 +87,10 @@ function Unordered_Map(): Container() constructor {
 		ds_map_set(raw, Key2, Temp)
 	}
 
-	///@function is_list(K)
+	///@function is_list(key)
   function is_list(K) { return ds_map_is_list(raw, K) }
 
-	///@function is_map(K)
+	///@function is_map(key)
   function is_map(K) { return ds_map_is_map(raw, K) }
 
 	///@function contains(key)
@@ -94,7 +106,19 @@ function Unordered_Map(): Container() constructor {
 	function clear() { ds_map_clear(raw) }
 
 	///@function read(data_string)
-	function read(Str) { ds_map_read(raw, Str) }
+	function read(Str) {
+		var loaded = ds_map_create()
+		ds_map_read(loaded, Str)
+		if 0 < ds_map_size(loaded) {
+			var MIt = ds_map_find_first(loaded)
+			while true {
+				insert(MIt, ds_map_find_value(loaded, MIt))
+				MIt = ds_map_find_next(loaded, MIt)
+				if is_undefined(MIt)
+					break
+			}
+		} 
+	}
 
 	///@function write()
 	function write() { return ds_map_write(raw) }
@@ -122,15 +146,23 @@ function Unordered_Map(): Container() constructor {
 				if 0 < Size {
 					var MIt = ds_map_find_first(Item)
 					while true {
-						set(MIt, ds_map_find_value(Item, MIt))
+						insert(MIt, ds_map_find_value(Item, MIt))
 						MIt = ds_map_find_next(Item, MIt)
 						if is_undefined(MIt)
 							break
 					}
 				}
 			} else if is_struct(Item) {
-				if is_iterable(Item) {
-					// (*) Paired-Container and Map
+				var Type = instanceof(Item)
+				if Type == "Map" or Type == "Multimap" {
+					// (*) Maps
+					ds_map_copy(raw, Item.data())
+					copy(cash.first(), cash.last(), Item.cash.first())
+				} else if Type == "Unordered_Map" or Type == "Unordered_Multimap" {
+					// (*) Unordered_Maps
+					
+				} else if is_iterable(Item) {
+					// (*) Paired-Container
 					foreach(Item.first(), Item.last(), function(Value) {
 						insert(Value)
 					})

@@ -11,7 +11,6 @@
 
 	Initialize:
 		new Queue
-		set_value_type(type)
 
 	Usage:
 		
@@ -28,9 +27,6 @@ function Queue(): Container() constructor {
 
 	///@function pop_front()
 	function pop_front() { return ds_queue_dequeue(raw) }
-
-	///@function emplace(tuple)
-	function emplace(Params) { push(construct(Params)) }
 
   ///@function back()
 	function back() { return ds_queue_tail(raw)}
