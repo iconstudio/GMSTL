@@ -30,14 +30,13 @@
 ###  Associative Containers
 
   * [x] Ordered Map
-  * [ ] Ordered Multiple Map
+  * [x] Ordered Multiple Map
   * [x] Unordered Map
   * [ ] Unordered Multiple Map
 
 ###  Graph Containers:
 
   * [ ] Grid
-  * [ ] Tree
   * [ ] Binary Tree
   * [ ] Red-Black Tree
   * [ ] Heap Tree
