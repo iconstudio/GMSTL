@@ -25,7 +25,10 @@ function Unordered_Multimap(): Container() constructor {
 	///@function bucket_find(bucket_index)
   function bucket_find(Index) {
 		if Index < size() {
-			return seek(cash.at(Index))
+			var It = new MapIterator(self, Index)
+			var Result = seek(It.get_key())
+			delete It
+			return Result
 		} else {
 			return undefined
 		}
@@ -39,13 +42,8 @@ function Unordered_Multimap(): Container() constructor {
 		ds_map_set(raw, K, NewList)
 	}
 
-	///@function first([bucket_index])
-  function first() {
-		if 1 == argument_count
-			return bucket_find(argument[0]).first()
-		else
-			return (new iterator_type(self, 0)).pure()
-	}
+	///@function first()
+  function first() { return (new iterator_type(self, 0)).pure() }
 
 	///@function last()
   function last() { return (new iterator_type(self, size())).pure() }
