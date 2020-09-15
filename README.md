@@ -1,8 +1,8 @@
-# STL Implements for GameMaker Studio 2
+# STL for GameMaker Studio 2
+For more detail, see the [Wiki](https://github.com/iconstudio/GMContainers/wiki).
 
 ## Contents
 ###  Algorithms
-
   * [x] Check: All, Any and None
   * [x] Iterate: Foreach
   * [x] Search: Find, Count, Binary Search
@@ -32,7 +32,7 @@
   * [x] Ordered Map
   * [x] Ordered Multiple Map
   * [x] Unordered Map
-  * [ ] Unordered Multiple Map
+  * [x] Unordered Multiple Map
 
 ###  Graph Containers:
 
@@ -42,4 +42,4 @@
   * [ ] Heap Tree
 
 ---
-Written by 2020 iconer
+Coypyright 2020 iconer
