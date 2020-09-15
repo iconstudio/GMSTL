@@ -15,7 +15,8 @@
 	Usage:
 		To Iterate values on lists:
 			for (var It = Container.first(); It.not_equal(Container.last()); It.go()) {
-				var KList = It.get()
+				var Pair = It.get()
+				var KList = Pair[1]
 				foreach(KList.first(), KList.first(), function(Value) {
 					myfunc(Value)
 				})
@@ -168,14 +169,17 @@ function Multimap(): Container() constructor {
 	///@function clear()
 	function clear() { ds_map_clear(raw) }
 
+	///@function set_key_comp(compare_function)
+	function set_key_comp(Func) { key_comparator = method(other, Func) return self }
+
 	///@function set_value_comp(compare_function)
-	function set_value_comp(Func) { value_comparator = method(other, Fun) return self }
+	function set_value_comp(Func) { value_comparator = method(other, Func) return self }
 
 	///@function cash_push(key)
 	function cash_push(K) {
 		if 1 < cash.size() {
 			cash.push_back(K)
-			cash.sort_builtin(true)
+			stable_sort(cash.first(), cash.last(), key_comparator)
 		} else {
 			cash.push_back(K)
 		}
@@ -206,9 +210,10 @@ function Multimap(): Container() constructor {
 	raw = ds_map_create()
 	iterator_type = ForwardIterator
 	const_iterator_type = ConstIterator
+	key_comparator = compare_complex_less
 	value_comparator = compare_less
 	cash = new List()
-	
+
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]

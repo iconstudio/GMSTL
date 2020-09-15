@@ -20,6 +20,24 @@ function compare_greater(a, b) {
 	return bool(a > b)
 }
 
+function compare_complex_less(a, b) {
+	if is_undefined(a) or is_undefined(b)
+		return false
+
+	//var A_is_unmeasurable = is_struct(a) or is_method(a)
+	var A_is_string = is_string(a), B_is_string = is_string(b)
+	var A_is_number = is_numeric(a), B_is_number = is_numeric(b)
+	if A_is_string and B_is_string {
+		return compare_string_less(a, b)
+	} else if A_is_string and B_is_number { // push strings to back of numbers
+		return false
+	} else if A_is_number and B_is_string { // pull numbers
+		return true
+	} else { // both are number
+		return bool(a < b)
+	}
+}
+
 function compare_string_less(a, b) {
 	if is_undefined(a) or is_undefined(b)
 		return false
