@@ -14,7 +14,7 @@
     {"id":{"name":"Stack","path":"scripts/Stack/Stack.yy",},"order":6,},
     {"id":{"name":"Container","path":"scripts/Container/Container.yy",},"order":2,},
     {"id":{"name":"Multimap","path":"scripts/Multimap/Multimap.yy",},"order":11,},
-    {"id":{"name":"Tree","path":"scripts/Tree/Tree.yy",},"order":15,},
+    {"id":{"name":"Binary_Tree","path":"scripts/Binary_Tree/Binary_Tree.yy",},"order":15,},
     {"id":{"name":"Grid","path":"scripts/Grid/Grid.yy",},"order":14,},
     {"id":{"name":"Priority_Deque","path":"scripts/Priority_Deque/Priority_Deque.yy",},"order":8,},
     {"id":{"name":"roomExample","path":"rooms/roomExample/roomExample.yy",},"order":0,},
