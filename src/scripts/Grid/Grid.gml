@@ -123,53 +123,6 @@ function Grid(Width, Height): Container() constructor {
 		return at(inner_iterator.x, inner_iterator.y)
 	}
 
-	///@function check_all(x1, y1, x2, y2, predicate)
-	function check_all(X1, Y1, X2, Y2, Pred) {
-		Pred = method(other, Pred)
-		for (; Y1 < Y2; ++Y1) {
-			for (var i = X1; i < X2; ++i) {
-				var Value = at(i, Y1)
-				if !pred(Value)
-					return false
-			}
-		}
-		return true
-	}
-
-	///@function check_any(begin, end, predicate)
-	function check_any(X1, Y1, X2, Y2, Pred) {
-		Pred = method(other, Pred)
-		while First.not_equals(Last) {
-			var Value = get(First)
-			if pred(Value)
-				return true
-			First++
-		}
-		return false
-	}
-
-	///@function check_none(begin, end, predicate)
-	function check_none(X1, Y1, X2, Y2, Pred) {
-		Pred = method(other, Pred)
-		while First.not_equals(Last) {
-			var Value = get(First)
-			if pred(Value)
-				return false
-			First++
-		}
-		return true
-	}
-
-	///@function foreach(begin, end, predicate)
-	function foreach(X1, Y1, X2, Y2, Pred) {
-		Pred = method(other, Pred)
-		while First.not_equals(Last) {
-			pred(get(First))
-			First++
-		}
-		return pred
-	}
-
 	///@function find(x1, y1, x2, y2, value)
 	function find(X1, Y1, X2, Y2, Value) {
 		var XR = ds_grid_value_x(raw, X1, Y1, X2, Y2, Value)
