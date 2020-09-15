@@ -3,7 +3,6 @@
 		Unordered_Map()
 		Unordered_Map(Arg)
 		Unordered_Map(Maps)
-		Unordered_Map(Unordered_Maps)
 		Unordered_Map(Paired-Container)
 		Unordered_Map(Builtin-Paired-Array)
 		Unordered_Map(Builtin-Paired-List)
@@ -158,9 +157,6 @@ function Unordered_Map(): Container() constructor {
 					// (*) Maps
 					ds_map_copy(raw, Item.data())
 					copy(cash.first(), cash.last(), Item.cash.first())
-				} else if Type == "Unordered_Map" or Type == "Unordered_Multimap" {
-					// (*) Unordered_Maps
-					
 				} else if is_iterable(Item) {
 					// (*) Paired-Container
 					foreach(Item.first(), Item.last(), function(Value) {

@@ -3,7 +3,7 @@
 		Multimap()
 		Multimap(Arg)
 		Multimap(Maps)
-		Multimap(Unordered_Maps)
+		Multimap(Multimaps)
 		Multimap(Paired-Container)
 		Multimap(Builtin-Paired-Array)
 		Multimap(Builtin-Paired-List)
@@ -238,8 +238,8 @@ function Multimap(): Container() constructor {
 					// (*) Maps
 					ds_map_copy(raw, Item.data())
 					copy(cash.first(), cash.last(), Item.cash.first())
-				} else if Type == "Unordered_Map" or Type == "Unordered_Multimap" {
-					// (*) Unordered_Maps
+				} else if Type == "Multimap" or Type == "Unordered_Multimap" {
+					// (*) Multimaps
 					
 				} else if is_iterable(Item) {
 					// (*) Paired-Container
