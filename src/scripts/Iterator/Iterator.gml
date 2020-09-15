@@ -8,6 +8,9 @@ function Iterator(Cont, Index) constructor {
 	///@function pure()
 	function pure() { is_pure = true; return self }
 
+	///@function impure()
+	function impure() { is_pure = false; return self }
+
 	///@function get()
 	function get() { return container.at(pointer) }
 
@@ -24,9 +27,20 @@ function Iterator(Cont, Index) constructor {
 
 	///@function next()
 	function next() {
-		var Result = duplicate()
-		Result.go()
+		var Result = duplicate().go()
 		return Result
+	}
+
+	///@function advance(other)
+	///@desc add it multiple times
+	function advance(Other) { 
+		if is_iterator(Other)
+			repeat Other.index go()
+		else if is_real(Other) and 0 < Other
+			repeat Other go()
+		else
+			throw "Cannot use the negative index for advancing normal iterators."
+		return self
 	}
 
 	///@function equals(iterator)
@@ -51,32 +65,9 @@ function Iterator(Cont, Index) constructor {
 	function distance(Other) { 
 		if is_iterator(Other)
 			return abs(Other.index - index)
-		else if is_numeric(Other)
+		else if is_real(Other)
 			return abs(Other - index)
 		return 0
-	}
-
-	///@function advance(other)
-	function advance(Other) { 
-		if is_iterator(Other) {
-			index += Other.index
-			pointer += Other.index
-			is_pure = false
-		} else if is_numeric(Other) {
-			index += Other
-			pointer += Other
-			is_pure = false
-		} 
-		return self
-	}
-
-	///@function subtract(other)
-	function subtract(Other) {
-		if is_iterator(Other)
-			advance(-Other.index)
-		else if is_numeric(Other)
-			advance(-Other)
-		return self
 	}
 
 	container = Cont
@@ -99,9 +90,33 @@ function ConstIterator(Cont, Index): Iterator(Cont, Index) constructor {
 
 	///@function previous()
 	function previous() {
-		var Result = duplicate()
-		Result.back()
+		var Result = duplicate().back()
 		return Result
+	}
+
+	///@function advance(other)
+	///@desc add or sub it multiple times
+	function advance(Other) { 
+		if is_iterator(Other) {
+			repeat Other.index go()
+		} else if is_real(Other) {
+			if 0 < Other
+				repeat Other go()
+			else if Other < 0
+				repeat -Other back()
+		} else {
+			throw "NaN value used on a iterator."
+		}
+		return self
+	}
+
+	///@function subtract(other)
+	function subtract(Other) {
+		if is_iterator(Other)
+			advance(-Other.index)
+		else if is_real(Other)
+			advance(-Other)
+		return self
 	}
 }
 
@@ -126,7 +141,8 @@ function ForwardIterator(Cont, Index): Iterator(Cont, Index) constructor {
 function BidirectionalIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
 	type = BidirectionalIterator
 
-	function set(value) { container.set(pointer, value) }
+	///@function set(value)
+	function set() { container.set(pointer, argument[0]) }
 
 	///@function swap(iterator)
 	function swap(Other) {
@@ -150,6 +166,29 @@ function RandomIterator(Cont, Index): BidirectionalIterator(Cont, Index) constru
 			pointer = Index
 			is_pure = false
 		}
+		return self
+	}
+
+	///@function advance(other)
+	function advance(Other) { 
+		if is_iterator(Other) {
+			index += Other.index
+			pointer += Other.index
+			is_pure = false
+		} else if is_real(Other) {
+			index += Other
+			pointer += Other
+			is_pure = false
+		} 
+		return self
+	}
+
+	///@function subtract(other)
+	function subtract(Other) {
+		if is_iterator(Other)
+			advance(-Other.index)
+		else if is_real(Other)
+			advance(-Other)
 		return self
 	}
 }
@@ -185,25 +224,11 @@ function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
 		return self
 	}
 
-	///@function next()
-	function next() {
-		var Result = duplicate()
-		Result.go()
-		return Result
-	}
-
-	///@function previous()
-	function previous() {
-		var Result = duplicate()
-		Result.back()
-		return Result
-	}
-
 	///@function advance(other)
 	function advance(Other) { 
 		if is_iterator(Other) {
 			repeat Other.index go()
-		} else if is_numeric(Other) {
+		} else if is_real(Other) {
 			if Other < 0
 				repeat -Other back()
 			else
