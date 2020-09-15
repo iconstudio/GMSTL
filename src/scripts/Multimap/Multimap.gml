@@ -2,7 +2,6 @@
 	Constructors:
 		Multimap()
 		Multimap(Arg)
-		Multimap(Maps)
 		Multimap(Multimaps)
 		Multimap(Paired-Container)
 		Multimap(Builtin-Paired-Array)
@@ -234,13 +233,12 @@ function Multimap(): Container() constructor {
 				//ds_map_copy(raw, Item)
 			} else if is_struct(Item) {
 				var Type = instanceof(Item)
-				if Type == "Map" or Type == "Unordered_Map" {
-					// (*) Maps
-					ds_map_copy(raw, Item.data())
-					copy(cash.first(), cash.last(), Item.cash.first())
-				} else if Type == "Multimap" or Type == "Unordered_Multimap" {
+				if Type == "Multimap" or Type == "Unordered_Multimap" {
 					// (*) Multimaps
-					
+					foreach(Item.first(), Item.last(), function(Value) {
+						var Key = Value[0], KList = Value[1].duplicate()
+						ds_map_set(raw, Key, KList)
+					})
 				} else if is_iterable(Item) {
 					// (*) Paired-Container
 					foreach(Item.first(), Item.last(), function(Value) {

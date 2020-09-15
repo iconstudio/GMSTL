@@ -2,7 +2,6 @@
 	Constructors:
 		Unordered_Multimap()
 		Unordered_Multimap(Arg)
-		Unordered_Multimap(Maps)
 		Unordered_Multimap(Multimaps)
 		Unordered_Multimap(Paired-Container)
 		Unordered_Multimap(Builtin-Paired-Array)
@@ -71,12 +70,6 @@ function Unordered_Multimap(): Container() constructor {
 		ds_map_set(raw, Pair[0], Pair[1])
 		return self
 	}
-
-	///@function set_list(key, builtin_list_id)
-  function set_list(K, Value) { ds_map_add_list(raw, K, Value) }
-
-	///@function set_map(key, builtin_map_id)
-  function set_map(K, Value) { ds_map_add_map(raw, K, Value)  }
 
 	///@function seek(key)
   function seek(K) { return ds_map_find_value(raw, K) }
@@ -174,13 +167,12 @@ function Unordered_Multimap(): Container() constructor {
 				}
 			} else if is_struct(Item) {
 				var Type = instanceof(Item)
-				if Type == "Map" or Type == "Multimap" {
-					// (*) Maps
-					ds_map_copy(raw, Item.data())
-					copy(cash.first(), cash.last(), Item.cash.first())
-				} else if Type == "Unordered_Map" or Type == "Unordered_Multimap" {
-					// (*) Unordered_Maps
-					
+				if Type == "Multimap" or Type == "Unordered_Multimap" {
+					// (*) Multimaps
+					foreach(Item.first(), Item.last(), function(Value) {
+						var Key = Value[0], KList = Value[1].duplicate()
+						ds_map_set(raw, Key, KList)
+					})
 				} else if is_iterable(Item) {
 					// (*) Paired-Container
 					foreach(Item.first(), Item.last(), function(Value) {

@@ -2,7 +2,7 @@
 	Constructors:
 		Unordered_Map()
 		Unordered_Map(Arg)
-		Unordered_Map(Maps)
+		Unordered_Map(Multimaps)
 		Unordered_Map(Paired-Container)
 		Unordered_Map(Builtin-Paired-Array)
 		Unordered_Map(Builtin-Paired-List)
@@ -153,10 +153,12 @@ function Unordered_Map(): Container() constructor {
 				}
 			} else if is_struct(Item) {
 				var Type = instanceof(Item)
-				if Type == "Map" or Type == "Multimap" {
-					// (*) Maps
-					ds_map_copy(raw, Item.data())
-					copy(cash.first(), cash.last(), Item.cash.first())
+				if Type == "Multimap" or Type == "Unordered_Multimap" {
+					// (*) Multimaps
+					foreach(Item.first(), Item.last(), function(Value) {
+						var Key = Value[0], KList = Value[1].duplicate()
+						insert(Key, KList)
+					})
 				} else if is_iterable(Item) {
 					// (*) Paired-Container
 					foreach(Item.first(), Item.last(), function(Value) {
