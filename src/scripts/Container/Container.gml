@@ -8,7 +8,7 @@ function Container() {
 
 	function duplicate() { return new type(self) }
 
-	function make_self() { return new type(self) }
+	function make_self() { return new type() }
 }
 
 ///@function is_iterable(container)

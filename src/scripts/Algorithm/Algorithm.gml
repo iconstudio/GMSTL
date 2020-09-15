@@ -55,7 +55,7 @@ function check_any(First, Last, Pred) {
 ///@function check_none(begin, end, predicate)
 function check_none(First, Last, Pred) {
 	First = make_iterator(First)
-	
+
 	while First.not_equals(Last) {
 		if Pred(First.get())
 			return false
@@ -67,7 +67,7 @@ function check_none(First, Last, Pred) {
 ///@function foreach(begin, end, predicate)
 function foreach(First, Last, Pred) {
 	First = make_iterator(First)
-	
+
 	while First.not_equals(Last) {
 		Pred(First.get())
 		First.go()
