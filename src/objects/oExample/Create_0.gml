@@ -25,6 +25,27 @@ show_debug_message("\nThe Summary List")
 merge(test1.first(), test1.last(), test2.first(), test2.last(), test_sum.first())
 print(test_sum)
 
+test_sum.push_front(6)
+show_debug_message("\nTree")
+test_tree = new Binary_Tree(test_sum)
+
+function tree_print(Cont, Index, Msg) {
+	Msg = select_argument(Msg, "[" + string(Index) + "]\t")
+	show_debug_message(Msg + string(Cont.at(Index)))
+
+	var Left = Cont.make_left(Index), Right = Cont.make_right(Index)
+	var LeftVal = Cont.at(Left), RightVal = Cont.at(Right)
+
+	if !is_undefined(LeftVal) and LeftVal != NODE_NULL {
+		tree_print(Cont, Left, "[" + string(Left) + "->L(" + string(Index) + ")]\t")
+	}
+	if !is_undefined(RightVal) and RightVal != NODE_NULL {
+		tree_print(Cont, Right, "[" + string(Right) + "->R(" + string(Index) + ")]\t")
+	}
+}
+tree_print(test_tree, 0, "[Head(0)]\t")
+
+/*
 var count_dem = count_if(test_sum.first(), test_sum.last(), function(Value) {
 	return !is_undefined(Value) and frac(Value) != 0
 })
