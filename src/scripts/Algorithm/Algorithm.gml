@@ -434,7 +434,7 @@ function binary_search(First, Last, Value) {
 	var Compare = 3 < argument_count ? argument[3] : compare_less
 	First = lower_bound(First, Last, Value, Compare)
 	var FirstVal = First.get()
-	return First.not_equals(Last) and !Compare(Value, FirstVal)
+	return bool(First.not_equals(Last) and !Compare(Value, FirstVal))
 }
 
 ///@function sort(begin, end, [comparator])
