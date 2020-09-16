@@ -15,6 +15,18 @@
 		
 */
 function Array(): Container() constructor {
+	///@function size()
+	static size = function() { return inner_size }
+
+	///@function at(index)
+  static at = function(Index) { return raw[Index] }
+
+  ///@function back()
+	static back = function() { return at(inner_size - 1) }
+
+  ///@function front()
+	static front = function() { return at(0) }
+
 	///@function first()
   static first = function() { return (new iterator_type(self, 0)).pure() }
 
@@ -33,15 +45,6 @@ function Array(): Container() constructor {
 		return self
 	}
 
-	///@function at(index)
-  static at = function(Index) { return raw[Index] }
-
-  ///@function back()
-	static back = function() { return at(inner_size - 1) }
-
-  ///@function front()
-	static front = function() { return at(0) }
-
 	///@function erase_index(index)
 	static erase_index = function(Index) {
 		var Value = at(Index)
@@ -55,9 +58,6 @@ function Array(): Container() constructor {
 		It.set(undefined)
 		return Value
 	}
-
-	///@function size()
-	static size = function() { return inner_size }
 
 	///@function destroy()
 	static destroy = function() { raw = 0; gc_collect() }

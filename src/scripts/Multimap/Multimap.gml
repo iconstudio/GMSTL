@@ -43,6 +43,27 @@
 		
 */
 function Multimap(): Container() constructor {
+	///@function size()
+	static size = function() { return ds_map_size(raw) }
+
+	///@function empty()
+	static empty = function() { return ds_map_empty(raw) }
+
+	///@function seek(key)
+  static seek = function(K) { return ds_map_find_value(raw, K) }
+
+	///@function at(bucket_index)
+  static at = function(Index) {
+		var K = cash.at(Index)
+		return make_pair(K, seek(K))
+	}
+
+  ///@function back()
+	static back = function() { return at(size() - 1) }
+
+  ///@function front()
+	static front = function() { return at(0) }
+
 	///@function bucket(key)
   function bucket(K) { return ds_list_find_index(cash.raw, K) }
 
@@ -124,21 +145,6 @@ function Multimap(): Container() constructor {
 		return self
 	}
 
-	///@function seek(key)
-  static seek = function(K) { return ds_map_find_value(raw, K) }
-
-	///@function at(bucket_index)
-  static at = function(Index) {
-		var K = cash.at(Index)
-		return make_pair(K, seek(K))
-	}
-
-  ///@function back()
-	static back = function() { return at(size() - 1) }
-
-  ///@function front()
-	static front = function() { return at(0) }
-
 	///@function erase_index(key)
 	static erase_index = function(K) {
 		var Temp = seek(K)
@@ -150,24 +156,18 @@ function Multimap(): Container() constructor {
 	///@function erase_one(iterator)
 	static erase_one = function(It) { return erase_index(It.get_index()) }
 
+	///@function clear()
+	static clear = function() { ds_map_clear(raw) }
+
+	///@function contains(key)
+  static contains = function(K) { return ds_map_exists(raw, K) }
+
 	///@function key_swap(key_1, key_2)
   static key_swap = function(Key1, Key2) {
 		var Temp = seek(Key1)
 		ds_map_set(raw, Key1, seek(Key2))
 		ds_map_set(raw, Key2, Temp)
 	}
-
-	///@function contains(key)
-  static contains = function(K) { return ds_map_exists(raw, K) }
-
-	///@function size()
-	static size = function() { return ds_map_size(raw) }
-
-	///@function empty()
-	static empty = function() { return ds_map_empty(raw) }
-
-	///@function clear()
-	static clear = function() { ds_map_clear(raw) }
 
 	///@function set_key_comp(compare_function)
 	function set_key_comp(Func) { key_comparator = method(other, Func) return self }

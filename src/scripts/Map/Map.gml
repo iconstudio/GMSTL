@@ -22,6 +22,27 @@
 */
 #macro Dictionary Map
 function Map(): Container() constructor {
+	///@function empty()
+	static empty = function() { return ds_map_empty(raw) }
+
+	///@function size()
+	static size = function() { return ds_map_size(raw) }
+
+	///@function seek(key)
+  static seek = function(K) { return ds_map_find_value(raw, K) }
+
+	///@function at(index)
+  static at = function(Index) {
+		var K = cash.at(Index)
+		return make_pair(K, seek(K))
+	}
+
+  ///@function back()
+	static back = function() { return at(size() - 1) }
+
+  ///@function front()
+	static front = function() { return at(0) }
+
 	///@function first()
   static first = function() { return (new iterator_type(self, 0)).pure() }
 
@@ -70,21 +91,6 @@ function Map(): Container() constructor {
 		ds_map_add_map(raw, K, Value) 
 	}
 
-	///@function seek(key)
-  static seek = function(K) { return ds_map_find_value(raw, K) }
-
-	///@function at(index)
-  static at = function(Index) {
-		var K = cash.at(Index)
-		return make_pair(K, seek(K))
-	}
-
-  ///@function back()
-	static back = function() { return at(size() - 1) }
-
-  ///@function front()
-	static front = function() { return at(0) }
-
 	///@function erase_index(key)
 	static erase_index = function(K) {
 		var Temp = seek(K)
@@ -95,6 +101,12 @@ function Map(): Container() constructor {
 
 	///@function erase_one(iterator)
 	static erase_one = function(It) { return erase_index(It.get_index()) }
+
+	///@function clear()
+	static clear = function() { ds_map_clear(raw) }
+
+	///@function contains(key)
+  static contains = function(K) { return ds_map_exists(raw, K) }
 
 	///@function key_change(key, value)
   function key_change(K, Value) {
@@ -114,18 +126,6 @@ function Map(): Container() constructor {
 
 	///@function is_map(key)
   static is_map = function(K) { return ds_map_is_map(raw, K) }
-
-	///@function contains(key)
-  static contains = function(K) { return ds_map_exists(raw, K) }
-
-	///@function size()
-	static size = function() { return ds_map_size(raw) }
-
-	///@function empty()
-	static empty = function() { return ds_map_empty(raw) }
-
-	///@function clear()
-	static clear = function() { ds_map_clear(raw) }
 
 	///@function cash_push(key)
 	function cash_push(K) {

@@ -32,6 +32,12 @@ function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 		return Result
 	}
 
+	///@function size()
+	static size = function() { return raw.size() }
+
+	///@function top()
+  static top = function() { return raw.front() }
+
 	///@function cfirst()
   static cfirst = function() { return raw.cfirst() }
 
@@ -58,12 +64,6 @@ function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 
 	///@function pop_front()
 	static pop_front = function() { return raw.pop_front() }
-
-	///@function top()
-  static top = function() { return raw.front() }
-
-	///@function size()
-	static size = function() { return raw.size() }
 
 	///@function empty()
 	static empty = function() { return raw.empty() }

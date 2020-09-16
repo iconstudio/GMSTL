@@ -15,6 +15,21 @@
 		
 */
 function List(): Container() constructor {
+	///@function size()
+	static size = function() { return ds_list_size(raw) }
+
+	///@function empty()
+	static empty = function() { return ds_list_empty(raw) }
+
+	///@function at(index)
+  static at = function(Index) { return ds_list_find_value(raw, Index) }
+
+	///@function back()
+	static back = function() { return at(size() - 1) }
+
+	///@function front()
+	static front = function() { return at(0) }
+
 	///@function first()
   static first = function() { return (new iterator_type(self, 0)).pure() }
 
@@ -39,15 +54,6 @@ function List(): Container() constructor {
 	///@function push_front(value)
 	static push_front = function(Value) { index_insert(0, Value) }
 
-	///@function at(index)
-  static at = function(Index) { return ds_list_find_value(raw, Index) }
-
-	///@function back()
-	static back = function() { return at(size() - 1) }
-
-	///@function front()
-	static front = function() { return at(0) }
-
 	///@function erase_index(index)
 	static erase_index = function(Index) {
 		var Value = at(Index)
@@ -69,6 +75,15 @@ function List(): Container() constructor {
 	///@function pop_front()
 	static pop_front = function() { return erase_index(0) }
 
+	///@function clear()
+	static clear = function() { ds_list_clear(raw) }
+
+	///@function sort_builtin(ascending)
+  function sort_builtin(Ascending) { ds_list_sort(raw, Ascending) }
+
+	///@function shuffle_builtin()
+  function shuffle_builtin() { ds_list_shuffle(raw) }
+
 	///@function mark_list(index)
   static mark_list = function(Index) { ds_list_mark_as_list(raw, Index) }
 
@@ -81,21 +96,6 @@ function List(): Container() constructor {
 	///@function is_map(index)
   static is_map = function(Index) { return ds_list_is_map(raw, Index) }
 
-	///@function size()
-	static size = function() { return ds_list_size(raw) }
-
-	///@function empty()
-	static empty = function() { return ds_list_empty(raw) }
-
-	///@function clear()
-	static clear = function() { ds_list_clear(raw) }
-
-	///@function sort_builtin(ascending)
-  function sort_builtin(Ascending) { ds_list_sort(raw, Ascending) }
-
-	///@function shuffle_builtin()
-  function shuffle_builtin() { ds_list_shuffle(raw) }
-
 	///@function read(data_string)
 	static read = function(Str) { ds_list_read(raw, Str) }
 
@@ -103,7 +103,7 @@ function List(): Container() constructor {
 	static write = function() { return ds_list_write(raw) }
 
 	///@function destroy()
-	static destroy = function() { ds_list_destroy(raw) gc_collect() }
+	static destroy = function() { ds_list_destroy(raw); gc_collect() }
 
 	raw = ds_list_create()
 	type = List

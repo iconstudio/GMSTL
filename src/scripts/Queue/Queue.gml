@@ -16,6 +16,18 @@
 		
 */
 function Queue(): Container() constructor {
+	///@function size()
+	static size = function() { return ds_queue_size(raw) }
+
+	///@function empty()
+	static empty = function() { return ds_queue_empty(raw) }
+
+  ///@function back()
+	static back = function() { return ds_queue_tail(raw)}
+
+  ///@function front()
+	static front = function() {  return ds_queue_head(raw) }
+
 	///@function push(value)
 	static push = function(Value) { ds_queue_enqueue(raw, Value) }
 
@@ -27,18 +39,6 @@ function Queue(): Container() constructor {
 
 	///@function pop_front()
 	static pop_front = function() { return ds_queue_dequeue(raw) }
-
-  ///@function back()
-	static back = function() { return ds_queue_tail(raw)}
-
-  ///@function front()
-	static front = function() {  return ds_queue_head(raw) }
-
-	///@function size()
-	static size = function() { return ds_queue_size(raw) }
-
-	///@function empty()
-	static empty = function() { return ds_queue_empty(raw) }
 
 	///@function clear()
 	static clear = function() { ds_queue_clear(raw) }

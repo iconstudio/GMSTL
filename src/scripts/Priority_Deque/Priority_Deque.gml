@@ -23,6 +23,24 @@
 	
 */
 function Priority_Deque(): Container() constructor {
+	///@function size()
+	static size = function() { return ds_priority_size(raw) }
+
+	///@function empty()
+	static empty = function() { return ds_priority_empty(raw) }
+
+  ///@function tail()
+	static tail = function() { return ds_priority_find_min(raw) }
+
+  ///@function top()
+	static top = function() { return ds_priority_find_max(raw) }
+
+  ///@function back()
+	static back = function() { return ds_priority_find_min(raw) }
+
+  ///@function front()
+	static front = function() { return ds_priority_find_max(raw) }
+
 	///@function set_procedure(function)
 	static set_procedure = function(Func) { procedure = method(other, Func) }
 
@@ -51,24 +69,6 @@ function Priority_Deque(): Container() constructor {
 
 	///@function pop_front()
 	static pop_front = function() { return ds_priority_delete_max(raw) }
-
-  ///@function tail()
-	static tail = function() { return ds_priority_find_min(raw) }
-
-  ///@function top()
-	static top = function() { return ds_priority_find_max(raw) }
-
-  ///@function back()
-	static back = function() { return ds_priority_find_min(raw) }
-
-  ///@function front()
-	static front = function() { return ds_priority_find_max(raw) }
-
-	///@function size()
-	static size = function() { return ds_priority_size(raw) }
-
-	///@function empty()
-	static empty = function() { return ds_priority_empty(raw) }
 
 	///@function clear()
 	static clear = function() { ds_priority_clear(raw) }

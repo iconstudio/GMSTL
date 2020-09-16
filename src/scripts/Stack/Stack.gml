@@ -16,6 +16,15 @@
 		
 */
 function Stack(): Container() constructor {
+	///@function size()
+	static size = function() { return ds_stack_size(raw) }
+
+	///@function empty()
+	static empty = function() { return ds_stack_empty(raw) }
+
+  ///@function top()
+	static top = function() { return ds_stack_top(raw) }
+
 	///@function push(value)
 	static push = function(Value) { ds_stack_push(raw, Value) }
 
@@ -27,15 +36,6 @@ function Stack(): Container() constructor {
 
 	///@function pop_back()
 	static pop_back = function() { return ds_stack_pop(raw) }
-
-  ///@function top()
-	static top = function() { return ds_stack_top(raw) }
-
-	///@function size()
-	static size = function() { return ds_stack_size(raw) }
-
-	///@function empty()
-	static empty = function() { return ds_stack_empty(raw) }
 
 	///@function clear()
 	static clear = function() { ds_stack_clear(raw) }

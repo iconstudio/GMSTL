@@ -21,6 +21,24 @@
 		
 */
 function Unordered_Multimap(): Container() constructor {
+	///@function size()
+	static size = function() { return ds_map_size(raw) }
+
+	///@function empty()
+	static empty = function() { return ds_map_empty(raw) }
+
+	///@function seek(key)
+  static seek = function(K) { return ds_map_find_value(raw, K) }
+
+	///@function at(key)
+  static at = function(K) { return make_pair(K, seek(K)) }
+
+  ///@function back()
+	static back = function() { return at(ds_map_find_last(raw)) }
+
+  ///@function front()
+	static front = function() {  return at(ds_map_find_first(raw)) }
+
 	///@function bucket_find(bucket_index)
   static bucket_find = function(Index) {
 		if Index < size() {
@@ -71,18 +89,6 @@ function Unordered_Multimap(): Container() constructor {
 		return self
 	}
 
-	///@function seek(key)
-  static seek = function(K) { return ds_map_find_value(raw, K) }
-
-	///@function at(key)
-  static at = function(K) { return make_pair(K, seek(K)) }
-
-  ///@function back()
-	static back = function() { return at(ds_map_find_last(raw)) }
-
-  ///@function front()
-	static front = function() {  return at(ds_map_find_first(raw)) }
-
 	///@function erase_index(key)
 	static erase_index = function(K) {
 		var Temp = seek(K)
@@ -92,6 +98,12 @@ function Unordered_Multimap(): Container() constructor {
 
 	///@function erase_one(iterator)
 	static erase_one = function(It) { return erase_index(It.get_key()) }
+
+	///@function clear()
+	static clear = function() { ds_map_clear(raw) }
+
+	///@function contains(key)
+  static contains = function(K) { return ds_map_exists(raw, K) }
 
 	///@function key_swap(key_1, key_2)
   static key_swap = function(Key1, Key2) {
@@ -105,18 +117,6 @@ function Unordered_Multimap(): Container() constructor {
 
 	///@function is_map(key)
   static is_map = function(K) { return ds_map_is_map(raw, K) }
-
-	///@function contains(key)
-  static contains = function(K) { return ds_map_exists(raw, K) }
-
-	///@function size()
-	static size = function() { return ds_map_size(raw) }
-
-	///@function empty()
-	static empty = function() { return ds_map_empty(raw) }
-
-	///@function clear()
-	static clear = function() { ds_map_clear(raw) }
 
 	///@function read(data_string)
 	static read = function(Str) {
