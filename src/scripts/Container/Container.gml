@@ -6,9 +6,9 @@ function Container() {
 
 	function data() { return raw }
 
-	function duplicate() { return new type(self) }
+	static duplicate = function() { return new type(self) }
 
-	function make_self() { return new type(self) }
+	function make_self() { return new type() }
 }
 
 ///@function is_iterable(container)

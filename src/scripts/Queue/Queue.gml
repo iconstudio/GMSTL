@@ -16,41 +16,41 @@
 		
 */
 function Queue(): Container() constructor {
-	///@function push(value)
-	function push(Value) { ds_queue_enqueue(raw, Value) }
-
-	///@function push_back(value)
-	function push_back(Value) { ds_queue_enqueue(raw, Value) }
-
-	///@function pop()
-	function pop() { ds_queue_dequeue(raw) }
-
-	///@function pop_front()
-	function pop_front() { return ds_queue_dequeue(raw) }
-
-  ///@function back()
-	function back() { return ds_queue_tail(raw)}
-
-  ///@function front()
-	function front() {  return ds_queue_head(raw) }
-
 	///@function size()
-	function size() { return ds_queue_size(raw) }
+	static size = function() { return ds_queue_size(raw) }
 
 	///@function empty()
-	function empty() { return ds_queue_empty(raw) }
+	static empty = function() { return ds_queue_empty(raw) }
+
+  ///@function back()
+	static back = function() { return ds_queue_tail(raw)}
+
+  ///@function front()
+	static front = function() {  return ds_queue_head(raw) }
+
+	///@function push(value)
+	static push = function(Value) { ds_queue_enqueue(raw, Value) }
+
+	///@function push_back(value)
+	static push_back = function(Value) { ds_queue_enqueue(raw, Value) }
+
+	///@function pop()
+	static pop = function() { ds_queue_dequeue(raw) }
+
+	///@function pop_front()
+	static pop_front = function() { return ds_queue_dequeue(raw) }
 
 	///@function clear()
-	function clear() { ds_queue_clear(raw) }
+	static clear = function() { ds_queue_clear(raw) }
 
 	///@function read(data_string)
-	function read(Str) { ds_queue_read(raw, Str) }
+	static read = function(Str) { ds_queue_read(raw, Str) }
 
 	///@function write()
-	function write() { return ds_queue_write(raw) }
+	static write = function() { return ds_queue_write(raw) }
 
 	///@function destroy()
-	function destroy() { ds_queue_destroy(raw) gc_collect() }
+	static destroy = function() { ds_queue_destroy(raw) gc_collect() }
 
 	type = Queue
 	raw = ds_queue_create()

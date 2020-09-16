@@ -25,6 +25,27 @@ show_debug_message("\nThe Summary List")
 merge(test1.first(), test1.last(), test2.first(), test2.last(), test_sum.first())
 print(test_sum)
 
+test_sum.push_front(6)
+show_debug_message("\nTree")
+test_tree = new Binary_Tree(test_sum)
+
+function tree_print(Cont, Index, Msg) {
+	Msg = select_argument(Msg, "[" + string(Index) + "]\t")
+	show_debug_message(Msg + string(Cont.at(Index)))
+
+	var Left = Cont.make_left(Index), Right = Cont.make_right(Index)
+	var LeftVal = Cont.at(Left), RightVal = Cont.at(Right)
+
+	if !is_undefined(LeftVal) and LeftVal != NODE_NULL {
+		tree_print(Cont, Left, "[" + string(Left) + "->L(" + string(Index) + ")]\t")
+	}
+	if !is_undefined(RightVal) and RightVal != NODE_NULL {
+		tree_print(Cont, Right, "[" + string(Right) + "->R(" + string(Index) + ")]\t")
+	}
+}
+tree_print(test_tree, 0, "[Head(0)]\t")
+
+/*
 var count_dem = count_if(test_sum.first(), test_sum.last(), function(Value) {
 	return !is_undefined(Value) and frac(Value) != 0
 })
@@ -69,7 +90,12 @@ test_mapped_list.push_back(["@", "4th"])
 test_mapped_list.push_back(["@", "5th"])
 test_mapped_list.push_back(["AA", "AA"])
 test_mapped_list.push_back(["AB", "AB"])
-test_mapped_list.push_back(["CT", "CT"])
+test_mapped_list.push_back(["CT", "CT_1"])
+test_mapped_list.push_back(["CT", "CT_2"])
+test_mapped_list.push_back(["CT", "CT_3"])
+test_mapped_list.push_back(["CT", "CT_4"])
+test_mapped_list.push_back(["CT", "CT_5"])
+test_mapped_list.push_back(["CT", "CT_6"])
 test_mapped_list.push_back(["CZ", "CZ"])
 test_mapped_list.push_back(["AC", "AC"]) // 17
 show_debug_message("Map")

@@ -54,7 +54,7 @@ function Grid(Width, Height): Container() constructor {
 	inner_size = width * height
 
 	///@function first([row])
-  function first() {
+  static first = function() {
 		if argument_count == 1
 			return argument[0] * width
 		else
@@ -62,7 +62,7 @@ function Grid(Width, Height): Container() constructor {
 	}
 
 	///@function last([row])
-  function last() {
+  static last = function() {
 		if argument_count == 1
 			return (argument[0] + 1) * width
 		else
@@ -70,7 +70,7 @@ function Grid(Width, Height): Container() constructor {
 	}
 
   ///@function set(x, y, value)
-	function set(X, Y, Value) {
+	static set = function(X, Y, Value) {
 		raw[# X, Y] = Value
 		return self
 	}
@@ -112,63 +112,7 @@ function Grid(Width, Height): Container() constructor {
 	}
 
 	///@function at(x, y)
-	function at(X, Y) { return raw[# X, Y] }
-
-	///@function get(iterator)
-	function get(It) { return at(It.x, It.y) }
-
-	///@function get_on(index)
-	function get_on(Index) {
-		inner_iterator.set_index(Index)
-		return at(inner_iterator.x, inner_iterator.y)
-	}
-
-	///@function check_all(x1, y1, x2, y2, predicate)
-	function check_all(X1, Y1, X2, Y2, Pred) {
-		Pred = method(other, Pred)
-		for (; Y1 < Y2; ++Y1) {
-			for (var i = X1; i < X2; ++i) {
-				var Value = at(i, Y1)
-				if !pred(Value)
-					return false
-			}
-		}
-		return true
-	}
-
-	///@function check_any(begin, end, predicate)
-	function check_any(X1, Y1, X2, Y2, Pred) {
-		Pred = method(other, Pred)
-		while First.not_equals(Last) {
-			var Value = get(First)
-			if pred(Value)
-				return true
-			First++
-		}
-		return false
-	}
-
-	///@function check_none(begin, end, predicate)
-	function check_none(X1, Y1, X2, Y2, Pred) {
-		Pred = method(other, Pred)
-		while First.not_equals(Last) {
-			var Value = get(First)
-			if pred(Value)
-				return false
-			First++
-		}
-		return true
-	}
-
-	///@function foreach(begin, end, predicate)
-	function foreach(X1, Y1, X2, Y2, Pred) {
-		Pred = method(other, Pred)
-		while First.not_equals(Last) {
-			pred(get(First))
-			First++
-		}
-		return pred
-	}
+	static at = function(X, Y) { return raw[# X, Y] }
 
 	///@function find(x1, y1, x2, y2, value)
 	function find(X1, Y1, X2, Y2, Value) {
@@ -188,45 +132,6 @@ function Grid(Width, Height): Container() constructor {
 			return undefined
 		else
 			return new GridIterator(XR, YR, self)
-	}
-
-	///@function find_if(begin, end, predicate)
-	function find_if(X1, Y1, X2, Y2, Pred) {
-		Pred = method(other, Pred)
-		while First.not_equals(Last) {
-			var Value = get(First)
-			if !is_undefined(Value) and pred(Value)
-				return First
-			First++
-		}
-		return Last
-	}
-
-	///@function count(begin, end, value)
-	function count(X1, Y1, X2, Y2, Value) {
-		for (var it = First, Result = 0; it != Last; it.go()) {
-			if get(it) == Value
-				Result++
-		}
-		return Result
-	}
-
-	///@function count_if(begin, end, predicate)
-	function count_if(X1, Y1, X2, Y2, Pred) {
-		Pred = method(other, Pred)
-		for (var it = First, Result = 0; it != Last; it.go()) {
-			var Value = get(it)
-			if pred(Value)
-				Result++
-		}
-		return Result
-	}
-
-	///@function copy_to(x1, y1, x2, y2, destination_begin)
-	function copy_to(X1, Y1, X2, Y2, DstIt) {
-		var Dst = DstIt.container // Actual iteraters have its owner.
-		var DstRaw = Dst.data()
-		ds_grid_set_grid_region(DstRaw, raw, X1, Y1, X2, Y2, DstIt.x, DstIt.y)
 	}
 
 	function get_max(X1, Y1, X2, Y2) { return ds_grid_get_max(raw, X1, Y1, X2, Y2) }
@@ -254,7 +159,7 @@ function Grid(Width, Height): Container() constructor {
 	function set_height(Height) { resize(width, Height) }
 
 	///@function size()
-	function size() { return inner_size }
+	static size = function() { return inner_size }
 
 	///@function get_width()
 	function get_width() { return width }
@@ -263,13 +168,13 @@ function Grid(Width, Height): Container() constructor {
 	function get_height() { return height }
 
 	///@function clear(value)
-	function clear(Value) { ds_grid_clear(raw, Value) }
+	function clear() { ds_grid_clear(raw, argument[0]) }
 
 	function sort_builtin(column, ascending) { ds_grid_sort(raw, column, ascending) }
 
 	function shuffle_builtin() { ds_grid_shuffle(raw) }
 
-	function destroy() {
+	static destroy = function() {
 		delete inner_iterator
 		ds_grid_destroy(raw)
 		raw = undefined
@@ -313,10 +218,10 @@ function GridIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	update_coordinates()
 
 	///@function set(value)
-	function set(Value) { return container.set(x, y, Value) }
+	static set = function(Value) { return container.set(x, y, Value) }
 
 	///@function get()
-	function get() { return container.get(x, y) }
+	static get = function() { return container.get(x, y) }
 
 	///@function set_index(index)
 	function set_index(Index) {
@@ -325,13 +230,13 @@ function GridIterator(Cont, Index): Iterator(Cont, Index) constructor {
 		return index
 	}
 
-	function back() {
+	static back = function() {
 		--index
 		update_coordinates()
 		return index
 	}
 
-	function go() {
+	static go = function() {
 		++index
 		update_coordinates()
 		return index

@@ -2,7 +2,6 @@
 	Constructors:
 		Multimap()
 		Multimap(Arg)
-		Multimap(Maps)
 		Multimap(Multimaps)
 		Multimap(Paired-Container)
 		Multimap(Builtin-Paired-Array)
@@ -16,7 +15,8 @@
 	Usage:
 		To Iterate values on lists:
 			for (var It = Container.first(); It.not_equal(Container.last()); It.go()) {
-				var KList = It.get()
+				var Pair = It.get()
+				var KList = Pair[1]
 				foreach(KList.first(), KList.first(), function(Value) {
 					myfunc(Value)
 				})
@@ -43,17 +43,38 @@
 		
 */
 function Multimap(): Container() constructor {
+	///@function size()
+	static size = function() { return ds_map_size(raw) }
+
+	///@function empty()
+	static empty = function() { return ds_map_empty(raw) }
+
+	///@function seek(key)
+  static seek = function(K) { return ds_map_find_value(raw, K) }
+
+	///@function at(bucket_index)
+  static at = function(Index) {
+		var K = cash.at(Index)
+		return make_pair(K, seek(K))
+	}
+
+  ///@function back()
+	static back = function() { return at(size() - 1) }
+
+  ///@function front()
+	static front = function() { return at(0) }
+
 	///@function bucket(key)
   function bucket(K) { return ds_list_find_index(cash.raw, K) }
 
 	///@function bucket_find(bucket_index)
-  function bucket_find(Index) { return seek(cash.at(Index)) }
+  static bucket_find = function(Index) { return seek(cash.at(Index)) }
 
 	///@function bucket_count()
   function bucket_count() { return cash.size() }
 
 	///@function bucket_create(key, [value])
-	function bucket_create(K) {
+	static bucket_create = function(K) {
 		var NewList = new List()
 		if 0 < argument_count
 			NewList.push_back(argument[1])
@@ -61,7 +82,7 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function first([bucket_index])
-  function first() {
+  static first = function() {
 		if 1 == argument_count
 			return bucket_find(argument[0]).first()
 		else
@@ -69,7 +90,7 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function last([bucket_index])
-  function last() {
+  static last = function() {
 		if 1 == argument_count
 			return bucket_find(argument[0]).last()
 		else
@@ -77,7 +98,7 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function cfirst([bucket_index])
-  function cfirst() {
+  static cfirst = function() {
 		if 1 == argument_count
 			return bucket_find(argument[0]).cfirst()
 		else
@@ -85,7 +106,7 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function clast([bucket_index])
-  function clast() {
+  static clast = function() {
 		if 1 == argument_count
 			return bucket_find(argument[0]).clast()
 		else
@@ -93,7 +114,7 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function set(bucket_index, list)
-  function set(Index, Value) {
+  static set = function(Index, Value) {
 		if !is_struct(Value)
 			throw "Cannot bind a non-struct item to Multimap!"
 		var Key = cash.at(Index)
@@ -103,7 +124,7 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function insert(item)
-	function insert() {
+	static insert = function() {
 		var Key, Value
 		if argument_count == 2 {
 			Key = argument[0]
@@ -124,23 +145,8 @@ function Multimap(): Container() constructor {
 		return self
 	}
 
-	///@function seek(key)
-  function seek(K) { return ds_map_find_value(raw, K) }
-
-	///@function at(bucket_index)
-  function at(Index) {
-		var K = cash.at(Index)
-		return make_pair(K, seek(K))
-	}
-
-  ///@function back()
-	function back() { return at(size() - 1) }
-
-  ///@function front()
-	function front() { return at(0) }
-
 	///@function erase_index(key)
-	function erase_index(K) {
+	static erase_index = function(K) {
 		var Temp = seek(K)
 		ds_map_delete(raw, K)
 		remove(cash.first(), cash.last(), K)
@@ -148,42 +154,39 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function erase_one(iterator)
-	function erase_one(It) { return erase_index(It.get_index()) }
+	static erase_one = function(It) { return erase_index(It.get_index()) }
+
+	///@function clear()
+	static clear = function() { ds_map_clear(raw) }
+
+	///@function contains(key)
+  static contains = function(K) { return ds_map_exists(raw, K) }
 
 	///@function key_swap(key_1, key_2)
-  function key_swap(Key1, Key2) {
+  static key_swap = function(Key1, Key2) {
 		var Temp = seek(Key1)
 		ds_map_set(raw, Key1, seek(Key2))
 		ds_map_set(raw, Key2, Temp)
 	}
 
-	///@function contains(key)
-  function contains(K) { return ds_map_exists(raw, K) }
-
-	///@function size()
-	function size() { return ds_map_size(raw) }
-
-	///@function empty()
-	function empty() { return ds_map_empty(raw) }
-
-	///@function clear()
-	function clear() { ds_map_clear(raw) }
+	///@function set_key_comp(compare_function)
+	function set_key_comp(Func) { key_comparator = method(other, Func) return self }
 
 	///@function set_value_comp(compare_function)
-	function set_value_comp(Func) { value_comparator = method(other, Fun) return self }
+	function set_value_comp(Func) { value_comparator = method(other, Func) return self }
 
 	///@function cash_push(key)
 	function cash_push(K) {
 		if 1 < cash.size() {
 			cash.push_back(K)
-			cash.sort_builtin(true)
+			stable_sort(cash.first(), cash.last(), key_comparator)
 		} else {
 			cash.push_back(K)
 		}
 	}
 
 	///@function read(data_string)
-	function read(Str) {
+	static read = function(Str) {
 		var loaded = ds_map_create()
 		ds_map_read(loaded, Str)
 		if 0 < ds_map_size(loaded) {
@@ -198,18 +201,19 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function write()
-	function write() { return ds_map_write(raw) }
+	static write = function() { return ds_map_write(raw) }
 
 	///@function destroy()
-	function destroy() { ds_map_destroy(raw); cash.destroy(); delete cash; gc_collect() }
+	static destroy = function() { ds_map_destroy(raw); cash.destroy(); delete cash; gc_collect() }
 
 	type = Map
 	raw = ds_map_create()
 	iterator_type = ForwardIterator
 	const_iterator_type = ConstIterator
+	key_comparator = compare_complex_less
 	value_comparator = compare_less
 	cash = new List()
-	
+
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]
@@ -234,13 +238,12 @@ function Multimap(): Container() constructor {
 				//ds_map_copy(raw, Item)
 			} else if is_struct(Item) {
 				var Type = instanceof(Item)
-				if Type == "Map" or Type == "Unordered_Map" {
-					// (*) Maps
-					ds_map_copy(raw, Item.data())
-					copy(cash.first(), cash.last(), Item.cash.first())
-				} else if Type == "Multimap" or Type == "Unordered_Multimap" {
+				if Type == "Multimap" or Type == "Unordered_Multimap" {
 					// (*) Multimaps
-					
+					foreach(Item.first(), Item.last(), function(Value) {
+						var Key = Value[0], KList = Value[1].duplicate()
+						ds_map_set(raw, Key, KList)
+					})
 				} else if is_iterable(Item) {
 					// (*) Paired-Container
 					foreach(Item.first(), Item.last(), function(Value) {

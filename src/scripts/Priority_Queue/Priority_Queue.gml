@@ -26,20 +26,26 @@
 */
 function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 	///@function duplicate()
-	function duplicate() {
+	static duplicate = function() {
 		var Result = new Priority_Queue(comparator, self.is_stable)
 		copy(raw.first(), raw.last(), Result.raw.first())
 		return Result
 	}
 
+	///@function size()
+	static size = function() { return raw.size() }
+
+	///@function top()
+  static top = function() { return raw.front() }
+
 	///@function cfirst()
-  function cfirst() { return raw.cfirst() }
+  static cfirst = function() { return raw.cfirst() }
 
 	///@function clast()
-  function clast() { return raw.clast() }
+  static clast = function() { return raw.clast() }
 
 	///@function push(value)
-	function push(Value) { 
+	static push = function(Value) { 
 		if 1 < raw.size() {
 			var Last = raw.last()
 			var Position = lower_bound(raw.first(), Last, Value, comparator)
@@ -54,28 +60,22 @@ function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 	}
 
 	///@function pop()
-	function pop() { raw.pop_front() }
+	static pop = function() { raw.pop_front() }
 
 	///@function pop_front()
-	function pop_front() { return raw.pop_front() }
-
-	///@function top()
-  function top() { return raw.front() }
-
-	///@function size()
-	function size() { return raw.size() }
+	static pop_front = function() { return raw.pop_front() }
 
 	///@function empty()
-	function empty() { return raw.empty() }
+	static empty = function() { return raw.empty() }
 
 	///@function clear()
-	function clear() { raw.clear() }
+	static clear = function() { raw.clear() }
 
 	///@function read(data_string)
-	function read(Str) { raw.read(Str) }
+	static read = function(Str) { raw.read(Str) }
 
 	///@function write()
-	function write() { return raw.write() }
+	static write = function() { return raw.write() }
 
 	type = Priority_Queue
 	raw = new List()

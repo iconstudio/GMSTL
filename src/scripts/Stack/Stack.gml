@@ -16,38 +16,38 @@
 		
 */
 function Stack(): Container() constructor {
-	///@function push(value)
-	function push(Value) { ds_stack_push(raw, Value) }
-
-	///@function push_back(value)
-	function push_back(Value) { ds_stack_push(raw, Value) }
-
-	///@function pop()
-	function pop() { ds_stack_pop(raw) }
-
-	///@function pop_back()
-	function pop_back() { return ds_stack_pop(raw) }
-
-  ///@function top()
-	function top() { return ds_stack_top(raw) }
-
 	///@function size()
-	function size() { return ds_stack_size(raw) }
+	static size = function() { return ds_stack_size(raw) }
 
 	///@function empty()
-	function empty() { return ds_stack_empty(raw) }
+	static empty = function() { return ds_stack_empty(raw) }
+
+  ///@function top()
+	static top = function() { return ds_stack_top(raw) }
+
+	///@function push(value)
+	static push = function(Value) { ds_stack_push(raw, Value) }
+
+	///@function push_back(value)
+	static push_back = function(Value) { ds_stack_push(raw, Value) }
+
+	///@function pop()
+	static pop = function() { ds_stack_pop(raw) }
+
+	///@function pop_back()
+	static pop_back = function() { return ds_stack_pop(raw) }
 
 	///@function clear()
-	function clear() { ds_stack_clear(raw) }
+	static clear = function() { ds_stack_clear(raw) }
 
 	///@function read(data_string)
-	function read(Str) { ds_stack_read(raw, Str) }
+	static read = function(Str) { ds_stack_read(raw, Str) }
 
 	///@function write()
-	function write() { return ds_stack_write(raw) }
+	static write = function() { return ds_stack_write(raw) }
 
 	///@function destroy()
-	function destroy() { ds_stack_destroy(raw) gc_collect() }
+	static destroy = function() { ds_stack_destroy(raw) gc_collect() }
 
 	type = Stack
 	raw = ds_stack_create()

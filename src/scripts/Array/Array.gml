@@ -15,55 +15,55 @@
 		
 */
 function Array(): Container() constructor {
+	///@function size()
+	static size = function() { return inner_size }
+
+	///@function at(index)
+  static at = function(Index) { return raw[Index] }
+
+  ///@function back()
+	static back = function() { return at(inner_size - 1) }
+
+  ///@function front()
+	static front = function() { return at(0) }
+
 	///@function first()
-  function first() { return (new iterator_type(self, 0)).pure() }
+  static first = function() { return (new iterator_type(self, 0)).pure() }
 
 	///@function last()
-  function last() { return (new iterator_type(self, size())).pure() }
+  static last = function() { return (new iterator_type(self, size())).pure() }
 
 	///@function cfirst()
-  function cfirst() { return (new const_iterator_type(self, 0)).pure() }
+  static cfirst = function() { return (new const_iterator_type(self, 0)).pure() }
 
 	///@function clast()
-  function clast() { return (new const_iterator_type(self, size())).pure() }
+  static clast = function() { return (new const_iterator_type(self, size())).pure() }
 
-	///@function set(index, value)
-  function set(Index, Value) {
+	//////@function set(index, value)
+  static set = function(Index, Value) {
 		raw[Index] = Value
 		return self
 	}
 
-	///@function at(index)
-  function at(Index) { return raw[Index] }
-
-  ///@function back()
-	function back() { return at(inner_size - 1) }
-
-  ///@function front()
-	function front() { return at(0) }
-
 	///@function erase_index(index)
-	function erase_index(Index) {
+	static erase_index = function(Index) {
 		var Value = at(Index)
 		set(Index, undefined)
 		return Value
 	}
 
 	///@function erase_one(iterator)
-	function erase_one(It) {
+	static erase_one = function(It) {
 		var Value = It.get()
 		It.set(undefined)
 		return Value
 	}
 
-	///@function size()
-	function size() { return inner_size }
-
 	///@function destroy()
-	function destroy() { raw = 0 gc_collect() }
+	static destroy = function() { raw = 0; gc_collect() }
 
 	///@function allocate(size)
-	function allocate(Size) {
+	static allocate = function(Size) {
 		inner_size = Size
 		raw = array_create(Size)
 	}
