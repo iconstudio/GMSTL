@@ -24,13 +24,13 @@
 */
 function Priority_Deque(): Container() constructor {
 	///@function set_procedure(function)
-	function set_procedure(Func) { procedure = method(other, Func) }
+	static set_procedure = function(Func) { procedure = method(other, Func) }
 
 	///@function push(value)
-	function push(Value) { ds_priority_add(raw, Value, procedure(Value)) }
+	static push = function(Value) { ds_priority_add(raw, Value, procedure(Value)) }
 
 	///@function insert(item)
-	function insert() {
+	static insert = function() {
 		var Pri, Value
 		if argument_count == 2 {
 			Pri = argument[0]
@@ -44,49 +44,49 @@ function Priority_Deque(): Container() constructor {
 	}
 
 	///@function pop()
-	function pop() { ds_priority_delete_max(raw) }
+	static pop = function() { ds_priority_delete_max(raw) }
 
 	///@function size()
-	function pop_back() { return ds_priority_delete_min(raw) }
+	static pop_back = function() { return ds_priority_delete_min(raw) }
 
 	///@function pop_front()
-	function pop_front() { return ds_priority_delete_max(raw) }
+	static pop_front = function() { return ds_priority_delete_max(raw) }
 
   ///@function tail()
-	function tail() { return ds_priority_find_min(raw) }
+	static tail = function() { return ds_priority_find_min(raw) }
 
   ///@function top()
-	function top() { return ds_priority_find_max(raw) }
+	static top = function() { return ds_priority_find_max(raw) }
 
   ///@function back()
-	function back() { return ds_priority_find_min(raw) }
+	static back = function() { return ds_priority_find_min(raw) }
 
   ///@function front()
-	function front() { return ds_priority_find_max(raw) }
+	static front = function() { return ds_priority_find_max(raw) }
 
 	///@function size()
-	function size() { return ds_priority_size(raw) }
+	static size = function() { return ds_priority_size(raw) }
 
 	///@function empty()
-	function empty() { return ds_priority_empty(raw) }
+	static empty = function() { return ds_priority_empty(raw) }
 
 	///@function clear()
-	function clear() { ds_priority_clear(raw) }
+	static clear = function() { ds_priority_clear(raw) }
 
 	///@function seek(value)
-	function seek(Value) { return ds_priority_find_priority(raw, Value) }
+	static seek = function(Value) { return ds_priority_find_priority(raw, Value) }
 
 	///@function abandon(value)
-	function abandon(Value) { ds_priority_delete_value(raw, Value) }
+	static abandon = function(Value) { ds_priority_delete_value(raw, Value) }
 
 	///@function read(data_string)
-	function read(Str) { ds_priority_read(raw, Str) }
+	static read = function(Str) { ds_priority_read(raw, Str) }
 
 	///@function write()
-	function write() { return ds_priority_write(raw) }
+	static write = function() { return ds_priority_write(raw) }
 
 	///@function size()
-	function destroy() { ds_priority_destroy(raw) gc_collect() }
+	static destroy = function() { ds_priority_destroy(raw) gc_collect() }
 
 	type = Priority_Deque
 	raw = ds_priority_create()

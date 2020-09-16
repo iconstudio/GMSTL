@@ -19,7 +19,7 @@ function Binary_Tree(Params): List(Params) constructor {
 		} else {
 			var Times = Dest - Size - 1
 			repeat Times
-				push_back(new Tree_Null())
+				push_back(LEAF_NULL)
 			push_back(Value)
 		}
 		return self
@@ -33,7 +33,7 @@ function Binary_Tree(Params): List(Params) constructor {
 		} else {
 			var Times = Dest - Size - 1
 			repeat Times
-				push_back(new Tree_Null())
+				push_back(LEAF_NULL)
 			push_back(Value)
 		}
 		return self
@@ -49,6 +49,5 @@ function Binary_Tree(Params): List(Params) constructor {
 	function set_comparator(Func) { comparator = method(other, Func) }
 
 	comparator = compare_less
-	leaf_null = LEAF_NULL
 }
 

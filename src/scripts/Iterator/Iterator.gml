@@ -3,22 +3,22 @@ function Iterator(Cont, Index) constructor {
 	ITERATOR = true
 
 	///@function duplicate()
-	function duplicate() { return new type(container, index) }
+	static duplicate = function() { return new type(container, index) }
 
 	///@function pure()
-	function pure() { is_pure = true; return self }
+	static pure = function() { is_pure = true; return self }
 
 	///@function impure()
-	function impure() { is_pure = false; return self }
+	static impure = function() { is_pure = false; return self }
 
 	///@function get()
-	function get() { return container.at(pointer) }
+	static get = function() { return container.at(pointer) }
 
 	///@function get_index()
-	function get_index() { return index }
+	static get_index = function() { return index }
 
 	///@function go()
-	function go() { 
+	static go = function() { 
 		index++
 		pointer++
 		is_pure = false
@@ -26,14 +26,14 @@ function Iterator(Cont, Index) constructor {
 	}
 
 	///@function next()
-	function next() {
+	static next = function() {
 		var Result = duplicate().go()
 		return Result
 	}
 
 	///@function advance(other)
 	///@desc add it multiple times
-	function advance(Other) { 
+	static advance = function(Other) {
 		if is_iterator(Other)
 			repeat Other.index go()
 		else if is_real(Other) and 0 < Other
@@ -44,7 +44,7 @@ function Iterator(Cont, Index) constructor {
 	}
 
 	///@function equals(iterator)
-	function equals(Other) {
+	static equals = function(Other) {
 		if is_iterator(Other)
 			return bool(Other.container == container and Other.index == index)
 		else if is_real(Other)
@@ -53,7 +53,7 @@ function Iterator(Cont, Index) constructor {
 	}
 
 	///@function not_equals(iterator)
-	function not_equals(Other) {
+	static not_equals = function(Other) {
 		if is_iterator(Other)
 			return bool(Other.container != container or Other.index != index)
 		else if is_real(Other)
@@ -62,7 +62,7 @@ function Iterator(Cont, Index) constructor {
 	}
 
 	///@function distance(iterator)
-	function distance(Other) { 
+	static distance = function(Other) { 
 		if is_iterator(Other)
 			return abs(Other.index - index)
 		else if is_real(Other)
@@ -81,7 +81,8 @@ function Iterator(Cont, Index) constructor {
 function ConstIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	type = ConstIterator
 
-	function back() { 
+	///@function back()
+	static back = function() { 
 		index--
 		pointer--
 		is_pure = false
@@ -89,14 +90,14 @@ function ConstIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	}
 
 	///@function previous()
-	function previous() {
+	static previous = function() {
 		var Result = duplicate().back()
 		return Result
 	}
 
 	///@function advance(other)
 	///@desc add or sub it multiple times
-	function advance(Other) { 
+	static advance = function(Other) {
 		if is_iterator(Other) {
 			repeat Other.index go()
 		} else if is_real(Other) {
@@ -111,7 +112,7 @@ function ConstIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	}
 
 	///@function subtract(other)
-	function subtract(Other) {
+	static subtract = function(Other) {
 		if is_iterator(Other)
 			advance(-Other.index)
 		else if is_real(Other)
@@ -125,13 +126,13 @@ function ForwardIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	type = ForwardIterator
 
 	///@function set(value)
-	function set() { container.set(pointer, argument[0]) }
+	static set = function() { container.set(pointer, argument[0]) }
 
 	///@function swap(iterator)
-	function swap(Other) {
+	static swap = function(Other) {
 		if is_iterator(Other) {
 			var Temp = get()
-			set(Other.get())
+			self.set(Other.get())
 			Other.set(Temp)
 		}
 	}
@@ -142,13 +143,13 @@ function BidirectionalIterator(Cont, Index): ConstIterator(Cont, Index) construc
 	type = BidirectionalIterator
 
 	///@function set(value)
-	function set() { container.set(pointer, argument[0]) }
+	static set = function() { container.set(pointer, argument[0]) }
 
 	///@function swap(iterator)
-	function swap(Other) {
+	static swap = function(Other) {
 		if is_iterator(Other) {
 			var Temp = get()
-			set(Other.get())
+			self.set(Other.get())
 			Other.set(Temp)
 		}
 	}
@@ -160,7 +161,7 @@ function RandomIterator(Cont, Index): BidirectionalIterator(Cont, Index) constru
 	type = RandomIterator
 
 	///@function set_index(index)
-	function set_index(Index) {
+	static set_index = function(Index) {
 		if index != Index {
 			index = Index
 			pointer = Index
@@ -170,7 +171,7 @@ function RandomIterator(Cont, Index): BidirectionalIterator(Cont, Index) constru
 	}
 
 	///@function advance(other)
-	function advance(Other) { 
+	static advance = function(Other) {
 		if is_iterator(Other) {
 			index += Other.index
 			pointer += Other.index
@@ -184,7 +185,7 @@ function RandomIterator(Cont, Index): BidirectionalIterator(Cont, Index) constru
 	}
 
 	///@function subtract(other)
-	function subtract(Other) {
+	static subtract = function(Other) {
 		if is_iterator(Other)
 			advance(-Other.index)
 		else if is_real(Other)
@@ -196,16 +197,16 @@ function RandomIterator(Cont, Index): BidirectionalIterator(Cont, Index) constru
 ///@function ConstMapIterator(container, index)
 function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
 	///@function get()
-	function get() { return container.at(key) }
+	static get = function() { return container.at(key) }
 
 	///@function get_index()
-	function get_index() { return index }
+	static get_index = function() { return index }
 
 	///@function get_key()
 	function get_key() { return key }
 
 	///@function go()
-	function go() { 
+	static go = function() { 
 		index++
 		pointer++
 		is_pure = false
@@ -215,7 +216,7 @@ function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
 	}
 
 	///@function back()
-	function back() { 
+	static back = function() { 
 		index--
 		pointer--
 		is_pure = false
@@ -225,7 +226,7 @@ function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
 	}
 
 	///@function advance(other)
-	function advance(Other) { 
+	static advance = function(Other) {
 		if is_iterator(Other) {
 			repeat Other.index go()
 		} else if is_real(Other) {
@@ -246,7 +247,7 @@ function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
 
 ///@function MapIterator(container, index)
 function MapIterator(Cont, Index): ConstMapIterator(Cont, Index) constructor {
-	function set(value) { container.insert(key, value) }
+	static set = function(value) { container.insert(key, value) }
 }
 
 ///@function iterator_distance(iterator_1, iterator_2)

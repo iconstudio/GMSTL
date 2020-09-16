@@ -31,7 +31,7 @@ function compare_complex_less(a, b) {
 		return false
 	} else if A_is_number and B_is_string { // pull numbers
 		return true
-	} else if (A_is_string and B_is_string) or (A_is_number and B_is_number){ // both are numbers or strings
+	} else if (A_is_string and B_is_string) or (A_is_number and B_is_number) { // both are numbers or strings
 		return bool(a < b)
 	}
 }
