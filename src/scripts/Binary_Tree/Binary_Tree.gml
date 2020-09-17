@@ -1,30 +1,45 @@
 global.__TLNULL = new (function() constructor {NULL = true})()
 #macro NODE_NULL global.__TLNULL
 function Binary_Tree(): List() constructor {
-	///@function make_left(index)
+	///@function left(index)
 	///@description smaller
-	static make_left = function(Index) { return Index * 2 + 1 }
+	static left = function(Index) { return Index * 2 + 1 }
 
-	///@function make_right(index)
+	///@function right(index)
 	///@description larger
-	static make_right = function(Index) { return Index * 2 + 2 }
+	static right = function(Index) { return Index * 2 + 2 }
 
 	///@function at_left(index)
-	static at_left = function(Index) { return at(make_left(Index)) }
+	static at_left = function(Index) { return at(left(Index)) }
 
 	///@function at_right(index)
-	static at_right = function(Index) { return at(make_right(Index)) }
+	static at_right = function(Index) { return at(right(Index)) }
+
+	///@function bucket(value)
+  static bucket = function(Value) {
+		if 0 == size()
+			return undefined
+
+		var CompVal, Index = 0, Size = size()
+		while Index < Size {
+			CompVal = at(Index)
+			if check_comparator(Value, CompVal) {
+				return Index
+			} else {
+				if key_comparator(Value, CompVal)
+					Index = left(Index)
+				else
+					Index = right(Index)
+			}
+		}
+		return undefined
+	}
+
+	///@function contains(value)
+  static contains = function(Value) { return !is_undefined(bucket(Value)) }
 
 	///@function head()
 	static head = function() { return front() }
-
-	///@function left(index)
-	static left = function(Index) { return (new iterator_type(self, make_left(Index))).pure() }
-
-	///@function right(index)
-	static right = function(Index) { return (new iterator_type(self, make_right(Index))).pure() }
-
-//todo: Map처럼 at과 seek을 분리.
 
 	///@function set(index, value)
   static set = function(Index, Value) {
@@ -43,41 +58,45 @@ function Binary_Tree(): List() constructor {
 	///@function insert_recursive(value, hint)
   static insert_recursive = function(Value, Hint) {
 		var Size = size(), CompVal = at(Hint)
-		if Size <= Hint or CompVal == NODE_NULL {
+		if Size < Hint or CompVal == NODE_NULL {
 			set(Hint, Value)
 			return Hint
+		} else {
+			if key_comparator(Value, CompVal)
+				return insert_recursive(Value, left(Hint))
+			else
+				return insert_recursive(Value, right(Hint))
 		}
-
-		if comparator(Value, CompVal)
-			return insert_recursive(Value, make_left(Hint))
-		else
-			return insert_recursive(Value, make_right(Hint))
 	}
 
 	///@function insert(item)
   static insert = function(Value) {
-		if size() == 0 {
+		if 0 == size() {
 			push_back(Value)
 			return 0
 		}
 
-		if comparator(Value, head())
-			return insert_recursive(Value, make_left(0))
+		if key_comparator(Value, head())
+			return insert_recursive(Value, left(0))
 		else
-			return insert_recursive(Value, make_right(0))
+			return insert_recursive(Value, right(0))
 	}
 
 	///@function push(value)
   static push = function(Value) { insert(Value) }
 
 	///@function contains(value)
-  static contains = function(Value) { return binary_search(first(), last(), Value, comparator) }
+  static contains = function(Value) { return binary_search(first(), last(), Value, key_comparator) }
 
-	///@function set_comparator(compare_function)
-	function set_comparator(Func) { comparator = method(other, Func) }
+	///@function set_key_comp(compare_function)
+	function set_key_comp(Func) { key_comparator = method(other, Func) }
+
+	///@function set_check_comp(compare_function)
+	function set_check_comp(Func) { check_comparator = method(other, Func) }
 
 	type = Binary_Tree
-	comparator = compare_less
+	key_comparator = compare_less
+	check_comparator = compare_equal
 
 		// ** Assigning **
 	if 0 < argument_count {
