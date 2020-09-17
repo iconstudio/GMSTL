@@ -33,18 +33,24 @@ function tree_print(Cont, Index, Msg) {
 	Msg = select_argument(Msg, "[" + string(Index) + "]\t")
 	show_debug_message(Msg + string(Cont.at(Index)))
 
-	var Left = Cont.make_left(Index), Right = Cont.make_right(Index)
+	var Size = Cont.size()
+	var Left = Cont.left(Index), Right = Cont.right(Index)
 	var LeftVal = Cont.at(Left), RightVal = Cont.at(Right)
 
-	if !is_undefined(LeftVal) and LeftVal != NODE_NULL {
-		tree_print(Cont, Left, "[" + string(Left) + "->L(" + string(Index) + ")]\t")
+	if Left < Size and LeftVal != NODE_NULL {
+		tree_print(Cont, Left, "L(" + string(Index) + ") -> [" + string(Left) + "]\t\t")
 	}
-	if !is_undefined(RightVal) and RightVal != NODE_NULL {
-		tree_print(Cont, Right, "[" + string(Right) + "->R(" + string(Index) + ")]\t")
+	if Right < Size and RightVal != NODE_NULL {
+		tree_print(Cont, Right, "R(" + string(Index) + ") -> [" + string(Right) + "]\t\t")
 	}
 }
-tree_print(test_tree, 0, "[Head(0)]\t")
+tree_print(test_tree, 0, "Head(0)\t")
 
+show_debug_message("Seaching (3): " + string(test_tree.bucket(3)))
+show_debug_message("Seaching (4): " + string(test_tree.bucket(4)))
+show_debug_message("Seaching (6): " + string(test_tree.bucket(6)))
+show_debug_message("Seaching (11): " + string(test_tree.bucket(11)))
+show_debug_message("Seaching (12): " + string(test_tree.bucket(12)))
 /*
 var count_dem = count_if(test_sum.first(), test_sum.last(), function(Value) {
 	return !is_undefined(Value) and frac(Value) != 0
