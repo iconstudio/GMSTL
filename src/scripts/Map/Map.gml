@@ -28,6 +28,9 @@ function Map(): Container() constructor {
 	///@function size()
 	static size = function() { return ds_map_size(raw) }
 
+	///@function contains(key)
+  static contains = function(K) { return ds_map_exists(raw, K) }
+
 	///@function seek(key)
   static seek = function(K) { return ds_map_find_value(raw, K) }
 
@@ -104,15 +107,6 @@ function Map(): Container() constructor {
 
 	///@function clear()
 	static clear = function() { ds_map_clear(raw) }
-
-	///@function contains(key)
-  static contains = function(K) { return ds_map_exists(raw, K) }
-
-	///@function key_change(key, value)
-  function key_change(K, Value) {
-		cash_push(K)
-		return ds_map_replace(raw, K, Value) 
-	}
 
 	///@function key_swap(key_1, key_2)
   static key_swap = function(Key1, Key2) {

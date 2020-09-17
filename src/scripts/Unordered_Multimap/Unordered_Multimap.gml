@@ -27,10 +27,13 @@ function Unordered_Multimap(): Container() constructor {
 	///@function empty()
 	static empty = function() { return ds_map_empty(raw) }
 
+	///@function contains(key)
+  static contains = function(K) { return ds_map_exists(raw, K) }
+
 	///@function seek(key)
   static seek = function(K) { return ds_map_find_value(raw, K) }
 
-	///@function at(key)
+	///@function at(index)
   static at = function(K) { return make_pair(K, seek(K)) }
 
   ///@function back()
@@ -101,9 +104,6 @@ function Unordered_Multimap(): Container() constructor {
 
 	///@function clear()
 	static clear = function() { ds_map_clear(raw) }
-
-	///@function contains(key)
-  static contains = function(K) { return ds_map_exists(raw, K) }
 
 	///@function key_swap(key_1, key_2)
   static key_swap = function(Key1, Key2) {

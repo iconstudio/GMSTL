@@ -49,6 +49,9 @@ function Multimap(): Container() constructor {
 	///@function empty()
 	static empty = function() { return ds_map_empty(raw) }
 
+	///@function contains(key)
+  static contains = function(K) { return ds_map_exists(raw, K) }
+
 	///@function seek(key)
   static seek = function(K) { return ds_map_find_value(raw, K) }
 
@@ -65,13 +68,13 @@ function Multimap(): Container() constructor {
 	static front = function() { return at(0) }
 
 	///@function bucket(key)
-  function bucket(K) { return ds_list_find_index(cash.raw, K) }
+  static bucket = function(K) { return ds_list_find_index(cash.raw, K) }
 
 	///@function bucket_find(bucket_index)
   static bucket_find = function(Index) { return seek(cash.at(Index)) }
 
 	///@function bucket_count()
-  function bucket_count() { return cash.size() }
+  static bucket_count = function() { return cash.size() }
 
 	///@function bucket_create(key, [value])
 	static bucket_create = function(K) {
@@ -158,9 +161,6 @@ function Multimap(): Container() constructor {
 
 	///@function clear()
 	static clear = function() { ds_map_clear(raw) }
-
-	///@function contains(key)
-  static contains = function(K) { return ds_map_exists(raw, K) }
 
 	///@function key_swap(key_1, key_2)
   static key_swap = function(Key1, Key2) {
