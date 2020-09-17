@@ -45,20 +45,6 @@ function Array(): Container() constructor {
 		return self
 	}
 
-	///@function erase_index(index)
-	static erase_index = function(Index) {
-		var Value = at(Index)
-		set(Index, undefined)
-		return Value
-	}
-
-	///@function erase_one(iterator)
-	static erase_one = function(It) {
-		var Value = It.get()
-		It.set(undefined)
-		return Value
-	}
-
 	///@function destroy()
 	static destroy = function() { raw = 0; gc_collect() }
 

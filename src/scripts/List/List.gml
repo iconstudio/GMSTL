@@ -54,26 +54,18 @@ function List(): Container() constructor {
 	///@function push_front(value)
 	static push_front = function(Value) { index_insert(0, Value) }
 
-	///@function erase_index(index)
-	static erase_index = function(Index) {
+	///@function erase_at(index)
+	static erase_at = function(Index) {
 		var Value = at(Index)
 		ds_list_delete(raw, Index)
 		return Value
 	}
 
-	///@function erase_one(iterator)
-	static erase_one = function(It) {
-		var Value = It.get()
-		ds_list_delete(raw, It)
-		It.pointer--
-		return Value
-	}
-
 	///@function pop_back()
-	static pop_back = function() { return erase_index(size() - 1) }
+	static pop_back = function() { return erase_at(size() - 1) }
 
 	///@function pop_front()
-	static pop_front = function() { return erase_index(0) }
+	static pop_front = function() { return erase_at(0) }
 
 	///@function clear()
 	static clear = function() { ds_list_clear(raw) }

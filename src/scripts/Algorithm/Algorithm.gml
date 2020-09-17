@@ -11,19 +11,22 @@ function assign(First, Last) {
 	return Output
 }
 
-///@function erase(begin, [end])
-function erase() {
-	var First = make_iterator(argument[0])
+///@function erase(begin, end)
+function erase(First, Last) {
+	if is_real(First) {
+		var Index = First
+		First = Last.container.first()
+		First.index = Index
+		First.pointer = Index
+	} else if !First.is_pure {
+		First = First.duplicate()
+	}
+	var Cont = First.container
 
-	if argument_count == 1 {
-		erase_one(First)
-	} else if argument_count == 2 {
-		var Result = First.duplicate()
-		while First.not_equals(argument[1]) {
-			erase_one(First)
-			First.go()
-			Result.go() // last
-		}
+	var Result = First.duplicate() // last
+	while First.not_equals(Last) {
+		Cont.erase_at(First.get_index())
+		First.go()
 	}
 	return Result
 }
@@ -231,12 +234,20 @@ function replace_copy(First, Last, Output, OldVal, NewVal) {
 
 ///@function remove(begin, end, value)
 function remove(First, Last, Value) {
-	First = make_iterator(First)
+	if is_real(First) {
+		var Index = First
+		First = Last.container.first()
+		First.index = Index
+		First.pointer = Index
+	} else if !First.is_pure {
+		First = First.duplicate()
+	}
+	var Cont = First.container
 
 	var Result = First.duplicate()
 	while First.not_equals(Last) {
 		if First.get() == Value
-			erase_one(Result)
+			Cont.erase_at(Result.get_index())
 		else
 			Result.go()
 		First.go()
@@ -246,12 +257,20 @@ function remove(First, Last, Value) {
 
 ///@function remove_if(begin, end, predicate)
 function remove_if(First, Last, Pred) {
-	First = make_iterator(First)
+	if is_real(First) {
+		var Index = First
+		First = Last.container.first()
+		First.index = Index
+		First.pointer = Index
+	} else if !First.is_pure {
+		First = First.duplicate()
+	}
+	var Cont = First.container
 
 	var Result = First.duplicate()
 	while First.not_equals(Last) {
 		if Pred(First.get())
-			erase_one(Result)
+			Cont.erase_at(Result.get_index())
 		else
 			Result.go()
 		First.go()

@@ -78,15 +78,12 @@ function Unordered_Map(): Container() constructor {
 	///@function set_map(key, builtin_map_id)
   static set_map = function(K, Value) { ds_map_add_map(raw, K, Value)  }
 
-	///@function erase_index(key)
-	static erase_index = function(K) {
+	///@function erase_at(key)
+	static erase_at = function(K) {
 		var Temp = seek(K)
 		ds_map_delete(raw, K)
 		return Temp
 	}
-
-	///@function erase_one(iterator)
-	static erase_one = function(It) { return erase_index(It.get_key()) }
 
 	///@function clear()
 	static clear = function() { ds_map_clear(raw) }

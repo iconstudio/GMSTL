@@ -148,16 +148,13 @@ function Multimap(): Container() constructor {
 		return self
 	}
 
-	///@function erase_index(key)
-	static erase_index = function(K) {
+	///@function erase_at(key)
+	static erase_at = function(K) {
 		var Temp = seek(K)
 		ds_map_delete(raw, K)
 		remove(cash.first(), cash.last(), K)
 		return Temp
 	}
-
-	///@function erase_one(iterator)
-	static erase_one = function(It) { return erase_index(It.get_index()) }
 
 	///@function clear()
 	static clear = function() { ds_map_clear(raw) }
