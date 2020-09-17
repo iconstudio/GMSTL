@@ -38,6 +38,9 @@ function Binary_Tree(): List() constructor {
 	///@function contains(value)
   static contains = function(Value) { return !is_undefined(bucket(Value)) }
 
+	///@function valid(index)
+  static valid = function(Index) { return bool(Index < size() and at(Index) != NODE_NULL) }
+
 	///@function head()
 	static head = function() { return front() }
 
@@ -57,11 +60,11 @@ function Binary_Tree(): List() constructor {
 
 	///@function insert_recursive(value, hint)
   static insert_recursive = function(Value, Hint) {
-		var Size = size(), CompVal = at(Hint)
-		if Size < Hint or CompVal == NODE_NULL {
+		if !valid(Hint) {
 			set(Hint, Value)
 			return Hint
 		} else {
+			var CompVal = at(Hint)
 			if key_comparator(Value, CompVal)
 				return insert_recursive(Value, left(Hint))
 			else
@@ -85,8 +88,10 @@ function Binary_Tree(): List() constructor {
 	///@function push(value)
   static push = function(Value) { insert(Value) }
 
-	///@function contains(value)
-  static contains = function(Value) { return binary_search(first(), last(), Value, key_comparator) }
+	///@function erase_at(index)
+	static erase_at = function(Index) {
+		
+	}
 
 	///@function set_key_comp(compare_function)
 	function set_key_comp(Func) { key_comparator = method(other, Func) }
