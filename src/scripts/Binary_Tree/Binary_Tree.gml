@@ -20,19 +20,7 @@ function Binary_Tree(): List() constructor {
 		if 0 == size()
 			return undefined
 
-		var CompVal, Index = 0, Size = size()
-		while Index < Size {
-			CompVal = at(Index)
-			if check_comparator(Value, CompVal) {
-				return Index
-			} else {
-				if key_comparator(Value, CompVal)
-					Index = left(Index)
-				else
-					Index = right(Index)
-			}
-		}
-		return undefined
+		return ds_list_find_index(raw, Value)
 	}
 
 	///@function contains(value)
@@ -50,7 +38,7 @@ function Binary_Tree(): List() constructor {
 		if Index < Size {
 			ds_list_set(raw, Index, Value)
 		} else {
-			var Times = Index - Size - 1
+			var Times = Index - Size
 			repeat Times
 				push_back(NODE_NULL)
 			push_back(Value)
@@ -58,52 +46,86 @@ function Binary_Tree(): List() constructor {
 		return self
 	}
 
-	///@function insert_recursive(value, hint)
-  static insert_recursive = function(Value, Hint) {
-		if !valid(Hint) {
-			set(Hint, Value)
-			return Hint
-		} else {
-			var CompVal = at(Hint)
-			if key_comparator(Value, CompVal)
-				return insert_recursive(Value, left(Hint))
-			else
-				return insert_recursive(Value, right(Hint))
-		}
-	}
-
 	///@function insert(item)
   static insert = function(Value) {
-		if 0 == size() {
-			push_back(Value)
-			return 0
-		}
-
-		if key_comparator(Value, head())
-			return insert_recursive(Value, left(0))
-		else
-			return insert_recursive(Value, right(0))
+		push_back(Value)
+		return size()
 	}
 
 	///@function push(value)
   static push = function(Value) { insert(Value) }
 
-	///@function erase_at(index)
-	static erase_at = function(Index) {
-		
+	///@function move_children(index, destination)
+	static move_children = function(Index, Target) {
+		var Left = left(Index), Right = right(Index)
+		var LeftChk = valid(Left), RightChk = valid(Right)
+		set(Target, at(Index))
+		set(Index, NODE_NULL)
+
+		if LeftChk {
+			move_children(Left, left(Target))
+		}
+		if RightChk {
+			move_children(Right, right(Target))
+		}
 	}
 
-	///@function set_key_comp(compare_function)
-	function set_key_comp(Func) { key_comparator = method(other, Func) }
+	///@function erase_at(index)
+	/*
+			Splice the case of erasing a key from the Tree.
+			
+			case 1: a leaf node
+				Just remove it.
+			
+			case 2: the node has one child
+				Remove it and pull up its children.
+			
+			case 3: the node has two children
+				Replace it with smallest one and remove the original smallest one.
+	*/
+	static erase_at = function(Index) {
+		if valid(Index) {
+			var Left = left(Index), Right = right(Index)
+			var LeftChk = valid(Left), RightChk = valid(Right)
+			deallocate(Index)
 
-	///@function set_check_comp(compare_function)
-	function set_check_comp(Func) { check_comparator = method(other, Func) }
+			if !LeftChk and !RightChk { // has no child
+			} else if LeftChk and !RightChk { // on left
+				move_children(Left, Index)
+			} else if !LeftChk and RightChk { // on right
+				move_children(Right, Index)
+			} else { // two children
+				var Result = Left, LeftofLeft = left(Left)
+				while true {
+					if !valid(LeftofLeft) {
+						break
+					}
+					Result = LeftofLeft // the smallest
+					LeftofLeft = left(Result) 
+				}
+				set(Index, at(Result))
+				erase_at(Result)
+			}
+
+			gc_collect()
+		}
+	}
+
+	///@function set_deallocator(destroy_function)
+	static set_deallocator = function(Func) { deallocator = method(other, Func) }
+
+	///@function deallocate(index)
+	static deallocate = function(Index) {
+		var Elem = at(Index)
+		if !is_undefined(deallocator)
+			deallocator(Elem)
+		set(Index, NODE_NULL)
+	}
 
 	type = Binary_Tree
-	key_comparator = compare_less
-	check_comparator = compare_equal
+	deallocator = undefined
 
-		// ** Assigning **
+	// ** Assigning **
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]
