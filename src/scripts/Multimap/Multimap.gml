@@ -172,8 +172,8 @@ function Multimap(): Container() constructor {
 	///@function set_value_comp(compare_function)
 	function set_value_comp(Func) { value_comparator = method(other, Func) return self }
 
-	///@function cash_push(key)
-	function cash_push(K) {
+	///@static cash_push = function(key)
+	static cash_push = function(K) {
 		if 1 < cash.size() {
 			cash.push_back(K)
 			stable_sort(cash.first(), cash.last(), key_comparator)

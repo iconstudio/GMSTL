@@ -13,10 +13,9 @@
 		new Map()
 
 	Usage:
-		To Iterate with pairs:
+		To Iterate values:
 			for (var It = Container.first(); It.not_equals(Container.last()); It.go()) {
-				var Pair = It.get()
-				myfunc(Pair[1])
+				myfunc(It.get())
 			}
 		
 */
@@ -31,13 +30,13 @@ function Map(): Container() constructor {
 	///@function contains(key)
   static contains = function(K) { return ds_map_exists(raw, K) }
 
-	///@function seek(key)
-  static seek = function(K) { return ds_map_find_value(raw, K) }
-
 	///@function at(index)
-  static at = function(Index) {
+  static at = function(Index) { return ds_map_find_value(raw, K) }
+
+	///@function seek(key)
+  static seek = function(K) {
 		var K = cash.at(Index)
-		return make_pair(K, seek(K))
+		return make_pair(K, at(K))
 	}
 
   ///@function back()
@@ -118,8 +117,8 @@ function Map(): Container() constructor {
 	///@function is_map(key)
   static is_map = function(K) { return ds_map_is_map(raw, K) }
 
-	///@function cash_push(key)
-	function cash_push(K) {
+	///@static cash_push = function(key)
+	static cash_push = function(K) {
 		if 1 < cash.size() {
 			cash.push_back(K)
 			cash.sort_builtin(true)

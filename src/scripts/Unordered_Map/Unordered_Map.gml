@@ -13,10 +13,9 @@
 		new Unordered_Map()
 
 	Usage:
-		To Iterate with pairs:
+		To Iterate values:
 			for (var It = Container.first(); It.not_equals(Container.last()); It.go()) {
-				var Pair = It.get()
-				myfunc(Pair[1])
+				myfunc(It.get())
 			}
 		
 */
@@ -30,11 +29,11 @@ function Unordered_Map(): Container() constructor {
 	///@function contains(key)
   static contains = function(K) { return ds_map_exists(raw, K) }
 
-	///@function seek(key)
-  static seek = function(K) { return ds_map_find_value(raw, K) }
+	///@function at(key)
+  static at = function(K) { return ds_map_find_value(raw, K) }
 
-	///@function at(index)
-  static at = function(K) { return make_pair(K, seek(K)) }
+	///@function seek(key)
+  static seek = function(K) { return make_pair(K, at(K)) }
 
   ///@function back()
 	static back = function() { return at(ds_map_find_last(raw)) }
@@ -80,7 +79,7 @@ function Unordered_Map(): Container() constructor {
 
 	///@function erase_at(key)
 	static erase_at = function(K) {
-		var Temp = seek(K)
+		var Temp = at(K)
 		ds_map_delete(raw, K)
 		return Temp
 	}
@@ -90,8 +89,8 @@ function Unordered_Map(): Container() constructor {
 
 	///@function key_swap(key_1, key_2)
   static key_swap = function(Key1, Key2) {
-		var Temp = seek(Key1)
-		ds_map_set(raw, Key1, seek(Key2))
+		var Temp = at(Key1)
+		ds_map_set(raw, Key1, at(Key2))
 		ds_map_set(raw, Key2, Temp)
 	}
 
