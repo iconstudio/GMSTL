@@ -6,7 +6,7 @@ For more detail, see the [Wiki](https://github.com/iconstudio/GMContainers/wiki)
   * [x] Check: All, Any and None
   * [x] Iterate: Foreach
   * [x] Search: Find, Count, Binary Search
-  * [x] Simple Modify: Erase, Insert and Assign
+  * [x] Simple Modify: Erase, Insert and Assign (Only for sequential containers)
   * [x] Swap
   * [x] Overwrite: Move, Fill, Copy and Replace
   * [x] Modify: Transform, Rotate, Reverse
@@ -38,6 +38,7 @@ For more detail, see the [Wiki](https://github.com/iconstudio/GMContainers/wiki)
 
   * [ ] Grid
   * [ ] Binary Tree
+  * [ ] Binary Search Tree
   * [ ] Red-Black Tree
   * [ ] Heap Tree
 
