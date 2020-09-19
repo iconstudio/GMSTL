@@ -31,12 +31,12 @@ function Map(): Container() constructor {
   static contains = function(K) { return ds_map_exists(raw, K) }
 
 	///@function at(index)
-  static at = function(Index) { return ds_map_find_value(raw, K) }
+  static at = function(Index) { return ds_map_find_value(raw, cash.at(Index)) }
 
 	///@function seek(key)
   static seek = function(K) {
-		var K = cash.at(Index)
-		return make_pair(K, at(K))
+		var Index = cash.seek(K)
+		return make_pair(K, at(Index))
 	}
 
   ///@function back()

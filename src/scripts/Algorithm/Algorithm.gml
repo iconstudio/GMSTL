@@ -82,7 +82,11 @@ function foreach(First, Last, Pred) {
 function find(First, Last, Value) {
 	First = make_iterator(First)
 
-	var Compare = 3 < argument_count ? argument[3] : compare_equal
+	var Compare
+	if 3 < argument_count
+		Compare = argument[3]
+	else
+		Compare = compare_equal
 	while First.not_equals(Last) {
 		if Compare(First.get(), Value)
 			return First
@@ -371,7 +375,11 @@ function min_element(First, Last) {
 
 	var Result = First.duplicate()
 	var Cursor = First.next()
-	var Compare = 2 < argument_count ? argument[2] : compare_less
+	var Compare
+	if 2 < argument_count
+		Compare = argument[2]
+	else
+		Compare = compare_less
 	while Cursor.not_equals(Last) {
 		if Compare(Cursor.get(), Result.get()) {
 			delete Result
@@ -391,7 +399,11 @@ function max_element(First, Last) {
 
 	var Result = First.duplicate()
 	var Cursor = First.next()
-	var Compare = 2 < argument_count ? argument[2] : compare_less
+	var Compare
+	if 2 < argument_count
+		Compare = argument[2]
+	else
+		Compare = compare_less
 	while Cursor.not_equals(Last) {
 		if Compare(Result.get(), Cursor.get()) {
 			delete Result
@@ -408,7 +420,11 @@ function max_element(First, Last) {
 function lower_bound(First, Last, Value) { // return the first and largest element which less than value.
 	First = make_iterator(First)
 
-	var Compare = 3 < argument_count ? argument[3] : compare_less
+	var Compare
+	if 3 < argument_count
+		Compare = argument[3]
+	else
+		Compare = compare_less
 	var It, Step, count = First.distance(Last)
 	while 0 < count {
 		Step = count * 0.5
@@ -429,7 +445,11 @@ function lower_bound(First, Last, Value) { // return the first and largest eleme
 function upper_bound(First, Last, Value) { // return a greater element to the value.
 	First = make_iterator(First)
 
-	var Compare = 3 < argument_count ? argument[3] : compare_less
+	var Compare
+	if 3 < argument_count
+		Compare = argument[3]
+	else
+		Compare = compare_less
 	var It, Step, count = First.distance(Last)
 	while 0 < count {
 		Step = count * 0.5
@@ -450,7 +470,11 @@ function upper_bound(First, Last, Value) { // return a greater element to the va
 function binary_search(First, Last, Value) {
 	First = make_iterator(First)
 
-	var Compare = 3 < argument_count ? argument[3] : compare_less
+	var Compare
+	if 3 < argument_count
+		Compare = argument[3]
+	else
+		Compare = compare_less
 	First = lower_bound(First, Last, Value, Compare)
 	var FirstVal = First.get()
 	return bool(First.not_equals(Last) and !Compare(Value, FirstVal))
@@ -464,7 +488,11 @@ function sort(First, Last) {
 	if Last.index <= 1
 		exit
 
-	var Compare = 2 < argument_count ? argument[2] : compare_less
+	var Compare
+	if 2 < argument_count
+		Compare = argument[2]
+	else
+		Compare = compare_less
 	var Pivot = First.duplicate(), Pivot_Next, Value = 0
 	for (var It = First.next(); It.index < First.index + Last.index; It.go()) {
 		Value = It.get()
@@ -493,7 +521,11 @@ function sort(First, Last) {
 function stable_sort(First, Last) {
 	First = make_iterator(First)
 
-	var selection, Compare = 2 < argument_count ? argument[2] : compare_less
+	var selection, Compare
+	if 2 < argument_count
+		Compare = argument[2]
+	else
+		Compare = compare_less
 	while First.not_equals(Last) {
 		selection = min_element(First, Last, Compare)
 		selection.swap(First)
@@ -507,7 +539,11 @@ function stable_sort(First, Last) {
 function insertion_sort(First, Last) {
 	First = make_iterator(First).go()
 
-	var Compare = 2 < argument_count ? argument[2] : compare_less
+	var Compare
+	if 2 < argument_count
+		Compare = argument[2]
+	else
+		Compare = compare_less
 	while First.not_equals(Last) {
 		var Value = First.get()
 		for(var It = First.previous(); 0 <= It.get_index() and Compare(Value, It.get()); It.back()) {
@@ -529,7 +565,11 @@ function merge_sort(First, Last) {
 	if Dist <= 1
 		exit
 
-	var Compare = 2 < argument_count ? argument[2] : compare_less
+	var Compare
+	if 2 < argument_count
+		Compare = argument[2]
+	else
+		Compare = compare_less
 	var Middle = iterator_advance(First, Dist * 0.5)
 	merge_sort(First, Middle, Compare)
 	merge_sort(Middle, Last, Compare)
@@ -656,7 +696,11 @@ function nth_element(First, Nth, Last) {
 	if First.equals(Last) or Nth.equals(Last)
 		exit
 
-	var Compare = 3 < argument_count ? argument[3] : compare_less
+	var Compare
+	if 3 < argument_count
+		Compare = argument[3]
+	else
+		Compare = compare_less
 	while 32 < First.distance(Last) { // divide and conquer, ordering partition containing Nth
 		var Middle = partition_by_median_guess(First, Last, Compare)
 
@@ -678,7 +722,11 @@ function is_sorted(First, Last) {
 	if First.equals(Last)
 		return true
 
-	var Compare = 2 < argument_count ? argument[2] : compare_less
+	var Compare
+	if 2 < argument_count
+		Compare = argument[2]
+	else
+		Compare = compare_less
 	var Next = First.next()
 	while Next.not_equals(Last) {
 		if Compare(Next.get(), First.get()) {
@@ -699,7 +747,11 @@ function unguarded_partition(First, Last, Pivot) {
 	First = make_iterator(First)
 	Last = make_iterator(Last)
 
-	var Compare = 3 < argument_count ? argument[3] : compare_less
+	var Compare
+	if 3 < argument_count
+		Compare = argument[3]
+	else
+		Compare = compare_less
 	while true {
 	  while Compare(First.get(), Pivot.get())
 			First.go()
@@ -769,7 +821,11 @@ function merge(First, Last, OtherFirst, OtherLast, Output) {
 	OtherFirst = make_iterator(OtherFirst)
 	OtherLast = make_iterator(OtherLast)
 
-	var Compare = 5 < argument_count ? argument[5] : compare_less
+	var Compare
+	if 5 < argument_count
+		Compare = argument[5]
+	else
+		Compare = compare_less
 	while true {
 		if First.equals(Last)
 			return copy(OtherFirst, OtherLast, Output)
@@ -798,7 +854,11 @@ function inplace_merge(First, Middle, Last) {
 	Middle = make_iterator(Middle)
 	Last = make_iterator(Last)
 
-	var Compare = 3 < argument_count ? argument[3] : compare_less
+	var Compare
+	if 3 < argument_count
+		Compare = argument[2]
+	else
+		Compare = compare_less
 	var Temp = duplicate()
 	Temp.merge(self, First, Middle, self, Middle, Last, First, Compare)
 	copy(Temp.first(), Temp.last(), First)
@@ -809,7 +869,11 @@ function inplace_merge(First, Middle, Last) {
 function shuffle(First, Last) {
 	First = make_iterator(First)
 
-	var Urng = 2 < argument_count ? argument[2] : irandom_range
+	var Urng
+	if 2 < argument_count
+		Urng = argument[2]
+	else
+		Urng = irandom_range
 	var Dist = iterator_distance(First, Last)
 	for (var i = Dist - 1; 0 < i; --i) {
 	  swap(iterator_advance(First, i), iterator_advance(First, Urng(0, i)))
@@ -820,7 +884,11 @@ function shuffle(First, Last) {
 function random_shuffle(First, Last) {
 	First = make_iterator(First)
 
-	var Gen = 2 < argument_count ? argument[2] : irandom
+	var Gen
+	if 2 < argument_count
+		Gen = argument[2]
+	else
+		Gen = irandom
 	var Dist = iterator_distance(First, Last)
 	for (var i = Dist - 1; 0 < i; --i) {
 	  swap(iterator_advance(First, i), iterator_advance(First, Gen(i + 1)))

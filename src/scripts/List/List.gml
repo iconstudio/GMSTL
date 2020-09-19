@@ -24,6 +24,9 @@ function List(): Container() constructor {
 	///@function at(index)
   static at = function(Index) { return ds_list_find_value(raw, Index) }
 
+	///@function seek(value)
+  static seek = function(Value) { return ds_list_find_index(raw, Value) }
+
 	///@function back()
 	static back = function() { return at(size() - 1) }
 
