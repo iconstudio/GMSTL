@@ -30,14 +30,14 @@ function Map(): Container() constructor {
 	///@function contains(key)
   static contains = function(K) { return ds_map_exists(raw, K) }
 
-	///@function at(index)
-  static at = function(Index) { return ds_map_find_value(raw, cash.at(Index)) }
+	///@function key_at(index)
+  static key_at = function(Index) { return cash.at(Index) }
 
 	///@function seek(key)
-  static seek = function(K) {
-		var Index = cash.seek(K)
-		return make_pair(K, at(Index))
-	}
+  static seek = function(K) { return ds_map_find_value(raw, K) }
+
+	///@function at(index)
+  static at = function(Index) { return ds_map_find_value(raw, key_at(Index)) }
 
   ///@function back()
 	static back = function() { return at(size() - 1) }

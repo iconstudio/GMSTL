@@ -13,10 +13,9 @@
 		new Unordered_Multimap()
 
 	Usage:
-		To Iterate values with pairs:
+		To Iterate values:
 			for (var It = Container.first(); It.not_equals(Container.last()); It.go()) {
-				var Pair = It.get()
-				myfunc(Pair[1])
+				myfunc(It.get())
 			}
 		
 */
@@ -34,25 +33,13 @@ function Unordered_Multimap(): Container() constructor {
   static seek = function(K) { return ds_map_find_value(raw, K) }
 
 	///@function at(index)
-  static at = function(K) { return make_pair(K, seek(K)) }
+  static at = function(Index) { return (new iterator_type(self, Index)).get() }
 
   ///@function back()
 	static back = function() { return at(ds_map_find_last(raw)) }
 
   ///@function front()
 	static front = function() {  return at(ds_map_find_first(raw)) }
-
-	///@function bucket_find(bucket_index)
-  static bucket_find = function(Index) {
-		if Index < size() {
-			var It = new MapIterator(self, Index)
-			var Result = seek(It.get_key())
-			delete It
-			return Result
-		} else {
-			return undefined
-		}
-	}
 
 	///@function bucket_create(key, [value])
 	static bucket_create = function(K) {

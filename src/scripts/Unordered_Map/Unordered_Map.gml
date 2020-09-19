@@ -29,17 +29,17 @@ function Unordered_Map(): Container() constructor {
 	///@function contains(key)
   static contains = function(K) { return ds_map_exists(raw, K) }
 
-	///@function at(key)
-  static at = function(K) { return ds_map_find_value(raw, K) }
-
 	///@function seek(key)
-  static seek = function(K) { return make_pair(K, at(K)) }
+  static seek = function(K) { return ds_map_find_value(raw, K) }
+
+	///@function at(index)
+  static at = function(Index) { return (new iterator_type(self, Index)).get() }
 
   ///@function back()
-	static back = function() { return at(ds_map_find_last(raw)) }
+	static back = function() { return at(0) }
 
   ///@function front()
-	static front = function() {  return at(ds_map_find_first(raw)) }
+	static front = function() {  return at(size()) }
 
 	///@function first()
   static first = function() { return (new iterator_type(self, 0)).pure() }
