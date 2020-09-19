@@ -59,7 +59,7 @@ function Binary_Tree(): List() constructor {
 	static move_children = function(Index, Target) {
 		var Left = left(Index), Right = right(Index)
 		var LeftChk = valid(Left), RightChk = valid(Right)
-		set(Target, at(Index))
+		var Value = at(Index)
 		set(Index, NODE_NULL)
 
 		if LeftChk {
@@ -68,6 +68,7 @@ function Binary_Tree(): List() constructor {
 		if RightChk {
 			move_children(Right, right(Target))
 		}
+		set(Target, Value)
 	}
 
 	///@function erase_at(index)
