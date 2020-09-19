@@ -1,4 +1,4 @@
-# STL for GameMaker Studio 2
+# GMSTL: STL for GameMaker Studio 2
 For more detail, see the [Wiki](https://github.com/iconstudio/GMContainers/wiki).
 
 ## Contents
@@ -37,8 +37,8 @@ For more detail, see the [Wiki](https://github.com/iconstudio/GMContainers/wiki)
 ###  Graph Containers:
 
   * [ ] Grid
-  * [ ] Binary Tree
-  * [ ] Binary Search Tree
+  * [x] Binary Tree
+  * [x] Binary Search Tree
   * [ ] Red-Black Tree
   * [ ] Heap Tree
 
