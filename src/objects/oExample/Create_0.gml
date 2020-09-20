@@ -27,7 +27,7 @@ print(test_sum)
 
 test_sum.push_front(6)
 show_debug_message("\nTree")
-test_tree = new BinarySearch_Tree(test_sum)
+test_tree = new Heap_Tree(test_sum)
 
 function tree_print(Cont, Index, Msg) {
 	Msg = select_argument(Msg, "[" + string(Index) + "]\t")
@@ -44,6 +44,8 @@ function tree_print(Cont, Index, Msg) {
 		tree_print(Cont, Right, "R(" + string(Index) + ") -> [" + string(Right) + "]\t\t")
 	}
 }
+tree_print(test_tree, 0, "Head(0)\t")
+/*
 tree_print(test_tree, 0, "Head(0)\t")
 show_debug_message("Seaching (3): " + string(test_tree.bucket(3)))
 show_debug_message("Seaching (4): " + string(test_tree.bucket(4)))

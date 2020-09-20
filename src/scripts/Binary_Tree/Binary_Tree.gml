@@ -27,7 +27,7 @@ function Binary_Tree(): List() constructor {
 	static contains = function(Value) { return !is_undefined(bucket(Value)) }
 
 	///@function valid(index)
-	static valid = function(Index) { return bool(is_real(Index) and 0 < Index and Index < size() and at(Index) != NODE_NULL) }
+	static valid = function(Index) { return bool(is_real(Index) and 0 <= Index and Index < size() and at(Index) != NODE_NULL) }
 
 	///@function head()
 	static head = function() { return front() }
