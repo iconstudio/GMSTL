@@ -51,12 +51,6 @@ function Map(): Container() constructor {
 	///@function last()
 	static last = function() { return (new iterator_type(self, size())).pure() }
 
-	///@function cfirst()
-	static cfirst = function() { return (new const_iterator_type(self, 0)).pure() }
-
-	///@function clast()
-	static clast = function() { return (new const_iterator_type(self, size())).pure() }
-
 	//////@function set(index, value)
 	static set = function(Index, Value) { 
 		var Key = cash.at(Index)
@@ -151,7 +145,6 @@ function Map(): Container() constructor {
 	type = Map
 	raw = ds_map_create()
 	iterator_type = ForwardIterator
-	const_iterator_type = ConstIterator
 	cash = new List()
 	
 	if 0 < argument_count {

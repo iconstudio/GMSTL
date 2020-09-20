@@ -1,6 +1,6 @@
 function BinarySearch_Tree(): Binary_Tree() constructor {
-	///@function bucket(value)
-	static bucket = function(Value) {
+	///@function find_of(value)
+	static find_of = function(Value) {
 		if 0 == size()
 			return undefined
 

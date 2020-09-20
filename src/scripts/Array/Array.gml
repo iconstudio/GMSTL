@@ -33,12 +33,6 @@ function Array(): Container() constructor {
 	///@function last()
 	static last = function() { return (new iterator_type(self, size())).pure() }
 
-	///@function cfirst()
-	static cfirst = function() { return (new const_iterator_type(self, 0)).pure() }
-
-	///@function clast()
-	static clast = function() { return (new const_iterator_type(self, size())).pure() }
-
 	//////@function set(index, value)
 	static set = function(Index, Value) {
 		raw[Index] = Value
@@ -56,7 +50,6 @@ function Array(): Container() constructor {
 
 	type = Array
 	iterator_type = RandomIterator
-	const_iterator_type = ConstIterator
 	inner_size = 0
 
 	// ** Assigning **

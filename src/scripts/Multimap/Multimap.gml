@@ -26,7 +26,7 @@
 			for (var It = Bucket.first(); It.not_equal(Bucket.last()); It.go())
 				myfunc(It.get())
 
-		To Iterate values with bucket indexes:
+		To Iterate values with find_of indexes:
 			var KList, Key, Values
 			for (var i = 0; i < Container.bucket_count(); ++i) {
 				KList = Container.at(i)
@@ -35,7 +35,7 @@
 			}
 
 		To Iterate values within methods:
-			var Bucket = Container.bucket("KEY")
+			var Bucket = Container.find_of("KEY")
 			myfunc(Container.first(Bucket), Container.last(Bucket))
 		
 */
@@ -64,8 +64,8 @@ function Multimap(): Container() constructor {
 	///@function front()
 	static front = function() { return at(0) }
 
-	///@function bucket(key)
-	static bucket = function(K) { return cash.seek(K) }
+	///@function find_of(key)
+	static find_of = function(K) { return cash.seek(K) }
 
 	///@function bucket_count()
 	static bucket_count = function() { return cash.size() }
@@ -92,22 +92,6 @@ function Multimap(): Container() constructor {
 			return at(argument[0]).last()
 		else
 			return (new iterator_type(self, size())).pure()
-	}
-
-	///@function cfirst([bucket_index])
-	static cfirst = function() {
-		if 1 == argument_count
-			return at(argument[0]).cfirst()
-		else
-			return (new const_iterator_type(self, 0)).pure()
-	}
-
-	///@function clast([bucket_index])
-	static clast = function() {
-		if 1 == argument_count
-			return at(argument[0]).clast()
-		else
-			return (new const_iterator_type(self, size())).pure()
 	}
 
 	///@function set(bucket_index, list)
@@ -200,7 +184,6 @@ function Multimap(): Container() constructor {
 	type = Map
 	raw = ds_map_create()
 	iterator_type = ForwardIterator
-	const_iterator_type = ConstIterator
 	key_comparator = compare_complex_less
 	value_comparator = compare_less
 	cash = new List()
