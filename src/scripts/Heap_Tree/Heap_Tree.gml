@@ -23,26 +23,33 @@ function Heap_Tree(): Binary_Tree() constructor {
 
 	///@function erase_head()
 	static erase_head = function() { // overwrite
-		var HeadValue = front()
-		var LastValue = back()
-		pop_back()
-		var Parent = 0, Child = left(0)
 		var Size = size()
+		var Index = 0, Left = left(Index), Right = right(Index), Minimum, MinPosition
+		
+		var HeadValue = at(0)
+		set(0, back())
+		pop_back()
 
-		while Child < Size {
-			if right(Parent) < Size and key_comparator(at_left(Parent), at_right(Parent))
-				Child++
+		while Left < Size {
+			Minimum = at(Left)
+			MinPosition = Left
 
-			if !key_comparator(LastValue, at(Child))
+			if Right < Size and key_comparator(at(Right), Minimum) {
+				Minimum = at(Right)
+				MinPosition = Right
+			}
+
+			if at(Index) < Minimum
 				break
 
-			var Value = at(Parent)
-			set(Parent, at(Child))
-			set(Child, Value)
-			Parent = Child
-			Child = left(Child)
-		}
-		set(Parent, LastValue)
+			var Temp = at(Index)
+			set(Index, at(MinPosition))
+			set(MinPosition, Temp)
+
+			Index = MinPosition
+			Left = left(Index)
+			Right = right(Index)
+        }
 	}
 
 	///@function set_key_comp(compare_function)
