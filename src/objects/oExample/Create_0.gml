@@ -24,10 +24,7 @@ show_debug_message("bsearch(2): " + string(binary_search(test2.first(), test2.la
 show_debug_message("\nThe Summary List")
 merge(test1.first(), test1.last(), test2.first(), test2.last(), test_sum.first())
 print(test_sum)
-
-test_sum.push_front(6)
-show_debug_message("\nTree")
-test_tree = new Heap_Tree(test_sum)
+random_shuffle(test_sum.first(), test_sum.last())
 
 function tree_print(Cont, Index, Msg) {
 	Msg = select_argument(Msg, "[" + string(Index) + "]\t")
@@ -36,22 +33,34 @@ function tree_print(Cont, Index, Msg) {
 	var Size = Cont.size()
 	var Left = Cont.left(Index), Right = Cont.right(Index)
 	var LeftVal = Cont.at(Left), RightVal = Cont.at(Right)
+	var LeftChk = Left < Size and LeftVal != NODE_NULL
+	var RightChk = Right < Size and RightVal != NODE_NULL
 
-	if Left < Size and LeftVal != NODE_NULL {
+	if LeftChk {
 		tree_print(Cont, Left, "L(" + string(Index) + ") -> [" + string(Left) + "]\t\t")
 	}
-	if Right < Size and RightVal != NODE_NULL {
+
+	if RightChk {
 		tree_print(Cont, Right, "R(" + string(Index) + ") -> [" + string(Right) + "]\t\t")
+		show_debug_message("--------")
 	}
 }
+show_debug_message("\nTree")
+test_tree = new Heap_Tree(test_sum)
+tree_print(test_tree, 0, "Head(0)\t")
+
+show_debug_message("\nTree")
+test_tree.erase_head()
+test_tree.erase_head()
+test_tree.erase_head()
 tree_print(test_tree, 0, "Head(0)\t")
 /*
 tree_print(test_tree, 0, "Head(0)\t")
-show_debug_message("Seaching (3): " + string(test_tree.bucket(3)))
-show_debug_message("Seaching (4): " + string(test_tree.bucket(4)))
-show_debug_message("Seaching (6): " + string(test_tree.bucket(6)))
-show_debug_message("Seaching (11): " + string(test_tree.bucket(11)))
-show_debug_message("Seaching (12): " + string(test_tree.bucket(12)))
+show_debug_message("Seaching (3): " + string(test_tree.find_of(3)))
+show_debug_message("Seaching (4): " + string(test_tree.find_of(4)))
+show_debug_message("Seaching (6): " + string(test_tree.find_of(6)))
+show_debug_message("Seaching (11): " + string(test_tree.find_of(11)))
+show_debug_message("Seaching (12): " + string(test_tree.find_of(12)))
 show_debug_message("\n")
 
 test_tree.insert(30)

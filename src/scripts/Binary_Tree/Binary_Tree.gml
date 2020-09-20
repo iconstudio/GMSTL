@@ -15,16 +15,14 @@ function Binary_Tree(): List() constructor {
 	///@function at_right(index)
 	static at_right = function(Index) { return at(right(Index)) }
 
-	///@function bucket(value)
-	static bucket = function(Value) {
-		if 0 == size()
-			return undefined
+	///@function find_of(value)
+	static find_of = function(Value) { return ds_list_find_index(raw, Value) }
 
-		return ds_list_find_index(raw, Value)
-	}
+	///@function find_parent(index)
+	static find_parent = function(Index) { return floor((Index - 1) * 0.5) }
 
 	///@function contains(value)
-	static contains = function(Value) { return !is_undefined(bucket(Value)) }
+	static contains = function(Value) { return !is_undefined(find_of(Value)) }
 
 	///@function valid(index)
 	static valid = function(Index) { return bool(is_real(Index) and 0 <= Index and Index < size() and at(Index) != NODE_NULL) }
@@ -51,9 +49,6 @@ function Binary_Tree(): List() constructor {
 		push_back(Value)
 		return size()
 	}
-
-	///@function push(value)
-	static push = function(Value) { insert(Value) }
 
 	///@function move_children(index, destination)
 	static move_children = function(Index, Target) {

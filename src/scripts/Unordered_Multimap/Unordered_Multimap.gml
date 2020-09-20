@@ -55,12 +55,6 @@ function Unordered_Multimap(): Container() constructor {
 	///@function last()
 	static last = function() { return (new iterator_type(self, size())).pure() }
 
-	///@function cfirst()
-	static cfirst = function() { return (new const_iterator_type(self, 0)).pure() }
-
-	///@function clast()
-	static clast = function() { return (new const_iterator_type(self, size())).pure() }
-
 	///@function set(key, value)
 	static set = function(K, Value) { ds_map_set(raw, K, Value) return self }
 
@@ -126,7 +120,6 @@ function Unordered_Multimap(): Container() constructor {
 	type = Unordered_Map
 	raw = ds_map_create()
 	iterator_type = MapIterator
-	const_iterator_type = ConstMapIterator
 
 	if 0 < argument_count {
 		if argument_count == 1 {

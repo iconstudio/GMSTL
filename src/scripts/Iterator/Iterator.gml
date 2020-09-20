@@ -77,9 +77,29 @@ function Iterator(Cont, Index) constructor {
 	is_pure = false
 }
 
-///@function ConstIterator(container, index)
-function ConstIterator(Cont, Index): Iterator(Cont, Index) constructor {
-	type = ConstIterator
+///@function ForwardIterator(container, index)
+function ForwardIterator(Cont, Index): Iterator(Cont, Index) constructor {
+	type = ForwardIterator
+
+	///@function set(value)
+	static set = function() { container.set(pointer, argument[0]) }
+
+	///@function swap(iterator)
+	static swap = function(Other) {
+		if is_iterator(Other) {
+			var Temp = get()
+			self.set(Other.get())
+			Other.set(Temp)
+		}
+	}
+}
+
+///@function BidirectionalIterator(container, index)
+function BidirectionalIterator(Cont, Index): Iterator(Cont, Index) constructor {
+	type = BidirectionalIterator
+
+	///@function set(value)
+	static set = function() { container.set(pointer, argument[0]) }
 
 	///@function back()
 	static back = function() { 
@@ -119,31 +139,6 @@ function ConstIterator(Cont, Index): Iterator(Cont, Index) constructor {
 			advance(-Other)
 		return self
 	}
-}
-
-///@function ForwardIterator(container, index)
-function ForwardIterator(Cont, Index): Iterator(Cont, Index) constructor {
-	type = ForwardIterator
-
-	///@function set(value)
-	static set = function() { container.set(pointer, argument[0]) }
-
-	///@function swap(iterator)
-	static swap = function(Other) {
-		if is_iterator(Other) {
-			var Temp = get()
-			self.set(Other.get())
-			Other.set(Temp)
-		}
-	}
-}
-
-///@function BidirectionalIterator(container, index)
-function BidirectionalIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
-	type = BidirectionalIterator
-
-	///@function set(value)
-	static set = function() { container.set(pointer, argument[0]) }
 
 	///@function swap(iterator)
 	static swap = function(Other) {
@@ -194,8 +189,10 @@ function RandomIterator(Cont, Index): BidirectionalIterator(Cont, Index) constru
 	}
 }
 
-///@function ConstMapIterator(container, index)
-function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
+///@function MapIterator(container, index)
+function MapIterator(Cont, Index): Iterator(Cont, Index) constructor {
+	static set = function(value) { container.insert(key, value) }
+
 	///@function get()
 	static get = function() { return container.at(key) }
 
@@ -245,11 +242,6 @@ function ConstMapIterator(Cont, Index): ConstIterator(Cont, Index) constructor {
 	}
 }
 
-///@function MapIterator(container, index)
-function MapIterator(Cont, Index): ConstMapIterator(Cont, Index) constructor {
-	static set = function(value) { container.insert(key, value) }
-}
-
 ///@function iterator_distance(iterator_1, iterator_2)
 function iterator_distance(ItA, ItB) {
 	if is_real(ItA) and is_real(ItB)
@@ -284,17 +276,6 @@ function make_iterator(Param) {
 	return Param
 }
 
-///@function make_const_iterator(parameter)
-function make_const_iterator(Param) {
-	if is_iterator(Param) {
-		if is_const_iterator(Param) {
-			if !Param.is_pure
-				return Param.duplicate()
-		}
-		return (new ConstIterator(Param.container, Param.index)).pure()
-	}
-	return Param
-}
 
 ///@function is_iterator(iterator)
 function is_iterator(iterator) {
@@ -302,10 +283,4 @@ function is_iterator(iterator) {
 		return bool(variable_struct_exists(iterator, "ITERATOR"))
 	else
 		return false
-}
-
-///@function is_const_iterator(iterator)
-function is_const_iterator(iterator) {
-	var meta = instanceof(iterator)
-	return bool(meta == "ConstIterator")
 }

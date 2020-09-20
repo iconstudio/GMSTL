@@ -1,24 +1,4 @@
 function Heap_Tree(): Binary_Tree() constructor {
-	///@function find_parent(index)
-	static find_parent = function(Index) { return floor((Index - 1) * 0.5) }
-
-	///@function insert_recursive(value, hint)
-	static insert_recursive = function(Value, Hint) {
-		var CompVal, Parent = find_parent(Hint)
-		while 0 < Hint {
-			CompVal = at(Parent)
-			if key_comparator(Value, CompVal) {
-				set(Hint, CompVal)
-				set(Parent, Value)
-			} else {
-				set(Hint, Value)
-				return Hint
-			}
-			Hint = Parent
-			Parent = find_parent(Hint)
-		}
-	}
-
 	///@function insert(item)
 	static insert = function(Value) {
 		if 0 == size() {
@@ -26,18 +6,57 @@ function Heap_Tree(): Binary_Tree() constructor {
 			return 0
 		}
 
-		return insert_recursive(Value, size())
+		var Index = size(), PriorValue, Parent
+		set(Index, Value)
+		while 0 < Index {
+			PriorValue = at(Index)
+			Parent = find_parent(Index)
+			if key_comparator(PriorValue, at(Parent)) {
+				set(Index, at(Parent))
+				set(Parent, PriorValue)
+				Index = Parent
+			} else {
+				break
+			}
+		}
+	}
+
+	///@function erase_head()
+	static erase_head = function() { // overwrite
+		var Size = size()
+		var Index = 0, Left = left(Index), Right = right(Index), Minimum, MinPosition
+		
+		var HeadValue = at(0)
+		set(0, back())
+		pop_back()
+
+		while Left < Size {
+			Minimum = at(Left)
+			MinPosition = Left
+
+			if Right < Size and key_comparator(at(Right), Minimum) {
+				Minimum = at(Right)
+				MinPosition = Right
+			}
+
+			if at(Index) < Minimum
+				break
+
+			var Temp = at(Index)
+			set(Index, at(MinPosition))
+			set(MinPosition, Temp)
+
+			Index = MinPosition
+			Left = left(Index)
+			Right = right(Index)
+        }
 	}
 
 	///@function set_key_comp(compare_function)
 	static set_key_comp = function(Func) { key_comparator = method(other, Func) }
 
-	///@function set_check_comp(compare_function)
-	static set_check_comp = function(Func) { check_comparator = method(other, Func) }
-
 	type = Heap_Tree
 	key_comparator = compare_less
-	check_comparator = compare_equal
 
 	// ** Assigning **
 	if 0 < argument_count {

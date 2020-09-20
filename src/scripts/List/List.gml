@@ -27,11 +27,11 @@ function List(): Container() constructor {
 	///@function seek(value)
 	static seek = function(Value) { return ds_list_find_index(raw, Value) }
 
-	///@function back()
-	static back = function() { return at(size() - 1) }
-
 	///@function front()
 	static front = function() { return at(0) }
+
+	///@function back()
+	static back = function() { return at(size() - 1) }
 
 	///@function first()
 	static first = function() { return (new iterator_type(self, 0)).pure() }
@@ -39,45 +39,35 @@ function List(): Container() constructor {
 	///@function last()
 	static last = function() { return (new iterator_type(self, size())).pure() }
 
-	///@function cfirst()
-	static cfirst = function() { return (new const_iterator_type(self, 0)).pure() }
-
-	///@function clast()
-	static clast = function() { return (new const_iterator_type(self, size())).pure() }
-
 	//////@function set(index, value)
-	static set = function(Index, Value) { ds_list_set(raw, Index, Value) return self }
+	static set = function(Index, Value) { ds_list_set(raw, Index, Value); return self }
 
 	//////@function index_insert(index, value)
 	static index_insert = function(Index, Value) { ds_list_insert(raw, Index, Value) }
 
-	///@function push_back(value)
-	static push_back = function(Value) { ds_list_add(raw, Value) }
-
 	///@function push_front(value)
 	static push_front = function(Value) { index_insert(0, Value) }
 
-	///@function erase_at(index)
-	static erase_at = function(Index) {
-		var Value = at(Index)
-		ds_list_delete(raw, Index)
-		return Value
-	}
+	///@function push_back(value)
+	static push_back = function(Value) { ds_list_add(raw, Value) }
 
-	///@function pop_back()
-	static pop_back = function() { return erase_at(size() - 1) }
+	///@function erase_at(index)
+	static erase_at = function(Index) { ds_list_delete(raw, Index) }
 
 	///@function pop_front()
-	static pop_front = function() { return erase_at(0) }
+	static pop_front = function() { erase_at(0) }
+
+	///@function pop_back()
+	static pop_back = function() { erase_at(size() - 1) }
 
 	///@function clear()
 	static clear = function() { ds_list_clear(raw) }
 
 	///@function sort_builtin(ascending)
-  function sort_builtin(Ascending) { ds_list_sort(raw, Ascending) }
+	static sort_builtin = function(Ascending) { ds_list_sort(raw, Ascending) }
 
 	///@function shuffle_builtin()
-  function shuffle_builtin() { ds_list_shuffle(raw) }
+	static shuffle_builtin = function() { ds_list_shuffle(raw) }
 
 	///@function mark_list(index)
 	static mark_list = function(Index) { ds_list_mark_as_list(raw, Index) }
@@ -103,7 +93,6 @@ function List(): Container() constructor {
 	raw = ds_list_create()
 	type = List
 	iterator_type = RandomIterator
-	const_iterator_type = ConstIterator
 	clear() // To avoid the 0-populate-value problem.
 
 	// ** Assigning **

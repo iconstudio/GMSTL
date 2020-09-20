@@ -1,7 +1,6 @@
 function Container() {
 	type = Container
 	iterator_type = undefined
-	const_iterator_type = undefined
 	raw = undefined
 
 	function data() { return raw }

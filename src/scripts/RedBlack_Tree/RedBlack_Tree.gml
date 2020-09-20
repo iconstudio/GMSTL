@@ -1,45 +1,61 @@
+///@function RBNode(value, color, [parent=undefined])
+static RBNode = function(Value, Color, Parent) constructor {
+	color = Color
+	value = Value
+	parent = select_argument(Parent, undefined)
+	child_type = RBChild.None
+	node_left = undefined
+	node_right = undefined
+	next = undefined
+	toString = function() {
+		return (color == RBColor.Black ? "Black: " : "Red: ") + string(value)
+	}
+}
+
+///@function make_rb_node(value, color, child_type, [parent=undefined], [next=undefined], [left=undefined], [right=undefined])
+static make_rb_node = function(Value, Color, Chty, Parent, NNext, Left, Right) {
+	var NewNode = new RBNode(Value, Color, Parent)
+	NewNode.child_type = select_argument(Chty, RBChild.None)
+	NewNode.next = NNext
+	NewNode.node_left = Left
+	NewNode.node_right = Right
+	return NewNode
+}
+
 enum RBColor { Black, Red }
 enum RBChild { Left, Right, None }
 
 function RedBlack_Tree(): Container() constructor {
-	///@function RBNode(value, color, parent)
-	static RBNode = function(Value, Color, Parent) constructor {
-		color = Color
-		value = Value
-		parent = Parent
-		node_left = undefined
-		node_right = undefined
-		toString = function() {
-			return (color == RBColor.Black ? "Black: " : "Red: ") + string(value)
-		}
-	}
+	///@function size()
+	static size = function() { return inner_size }
 
-	///@function find_parent(index)
-	static find_parent = function(Index) {
-		return floor((Index - 1) * 0.5)
-	}
+	///@function empty()
+	static empty = function() { return bool(inner_size == 0) }
 
-	///@function seek(index)
-	static seek = function(Index) {
-		var Node = ds_list_find_value(raw, Index)
-		return Node.value
-	}
+	///@function first()
+	static first = function() { return (new iterator_type(self, 0)).pure() }
 
-	///@function at(index)
-	static at = function(Index) { return ds_list_find_value(raw, Index) }
+	///@function last()
+	static last = function() { return (new iterator_type(self, size())).pure() }
 
-	///@function bucket(value)
-	static bucket = function(Value) {
+	///@function front()
+	static front = function() { return first().get() }
+
+	///@function back()
+	static back = function() { return last().get() }
+
+	///@function find_of(value)
+	static find_of = function(Value) {
 		if 0 == size()
 			return undefined
 
 		var CompVal, Index = 0, Size = size()
 		while Index < Size {
 			CompVal = at(Index)
-			if check_inquire_compare(Value, CompVal) {
+			if check_comparator(Value, CompVal) {
 				return Index
 			} else {
-				if key_inquire_compare(Value, CompVal)
+				if key_comparator(Value, CompVal)
 					Index = left(Index)
 				else
 					Index = right(Index)
@@ -48,26 +64,8 @@ function RedBlack_Tree(): Container() constructor {
 		return undefined
 	}
 
-	///@function set(index, node)
-	static set = function(Index, Node) { // This is not a pure value.
-		var Size = size()
-		if Index < Size {
-			var PreValue = at(Index)
-			if PreValue != NODE_NULL { // already have a node
-				ds_list_set(raw, Index, Node)
-				delete PreValue
-			} else {
-				ds_list_set(raw, Index, Node)
-			}
-		} else {
-			var Times = Index - Size
-			repeat Times
-				push_back(NODE_NULL)
-			push_back(Node)
-		}
-		gc_collect()
-		return self
-	}
+	///@function count_of(value)
+	static count_of = function(Value) { return 0 }
 
 	///@function retouch(index)
 	static retouch = function(Index) { 
@@ -114,19 +112,19 @@ function RedBlack_Tree(): Container() constructor {
 	static insert = function(Value) { // This is a pure value.
 		var Size = size()
 		if 0 == Size {
-			var NewNode = new RBNode(Value, BLACK, -1)
-			show_debug_message(NewNode)
-			push_back(NewNode)
-			return 0
+			node_head = new RBNode(Value, RBColor.Black)
+			node_smallest = node_head
+			node_largest = node_head
+			inner_size = 1
+			return 1
 		} else if 1 == Size { // hardcoded for optimizing
-			var NewNode = new RBNode(Value, RED, 0)
-			show_debug_message(NewNode)
+			var NewNode = new RBNode(Value, RED, at(0))
 			if key_inquire_compare(NewNode, at(0)) {
 				set(1, NewNode)
-				return 0
+				return 2
 			} else {
 				set(2, NewNode)
-				return 0
+				return 2
 			}
 		} else {
 			var NewNode = new RBNode(Value, RED, 0)
@@ -189,12 +187,15 @@ function RedBlack_Tree(): Container() constructor {
 	///@function set_check_comp(compare_function)
 	static set_check_comp = function(Func) { check_comparator = method(other, Func) }
 
-	type = BinarySearch_Tree
+	type = RedBlack_Tree
 	key_comparator = compare_less
 	check_comparator = compare_equal
 	key_inquire_compare = function(a, b) { return key_comparator(a.value, b.value) }
 	check_inquire_compare = function(a, b) { return check_comparator(a.value, b.value) }
-	static BLACK = 0, RED = 1
+	node_head = undefined
+	node_smallest = undefined
+	node_largest = undefined
+	inner_size = 0
 
 	// ** Assigning **
 	if 0 < argument_count {

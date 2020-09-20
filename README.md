@@ -1,7 +1,9 @@
-# GMSTL: STL for GameMaker Studio 2
-For more detail, see the [Wiki](https://github.com/iconstudio/GMContainers/wiki).
+# GMSTL: Standard Template Library for GameMaker Studio 2
+!["GMSTL Trademark"](docs/trademark.png)
+For more information, see the [Wiki](https://github.com/iconstudio/GMContainers/wiki).
 
 ## Contents
+
 ###  Algorithms
   * [x] Check: All, Any and None
   * [x] Iterate: Foreach
