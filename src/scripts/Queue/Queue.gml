@@ -22,10 +22,10 @@ function Queue(): Container() constructor {
 	///@function empty()
 	static empty = function() { return ds_queue_empty(raw) }
 
-  ///@function back()
+	///@function back()
 	static back = function() { return ds_queue_tail(raw)}
 
-  ///@function front()
+	///@function front()
 	static front = function() {  return ds_queue_head(raw) }
 
 	///@function push(value)

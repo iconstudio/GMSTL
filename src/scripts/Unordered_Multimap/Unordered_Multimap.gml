@@ -27,18 +27,18 @@ function Unordered_Multimap(): Container() constructor {
 	static empty = function() { return ds_map_empty(raw) }
 
 	///@function contains(key)
-  static contains = function(K) { return ds_map_exists(raw, K) }
+	static contains = function(K) { return ds_map_exists(raw, K) }
 
 	///@function seek(key)
-  static seek = function(K) { return ds_map_find_value(raw, K) }
+	static seek = function(K) { return ds_map_find_value(raw, K) }
 
 	///@function at(index)
-  static at = function(Index) { return (new iterator_type(self, Index)).get() }
+	static at = function(Index) { return (new iterator_type(self, Index)).get() }
 
-  ///@function back()
+	///@function back()
 	static back = function() { return at(ds_map_find_last(raw)) }
 
-  ///@function front()
+	///@function front()
 	static front = function() {  return at(ds_map_find_first(raw)) }
 
 	///@function bucket_create(key, [value])
@@ -50,19 +50,19 @@ function Unordered_Multimap(): Container() constructor {
 	}
 
 	///@function first()
-  static first = function() { return (new iterator_type(self, 0)).pure() }
+	static first = function() { return (new iterator_type(self, 0)).pure() }
 
 	///@function last()
-  static last = function() { return (new iterator_type(self, size())).pure() }
+	static last = function() { return (new iterator_type(self, size())).pure() }
 
 	///@function cfirst()
-  static cfirst = function() { return (new const_iterator_type(self, 0)).pure() }
+	static cfirst = function() { return (new const_iterator_type(self, 0)).pure() }
 
 	///@function clast()
-  static clast = function() { return (new const_iterator_type(self, size())).pure() }
+	static clast = function() { return (new const_iterator_type(self, size())).pure() }
 
 	///@function set(key, value)
-  static set = function(K, Value) { ds_map_set(raw, K, Value) return self }
+	static set = function(K, Value) { ds_map_set(raw, K, Value) return self }
 
 	///@function insert(item)
 	static insert = function() {
@@ -90,17 +90,17 @@ function Unordered_Multimap(): Container() constructor {
 	static clear = function() { ds_map_clear(raw) }
 
 	///@function key_swap(key_1, key_2)
-  static key_swap = function(Key1, Key2) {
+	static key_swap = function(Key1, Key2) {
 		var Temp = seek(Key1)
 		ds_map_set(raw, Key1, seek(Key2))
 		ds_map_set(raw, Key2, Temp)
 	}
 
 	///@function is_list(key)
-  static is_list = function(K) { return ds_map_is_list(raw, K) }
+	static is_list = function(K) { return ds_map_is_list(raw, K) }
 
 	///@function is_map(key)
-  static is_map = function(K) { return ds_map_is_map(raw, K) }
+	static is_map = function(K) { return ds_map_is_map(raw, K) }
 
 	///@function read(data_string)
 	static read = function(Str) {

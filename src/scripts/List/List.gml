@@ -22,10 +22,10 @@ function List(): Container() constructor {
 	static empty = function() { return ds_list_empty(raw) }
 
 	///@function at(index)
-  static at = function(Index) { return ds_list_find_value(raw, Index) }
+	static at = function(Index) { return ds_list_find_value(raw, Index) }
 
 	///@function seek(value)
-  static seek = function(Value) { return ds_list_find_index(raw, Value) }
+	static seek = function(Value) { return ds_list_find_index(raw, Value) }
 
 	///@function back()
 	static back = function() { return at(size() - 1) }
@@ -34,22 +34,22 @@ function List(): Container() constructor {
 	static front = function() { return at(0) }
 
 	///@function first()
-  static first = function() { return (new iterator_type(self, 0)).pure() }
+	static first = function() { return (new iterator_type(self, 0)).pure() }
 
 	///@function last()
-  static last = function() { return (new iterator_type(self, size())).pure() }
+	static last = function() { return (new iterator_type(self, size())).pure() }
 
 	///@function cfirst()
-  static cfirst = function() { return (new const_iterator_type(self, 0)).pure() }
+	static cfirst = function() { return (new const_iterator_type(self, 0)).pure() }
 
 	///@function clast()
-  static clast = function() { return (new const_iterator_type(self, size())).pure() }
+	static clast = function() { return (new const_iterator_type(self, size())).pure() }
 
 	//////@function set(index, value)
-  static set = function(Index, Value) { ds_list_set(raw, Index, Value) return self }
+	static set = function(Index, Value) { ds_list_set(raw, Index, Value) return self }
 
 	//////@function index_insert(index, value)
-  static index_insert = function(Index, Value) { ds_list_insert(raw, Index, Value) }
+	static index_insert = function(Index, Value) { ds_list_insert(raw, Index, Value) }
 
 	///@function push_back(value)
 	static push_back = function(Value) { ds_list_add(raw, Value) }
@@ -80,16 +80,16 @@ function List(): Container() constructor {
   function shuffle_builtin() { ds_list_shuffle(raw) }
 
 	///@function mark_list(index)
-  static mark_list = function(Index) { ds_list_mark_as_list(raw, Index) }
+	static mark_list = function(Index) { ds_list_mark_as_list(raw, Index) }
 
 	///@function mark_map(index)
-  static mark_map = function(Index) { ds_list_mark_as_map(raw, Index) }
+	static mark_map = function(Index) { ds_list_mark_as_map(raw, Index) }
 
 	///@function is_list(index)
-  static is_list = function(Index) { return ds_list_is_list(raw, Index) }
+	static is_list = function(Index) { return ds_list_is_list(raw, Index) }
 
 	///@function is_map(index)
-  static is_map = function(Index) { return ds_list_is_map(raw, Index) }
+	static is_map = function(Index) { return ds_list_is_map(raw, Index) }
 
 	///@function read(data_string)
 	static read = function(Str) { ds_list_read(raw, Str) }

@@ -28,37 +28,37 @@ function Map(): Container() constructor {
 	static size = function() { return ds_map_size(raw) }
 
 	///@function contains(key)
-  static contains = function(K) { return ds_map_exists(raw, K) }
+	static contains = function(K) { return ds_map_exists(raw, K) }
 
 	///@function key_at(index)
-  static key_at = function(Index) { return cash.at(Index) }
+	static key_at = function(Index) { return cash.at(Index) }
 
 	///@function seek(key)
-  static seek = function(K) { return ds_map_find_value(raw, K) }
+	static seek = function(K) { return ds_map_find_value(raw, K) }
 
 	///@function at(index)
-  static at = function(Index) { return ds_map_find_value(raw, key_at(Index)) }
+	static at = function(Index) { return ds_map_find_value(raw, key_at(Index)) }
 
-  ///@function back()
+	///@function back()
 	static back = function() { return at(size() - 1) }
 
-  ///@function front()
+	///@function front()
 	static front = function() { return at(0) }
 
 	///@function first()
-  static first = function() { return (new iterator_type(self, 0)).pure() }
+	static first = function() { return (new iterator_type(self, 0)).pure() }
 
 	///@function last()
-  static last = function() { return (new iterator_type(self, size())).pure() }
+	static last = function() { return (new iterator_type(self, size())).pure() }
 
 	///@function cfirst()
-  static cfirst = function() { return (new const_iterator_type(self, 0)).pure() }
+	static cfirst = function() { return (new const_iterator_type(self, 0)).pure() }
 
 	///@function clast()
-  static clast = function() { return (new const_iterator_type(self, size())).pure() }
+	static clast = function() { return (new const_iterator_type(self, size())).pure() }
 
 	//////@function set(index, value)
-  static set = function(Index, Value) { 
+	static set = function(Index, Value) { 
 		var Key = cash.at(Index)
 		if !is_undefined(Key)
 			ds_map_set(raw, Key, Value)
@@ -82,13 +82,13 @@ function Map(): Container() constructor {
 	}
 
 	///@function set_list(key, builtin_list_id)
-  static set_list = function(K, Value) {
+	static set_list = function(K, Value) {
 		if !contains(K) cash_push(K)
 		ds_map_add_list(raw, K, Value)
 	}
 
 	///@function set_map(key, builtin_map_id)
-  static set_map = function(K, Value) {
+	static set_map = function(K, Value) {
 		if !contains(K) cash_push(K)
 		ds_map_add_map(raw, K, Value) 
 	}
@@ -105,17 +105,17 @@ function Map(): Container() constructor {
 	static clear = function() { ds_map_clear(raw) }
 
 	///@function key_swap(key_1, key_2)
-  static key_swap = function(Key1, Key2) {
+	static key_swap = function(Key1, Key2) {
 		var Temp = seek(Key1)
 		ds_map_set(raw, Key1, seek(Key2))
 		ds_map_set(raw, Key2, Temp)
 	}
 
 	///@function is_list(key)
-  static is_list = function(K) { return ds_map_is_list(raw, K) }
+	static is_list = function(K) { return ds_map_is_list(raw, K) }
 
 	///@function is_map(key)
-  static is_map = function(K) { return ds_map_is_map(raw, K) }
+	static is_map = function(K) { return ds_map_is_map(raw, K) }
 
 	///@static cash_push = function(key)
 	static cash_push = function(K) {

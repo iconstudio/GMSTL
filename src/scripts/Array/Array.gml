@@ -19,28 +19,28 @@ function Array(): Container() constructor {
 	static size = function() { return inner_size }
 
 	///@function at(index)
-  static at = function(Index) { return raw[Index] }
+	static at = function(Index) { return raw[Index] }
 
-  ///@function back()
+	///@function back()
 	static back = function() { return at(inner_size - 1) }
 
-  ///@function front()
+	///@function front()
 	static front = function() { return at(0) }
 
 	///@function first()
-  static first = function() { return (new iterator_type(self, 0)).pure() }
+	static first = function() { return (new iterator_type(self, 0)).pure() }
 
 	///@function last()
-  static last = function() { return (new iterator_type(self, size())).pure() }
+	static last = function() { return (new iterator_type(self, size())).pure() }
 
 	///@function cfirst()
-  static cfirst = function() { return (new const_iterator_type(self, 0)).pure() }
+	static cfirst = function() { return (new const_iterator_type(self, 0)).pure() }
 
 	///@function clast()
-  static clast = function() { return (new const_iterator_type(self, size())).pure() }
+	static clast = function() { return (new const_iterator_type(self, size())).pure() }
 
 	//////@function set(index, value)
-  static set = function(Index, Value) {
+	static set = function(Index, Value) {
 		raw[Index] = Value
 		return self
 	}

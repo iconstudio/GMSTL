@@ -36,13 +36,13 @@ function Priority_Queue(Comparator, Is_Stable): Container() constructor {
 	static size = function() { return raw.size() }
 
 	///@function top()
-  static top = function() { return raw.front() }
+	static top = function() { return raw.front() }
 
 	///@function cfirst()
-  static cfirst = function() { return raw.cfirst() }
+	static cfirst = function() { return raw.cfirst() }
 
 	///@function clast()
-  static clast = function() { return raw.clast() }
+	static clast = function() { return raw.clast() }
 
 	///@function push(value)
 	static push = function(Value) { 

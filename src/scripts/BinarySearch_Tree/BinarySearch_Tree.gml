@@ -1,6 +1,6 @@
 function BinarySearch_Tree(): Binary_Tree() constructor {
 	///@function bucket(value)
-  static bucket = function(Value) {
+	static bucket = function(Value) {
 		if 0 == size()
 			return undefined
 
@@ -20,7 +20,7 @@ function BinarySearch_Tree(): Binary_Tree() constructor {
 	}
 
 	///@function insert_recursive(value, hint)
-  static insert_recursive = function(Value, Hint) {
+	static insert_recursive = function(Value, Hint) {
 		if !valid(Hint) {
 			set(Hint, Value)
 			return Hint
@@ -34,7 +34,7 @@ function BinarySearch_Tree(): Binary_Tree() constructor {
 	}
 
 	///@function insert(item)
-  static insert = function(Value) {
+	static insert = function(Value) {
 		if 0 == size() {
 			push_back(Value)
 			return 0

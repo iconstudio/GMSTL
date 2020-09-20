@@ -16,7 +16,7 @@ function Binary_Tree(): List() constructor {
 	static at_right = function(Index) { return at(right(Index)) }
 
 	///@function bucket(value)
-  static bucket = function(Value) {
+	static bucket = function(Value) {
 		if 0 == size()
 			return undefined
 
@@ -24,16 +24,16 @@ function Binary_Tree(): List() constructor {
 	}
 
 	///@function contains(value)
-  static contains = function(Value) { return !is_undefined(bucket(Value)) }
+	static contains = function(Value) { return !is_undefined(bucket(Value)) }
 
 	///@function valid(index)
-  static valid = function(Index) { return bool(Index < size() and at(Index) != NODE_NULL) }
+	static valid = function(Index) { return bool(is_real(Index) and 0 < Index and Index < size() and at(Index) != NODE_NULL) }
 
 	///@function head()
 	static head = function() { return front() }
 
 	///@function set(index, value)
-  static set = function(Index, Value) {
+	static set = function(Index, Value) {
 		var Size = size()
 		if Index < Size {
 			ds_list_set(raw, Index, Value)
@@ -47,13 +47,13 @@ function Binary_Tree(): List() constructor {
 	}
 
 	///@function insert(item)
-  static insert = function(Value) {
+	static insert = function(Value) {
 		push_back(Value)
 		return size()
 	}
 
 	///@function push(value)
-  static push = function(Value) { insert(Value) }
+	static push = function(Value) { insert(Value) }
 
 	///@function move_children(index, destination)
 	static move_children = function(Index, Target) {
@@ -68,6 +68,30 @@ function Binary_Tree(): List() constructor {
 		if RightChk {
 			move_children(Right, right(Target))
 		}
+		set(Target, Value)
+	}
+
+	///@function move_children_of_left(index, destination)
+	static move_children_of_left = function(Index, Target) {
+		var Left = left(Index), LeftChk = valid(Left)
+		var Value = at(Index)
+		set(Index, NODE_NULL)
+
+		if LeftChk
+			move_children(Left, left(Target))
+
+		set(Target, Value)
+	}
+
+	///@function move_children_of_right(index, destination)
+	static move_children_of_right = function(Index, Target) {
+		var Right = right(Index), RightChk = valid(Right)
+		var Value = at(Index)
+		set(Index, NODE_NULL)
+
+		if RightChk
+			move_children(Right, right(Target))
+
 		set(Target, Value)
 	}
 

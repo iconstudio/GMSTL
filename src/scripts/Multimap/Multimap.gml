@@ -47,28 +47,28 @@ function Multimap(): Container() constructor {
 	static empty = function() { return ds_map_empty(raw) }
 
 	///@function contains(key)
-  static contains = function(K) { return ds_map_exists(raw, K) }
+	static contains = function(K) { return ds_map_exists(raw, K) }
 
 	///@function key_at(index)
-  static key_at = function(Index) { return cash.at(Index) }
+	static key_at = function(Index) { return cash.at(Index) }
 
 	///@function seek(key)
-  static seek = function(K) { return ds_map_find_value(raw, K) }
+	static seek = function(K) { return ds_map_find_value(raw, K) }
 
 	///@function at(index)
-  static at = function(Index) { return ds_map_find_value(raw, key_at(Index)) }
+	static at = function(Index) { return ds_map_find_value(raw, key_at(Index)) }
 
-  ///@function back()
+	///@function back()
 	static back = function() { return at(size() - 1) }
 
-  ///@function front()
+	///@function front()
 	static front = function() { return at(0) }
 
 	///@function bucket(key)
-  static bucket = function(K) { return cash.seek(K) }
+	static bucket = function(K) { return cash.seek(K) }
 
 	///@function bucket_count()
-  static bucket_count = function() { return cash.size() }
+	static bucket_count = function() { return cash.size() }
 
 	///@function bucket_create(key, [value])
 	static bucket_create = function(K) {
@@ -79,7 +79,7 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function first([bucket_index])
-  static first = function() {
+	static first = function() {
 		if 1 == argument_count
 			return at(argument[0]).first()
 		else
@@ -87,7 +87,7 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function last([bucket_index])
-  static last = function() {
+	static last = function() {
 		if 1 == argument_count
 			return at(argument[0]).last()
 		else
@@ -95,7 +95,7 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function cfirst([bucket_index])
-  static cfirst = function() {
+	static cfirst = function() {
 		if 1 == argument_count
 			return at(argument[0]).cfirst()
 		else
@@ -103,7 +103,7 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function clast([bucket_index])
-  static clast = function() {
+	static clast = function() {
 		if 1 == argument_count
 			return at(argument[0]).clast()
 		else
@@ -111,7 +111,7 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function set(bucket_index, list)
-  static set = function(Index, Value) {
+	static set = function(Index, Value) {
 		if !is_struct(Value)
 			throw "Cannot bind a non-struct item to Multimap!"
 		var Key = cash.at(Index)
@@ -154,7 +154,7 @@ function Multimap(): Container() constructor {
 	static clear = function() { ds_map_clear(raw) }
 
 	///@function key_swap(key_1, key_2)
-  static key_swap = function(Key1, Key2) {
+	static key_swap = function(Key1, Key2) {
 		var Temp = seek(Key1)
 		ds_map_set(raw, Key1, seek(Key2))
 		ds_map_set(raw, Key2, Temp)

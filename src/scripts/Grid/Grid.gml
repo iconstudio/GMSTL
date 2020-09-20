@@ -54,7 +54,7 @@ function Grid(Width, Height): Container() constructor {
 	inner_size = width * height
 
 	///@function first([row])
-  static first = function() {
+	static first = function() {
 		if argument_count == 1
 			return argument[0] * width
 		else
@@ -62,50 +62,50 @@ function Grid(Width, Height): Container() constructor {
 	}
 
 	///@function last([row])
-  static last = function() {
+	static last = function() {
 		if argument_count == 1
 			return (argument[0] + 1) * width
 		else
 			return inner_size
 	}
 
-  ///@function set(x, y, value)
+	///@function set(x, y, value)
 	static set = function(X, Y, Value) {
 		raw[# X, Y] = Value
 		return self
 	}
 
-  ///@function set_region(x1, y1, x2, y2, value)
+	///@function set_region(x1, y1, x2, y2, value)
 	function set_region(X1, Y1, X2, Y2, Value) {
 		ds_grid_set_region(raw, X1, Y1, X2, Y2, Value)
 		return self
 	}
 
-  ///@function add_region(x1, y1, x2, y2, value)
+	///@function add_region(x1, y1, x2, y2, value)
 	function add_region(X1, Y1, X2, Y2, Value) {
 		ds_grid_add_region(raw, X1, Y1, X2, Y2, Value)
 		return self
 	}
 
-  ///@function multiply_region(x1, y1, x2, y2, value)
+	///@function multiply_region(x1, y1, x2, y2, value)
 	function multiply_region(X1, Y1, X2, Y2, Value) {
 		ds_grid_multiply_region(raw, X1, Y1, X2, Y2, Value)
 		return self
 	}
 
-  ///@function set_disk(x, y, radius, value)
+	///@function set_disk(x, y, radius, value)
 	function set_disk(X, Y, Rads, Value) {
 		ds_grid_set_disk(raw, X, Y, Rads, Value)
 		return self
 	}
 
-  ///@function add_disk(x, y, radius, value)
+	///@function add_disk(x, y, radius, value)
 	function add_disk(X, Y, Rads, Value) {
 		ds_grid_add_disk(raw, X, Y, Rads, Value)
 		return self
 	}
 
-  ///@function multiply_disk(x, y, radius, value)
+	///@function multiply_disk(x, y, radius, value)
 	function multiply_disk(X, Y, Rads, Value) {
 		ds_grid_multiply_disk(raw, X, Y, Rads, Value)
 		return self
