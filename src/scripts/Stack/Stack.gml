@@ -22,7 +22,7 @@ function Stack(): Container() constructor {
 	///@function empty()
 	static empty = function() { return ds_stack_empty(raw) }
 
-  ///@function top()
+	///@function top()
 	static top = function() { return ds_stack_top(raw) }
 
 	///@function push(value)

@@ -1,4 +1,4 @@
-# STL for GameMaker Studio 2
+# GMSTL: STL for GameMaker Studio 2
 For more detail, see the [Wiki](https://github.com/iconstudio/GMContainers/wiki).
 
 ## Contents
@@ -6,7 +6,7 @@ For more detail, see the [Wiki](https://github.com/iconstudio/GMContainers/wiki)
   * [x] Check: All, Any and None
   * [x] Iterate: Foreach
   * [x] Search: Find, Count, Binary Search
-  * [x] Simple Modify: Erase, Insert and Assign
+  * [x] Simple Modify: Erase, Insert and Assign (Only for sequential containers)
   * [x] Swap
   * [x] Overwrite: Move, Fill, Copy and Replace
   * [x] Modify: Transform, Rotate, Reverse
@@ -37,9 +37,10 @@ For more detail, see the [Wiki](https://github.com/iconstudio/GMContainers/wiki)
 ###  Graph Containers:
 
   * [ ] Grid
-  * [ ] Binary Tree
-  * [ ] Red-Black Tree
+  * [x] Binary Tree
+  * [x] Binary Search Tree
   * [ ] Heap Tree
+  * [ ] Red-Black Tree
 
 ---
 Coypyright 2020 iconer

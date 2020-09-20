@@ -29,16 +29,16 @@ function Priority_Deque(): Container() constructor {
 	///@function empty()
 	static empty = function() { return ds_priority_empty(raw) }
 
-  ///@function tail()
+	///@function tail()
 	static tail = function() { return ds_priority_find_min(raw) }
 
-  ///@function top()
+	///@function top()
 	static top = function() { return ds_priority_find_max(raw) }
 
-  ///@function back()
+	///@function back()
 	static back = function() { return ds_priority_find_min(raw) }
 
-  ///@function front()
+	///@function front()
 	static front = function() { return ds_priority_find_max(raw) }
 
 	///@function set_procedure(function)

@@ -15,25 +15,22 @@
 	Usage:
 		To Iterate values on lists:
 			for (var It = Container.first(); It.not_equal(Container.last()); It.go()) {
-				var Pair = It.get()
-				var KList = Pair[1]
+				var KList = It.get()
 				foreach(KList.first(), KList.first(), function(Value) {
 					myfunc(Value)
 				})
 			}
 
 		To Iterate values in a key:
-			var Bucket = Container.bucket("KEY")
-			for (var It = Container.first(Bucket); It.not_equal(Container.last(Bucket)); It.go())
+			var Bucket = Container.seek("KEY")
+			for (var It = Bucket.first(); It.not_equal(Bucket.last()); It.go())
 				myfunc(It.get())
 
 		To Iterate values with bucket indexes:
-			var Pair, Key, Values
+			var KList, Key, Values
 			for (var i = 0; i < Container.bucket_count(); ++i) {
-				Pair = Container.at(i) // a Pair
-				Key = TempPair[0]
-				Values = TempPair[1] // a List
-				for (var It = Values.first(); It.not_equal(Values.last()); It.go())
+				KList = Container.at(i)
+				for (var It = KList.first(); It.not_equal(KList.last()); It.go())
 					myfunc(It.get())
 			}
 
@@ -50,31 +47,28 @@ function Multimap(): Container() constructor {
 	static empty = function() { return ds_map_empty(raw) }
 
 	///@function contains(key)
-  static contains = function(K) { return ds_map_exists(raw, K) }
+	static contains = function(K) { return ds_map_exists(raw, K) }
+
+	///@function key_at(index)
+	static key_at = function(Index) { return cash.at(Index) }
 
 	///@function seek(key)
-  static seek = function(K) { return ds_map_find_value(raw, K) }
+	static seek = function(K) { return ds_map_find_value(raw, K) }
 
-	///@function at(bucket_index)
-  static at = function(Index) {
-		var K = cash.at(Index)
-		return make_pair(K, seek(K))
-	}
+	///@function at(index)
+	static at = function(Index) { return ds_map_find_value(raw, key_at(Index)) }
 
-  ///@function back()
+	///@function back()
 	static back = function() { return at(size() - 1) }
 
-  ///@function front()
+	///@function front()
 	static front = function() { return at(0) }
 
 	///@function bucket(key)
-  static bucket = function(K) { return ds_list_find_index(cash.raw, K) }
-
-	///@function bucket_find(bucket_index)
-  static bucket_find = function(Index) { return seek(cash.at(Index)) }
+	static bucket = function(K) { return cash.seek(K) }
 
 	///@function bucket_count()
-  static bucket_count = function() { return cash.size() }
+	static bucket_count = function() { return cash.size() }
 
 	///@function bucket_create(key, [value])
 	static bucket_create = function(K) {
@@ -85,39 +79,39 @@ function Multimap(): Container() constructor {
 	}
 
 	///@function first([bucket_index])
-  static first = function() {
+	static first = function() {
 		if 1 == argument_count
-			return bucket_find(argument[0]).first()
+			return at(argument[0]).first()
 		else
 			return (new iterator_type(self, 0)).pure()
 	}
 
 	///@function last([bucket_index])
-  static last = function() {
+	static last = function() {
 		if 1 == argument_count
-			return bucket_find(argument[0]).last()
+			return at(argument[0]).last()
 		else
 			return (new iterator_type(self, size())).pure()
 	}
 
 	///@function cfirst([bucket_index])
-  static cfirst = function() {
+	static cfirst = function() {
 		if 1 == argument_count
-			return bucket_find(argument[0]).cfirst()
+			return at(argument[0]).cfirst()
 		else
 			return (new const_iterator_type(self, 0)).pure()
 	}
 
 	///@function clast([bucket_index])
-  static clast = function() {
+	static clast = function() {
 		if 1 == argument_count
-			return bucket_find(argument[0]).clast()
+			return at(argument[0]).clast()
 		else
 			return (new const_iterator_type(self, size())).pure()
 	}
 
 	///@function set(bucket_index, list)
-  static set = function(Index, Value) {
+	static set = function(Index, Value) {
 		if !is_struct(Value)
 			throw "Cannot bind a non-struct item to Multimap!"
 		var Key = cash.at(Index)
@@ -148,22 +142,19 @@ function Multimap(): Container() constructor {
 		return self
 	}
 
-	///@function erase_index(key)
-	static erase_index = function(K) {
+	///@function erase_at(key)
+	static erase_at = function(K) {
 		var Temp = seek(K)
 		ds_map_delete(raw, K)
 		remove(cash.first(), cash.last(), K)
 		return Temp
 	}
 
-	///@function erase_one(iterator)
-	static erase_one = function(It) { return erase_index(It.get_index()) }
-
 	///@function clear()
 	static clear = function() { ds_map_clear(raw) }
 
 	///@function key_swap(key_1, key_2)
-  static key_swap = function(Key1, Key2) {
+	static key_swap = function(Key1, Key2) {
 		var Temp = seek(Key1)
 		ds_map_set(raw, Key1, seek(Key2))
 		ds_map_set(raw, Key2, Temp)
@@ -176,7 +167,7 @@ function Multimap(): Container() constructor {
 	function set_value_comp(Func) { value_comparator = method(other, Func) return self }
 
 	///@function cash_push(key)
-	function cash_push(K) {
+	static cash_push = function(K) {
 		if 1 < cash.size() {
 			cash.push_back(K)
 			stable_sort(cash.first(), cash.last(), key_comparator)
