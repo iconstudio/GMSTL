@@ -39,8 +39,8 @@ For more detail, see the [Wiki](https://github.com/iconstudio/GMContainers/wiki)
   * [ ] Grid
   * [x] Binary Tree
   * [x] Binary Search Tree
-  * [ ] Red-Black Tree
   * [ ] Heap Tree
+  * [ ] Red-Black Tree
 
 ---
 Coypyright 2020 iconer
