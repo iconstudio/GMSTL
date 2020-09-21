@@ -18,20 +18,37 @@ function Array(): Container() constructor {
 	///@function size()
 	static size = function() { return inner_size }
 
-	///@function at(index)
-	static at = function(Index) { return raw[Index] }
+	///@function empty()
+	static empty = function() { return bool(inner_size == 0) }
 
-	///@function back()
-	static back = function() { return at(inner_size - 1) }
+	///@function at(index)
+	///@description Checks the boundary
+	static at = function(Index) {
+		if Index < 0 or inner_size <= Index
+			return undefined
+		return raw[Index]
+	}
+
+	///@function seek(value)
+	static seek = function(Value) {
+		for (var i = 0; i < inner_size; ++i) {
+			if at(i) == Value
+				return i
+		}
+		return undefined
+	}
 
 	///@function front()
 	static front = function() { return at(0) }
+
+	///@function back()
+	static back = function() { return at(inner_size - 1) }
 
 	///@function first()
 	static first = function() { return (new iterator_type(self, 0)).pure() }
 
 	///@function last()
-	static last = function() { return (new iterator_type(self, size())).pure() }
+	static last = function() { return (new iterator_type(self, inner_size)).pure() }
 
 	//////@function set(index, value)
 	static set = function(Index, Value) {
