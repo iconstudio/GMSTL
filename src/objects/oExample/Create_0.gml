@@ -24,9 +24,9 @@ show_debug_message("bsearch(2): " + string(binary_search(test2.first(), test2.la
 show_debug_message("\nThe Summary List")
 merge(test1.first(), test1.last(), test2.first(), test2.last(), test_sum.first())
 print(test_sum)
-random_shuffle(test_sum.first(), test_sum.last())
+//random_shuffle(test_sum.first(), test_sum.last())
 
-function tree_print(Cont, Index, Msg) {
+function index_tree_print(Cont, Index, Msg) {
 	Msg = select_argument(Msg, "[" + string(Index) + "]\t")
 	show_debug_message(Msg + string(Cont.at(Index)))
 
@@ -37,23 +37,35 @@ function tree_print(Cont, Index, Msg) {
 	var RightChk = Right < Size and RightVal != NODE_NULL
 
 	if LeftChk {
-		tree_print(Cont, Left, "L(" + string(Index) + ") -> [" + string(Left) + "]\t\t")
+		index_tree_print(Cont, Left, "L(" + string(Index) + ") -> [" + string(Left) + "]\t\t")
 	}
 
 	if RightChk {
-		tree_print(Cont, Right, "R(" + string(Index) + ") -> [" + string(Right) + "]\t\t")
+		index_tree_print(Cont, Right, "R(" + string(Index) + ") -> [" + string(Right) + "]\t\t")
 		show_debug_message("--------")
 	}
 }
-show_debug_message("\nTree")
-test_tree = new Heap_Tree(test_sum)
-tree_print(test_tree, 0, "Head(0)\t")
 
+function node_tree_print(Cont, NodeStart, Msg) {
+	Msg = select_argument(Msg, "[" + string(NodeStart) + "]\t")
+	show_debug_message(Msg)
+
+	var LeftNode = NodeStart.node_left, RightNode = NodeStart.node_right
+	var LeftChk = Cont.valid(LeftNode), RightChk = Cont.valid(RightNode)
+
+	if LeftChk {
+		node_tree_print(Cont, LeftNode, "LEFT(" + string(NodeStart) + ") -> [" + string(LeftNode) + "]\t")
+		show_debug_message("--------")
+	}
+
+	if RightChk {
+		node_tree_print(Cont, RightNode, "RIGHT(" + string(NodeStart) + ") -> [" + string(RightNode) + "]\t")
+	}
+}
 show_debug_message("\nTree")
-test_tree.erase_head()
-test_tree.erase_head()
-test_tree.erase_head()
-tree_print(test_tree, 0, "Head(0)\t")
+test_tree = new RedBlack_Tree(test_sum)
+node_tree_print(test_tree, test_tree.node_head)
+
 /*
 tree_print(test_tree, 0, "Head(0)\t")
 show_debug_message("Seaching (3): " + string(test_tree.find_of(3)))

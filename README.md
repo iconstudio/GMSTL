@@ -41,7 +41,7 @@ For more information, see the [Wiki](https://github.com/iconstudio/GMContainers/
   * [ ] Grid
   * [x] Binary Tree
   * [x] Binary Search Tree
-  * [ ] Heap Tree
+  * [x] Heap Tree
   * [ ] Red-Black Tree
 
 ---

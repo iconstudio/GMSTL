@@ -19,6 +19,26 @@ function BinarySearch_Tree(): Binary_Tree() constructor {
 		return undefined
 	}
 
+	///@function count_of(value)
+	static count_of = function(Value) {
+		if 0 == size()
+			return undefined
+
+		var CompVal, Index = 0, Size = size(), Result = 0
+		while Index < Size {
+			CompVal = at(Index)
+			if check_comparator(Value, CompVal) {
+				Result++
+			} else {
+				if key_comparator(Value, CompVal)
+					Index = left(Index)
+				else
+					Index = right(Index)
+			}
+		}
+		return Result
+	}
+
 	///@function insert_recursive(value, hint)
 	static insert_recursive = function(Value, Hint) {
 		if !valid(Hint) {
