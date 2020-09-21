@@ -1,29 +1,43 @@
+enum RBColor { Black, Red }
+enum RBChild { Left, Right, None }
+
 ///@function RBNode(value, color, [parent=undefined])
-static RBNode = function(Value, Color, Parent) constructor {
+function RBNode(Value, Color) constructor {
 	color = Color
 	value = Value
-	parent = select_argument(Parent, undefined)
 	child_type = RBChild.None
+	parent = 2 < argument_count ? argument[2] : undefined
 	node_left = undefined
 	node_right = undefined
 	next = undefined
-	toString = function() {
+
+	///@function set_left(node)
+	static set_left = function(Node) {
+		node_left = Node
+		Node.child_type = RBChild.Left
+		Node.next = self
+		Node.parent = self
+	}
+
+	///@function set_right(node)
+	static set_right = function(Node) {
+		node_right = Node
+		Node.child_type = RBChild.Right
+		next = Node
+		Node.parent = self
+	}
+
+	static toString = function() {
 		return (color == RBColor.Black ? "Black: " : "Red: ") + string(value)
 	}
 }
 
-///@function make_rb_node(value, color, child_type, [parent=undefined], [next=undefined], [left=undefined], [right=undefined])
-static make_rb_node = function(Value, Color, Chty, Parent, NNext, Left, Right) {
+///@function make_rb_node(value, color, [child_type=none], [parent=undefined])
+function make_rb_node(Value, Color, Chty, Parent) {
 	var NewNode = new RBNode(Value, Color, Parent)
 	NewNode.child_type = select_argument(Chty, RBChild.None)
-	NewNode.next = NNext
-	NewNode.node_left = Left
-	NewNode.node_right = Right
 	return NewNode
 }
-
-enum RBColor { Black, Red }
-enum RBChild { Left, Right, None }
 
 function RedBlack_Tree(): Container() constructor {
 	///@function size()
@@ -31,6 +45,9 @@ function RedBlack_Tree(): Container() constructor {
 
 	///@function empty()
 	static empty = function() { return bool(inner_size == 0) }
+
+	///@function valid(node)
+	static valid = function(Node) { return !is_undefined(Node) }
 
 	///@function first()
 	static first = function() { return (new iterator_type(self, 0)).pure() }
@@ -44,141 +61,186 @@ function RedBlack_Tree(): Container() constructor {
 	///@function back()
 	static back = function() { return last().get() }
 
+	///@function minimum([start_node=head])
+	static minimum = function() {
+		var Result, StartNode = 0 < argument_count ? argument[0] : node_head
+		while valid(StartNode) {
+			Result = StartNode
+			StartNode = StartNode.node_left
+		}
+		return Result
+	}
+
+	///@function maximum([start_node=head])
+	static maximum = function() {
+		var Result, StartNode = 0 < argument_count ? argument[0] : node_head
+		while valid(StartNode) {
+			Result = StartNode
+			StartNode = StartNode.node_right
+		}
+		return Result
+	}
+
 	///@function find_of(value)
 	static find_of = function(Value) {
 		if 0 == size()
 			return undefined
 
-		var CompVal, Index = 0, Size = size()
-		while Index < Size {
-			CompVal = at(Index)
-			if check_comparator(Value, CompVal) {
-				return Index
+		var Result, NodeIt = node_head
+		while valid(NodeIt) {
+			Result = NodeIt
+			if check_comparator(Value, NodeIt.value) {
+				return Result
 			} else {
-				if key_comparator(Value, CompVal)
-					Index = left(Index)
+				if key_comparator(Value, NodeIt.value)
+					NodeIt = NodeIt.node_left
 				else
-					Index = right(Index)
+					NodeIt = NodeIt.node_right
 			}
+
 		}
 		return undefined
 	}
 
 	///@function count_of(value)
-	static count_of = function(Value) { return 0 }
+	static count_of = function(Value) {
+		if 0 == size()
+			return 0
 
-	///@function retouch(index)
-	static retouch = function(Index) { 
-		var Node = at(Index)
-		var LeftNode = at_left(Index), RightNode = at_right(Index)
-		if LeftNode.color == RED and RightNode.color = RED {
-			Node.color = RED
-			LeftNode.color = BLACK
-			RightNode.color = BLACK
-			if 2 < Index { // height is greater than 1.
-				var Parent = find_parent(Node)
-				if Parent.color == RED
-					retouch(find_parent(Parent))
+		var Result = 0, NodeIt = node_head
+		while valid(NodeIt) {
+			if check_comparator(Value, NodeIt.value) {
+				Result++
+			}
+
+			if key_comparator(Value, NodeIt.value)
+				NodeIt = NodeIt.node_left
+			else
+				NodeIt = NodeIt.node_right
+
+		}
+		return Result
+	}
+
+	///@function rotate_left(axis_node)
+	static rotate_left = function(Node) {
+		var Right = Node.node_left
+		var LeftofRight = Right.node_right
+        Node.set_right(LeftofRight)
+
+        if Node == node_head {
+			node_head = Right
+		} else {
+			var Parent = Node.parent
+			if Node.child_type == RBChild.Left
+				Parent.set_left(Right)
+			else
+				Parent.set_right(Right)
+		}
+        Right.set_left(Node)
+	}
+
+	///@function rotate_right(node)
+	static rotate_right = function(Node) {
+		var Left = Node.node_left
+		var RightofLeft = Left.node_right
+        Node.set_left(RightofLeft)
+
+        if Node == node_head {
+			node_head = Left
+		} else {
+			var Parent = Node.parent
+			if Node.child_type == RBChild.Right
+				Parent.set_right(Left)
+			else
+				Parent.set_left(Left)
+		}
+        Left.set_right(Node)
+	}
+
+	///@function insert_recursive(node, start_node)
+	static insert_recursive = function(Node, StartNode) { // They are node.
+		if key_inquire_compare(Node, StartNode) {
+			var Next = StartNode.node_left
+			if !valid(Next) {
+				StartNode.set_left(Node)
+				show_debug_message(string(StartNode) + "'s LEFT: " + string(Node))
+			} else {
+				return insert_recursive(Node, Next)
+			}
+		} else {
+			var Next = StartNode.node_right
+			if !valid(Next) {
+				StartNode.set_right(Node)
+				show_debug_message(string(StartNode) + "'s RIGHT: " + string(Node))
+			} else {
+				return insert_recursive(Node, Next)
 			}
 		}
-	}
-
-	///@function move_children_of_right(index, destination)
-	static move_children_of_right = function(Index, Target) {
-		var Right = right(Index), RightChk = valid(Right)
-		var Value = at(Index)
-		set(Index, NODE_NULL)
-
-		if RightChk
-			move_children(Right, right(Target))
-
-		set(Target, Value)
-	}
-
-	///@function insert_recursive(node, hint)
-	static insert_recursive = function(Node, Hint) { // This is a pure value.
-		if !valid(Hint) {
-			set(Hint, Node)
-			return Hint
-		} else {
-			if key_inquire_compare(Node, at(Hint))
-				return insert_recursive(Node, left(Hint))
-			else
-				return insert_recursive(Node, right(Hint))
-		}
+		return StartNode
 	}
 
 	///@function insert(item)
+	///@description Imported from Visual Studio.
 	static insert = function(Value) { // This is a pure value.
-		var Size = size()
+		var Size = inner_size++
 		if 0 == Size {
-			node_head = new RBNode(Value, RBColor.Black)
-			node_smallest = node_head
-			node_largest = node_head
-			inner_size = 1
-			return 1
-		} else if 1 == Size { // hardcoded for optimizing
-			var NewNode = new RBNode(Value, RED, at(0))
-			if key_inquire_compare(NewNode, at(0)) {
-				set(1, NewNode)
-				return 2
-			} else {
-				set(2, NewNode)
-				return 2
-			}
+			node_head = make_rb_node(Value, RBColor.Black, RBChild.None)
+			node_head.parent = node_head
+			//node_head.node_left = node_head
+			//node_head.node_right = node_head
 		} else {
-			var NewNode = new RBNode(Value, RED, 0)
-			var Index = insert_recursive(NewNode, 0)
-			show_debug_message("01")
-			var PreIndex = find_parent(Index)
-			var PrePreIndex = find_parent(PreIndex)
-			show_debug_message("02")
-			show_debug_message("Pre Index: " + string(PreIndex))
-			show_debug_message("Pre Pre Index: " + string(PrePreIndex))
-			if valid(PreIndex) and valid(PrePreIndex) { // all hierachy is going on.
-				show_debug_message("03")
-				var ParentNode = at(PreIndex)
-				if ParentNode.color == RED { // parent is red
-					show_debug_message("04")
-					var GrandLeft = left(PrePreIndex), GrandRight = right(PrePreIndex)
-					var UncleIndex = -1, UncleNode
-					if GrandLeft == ParentNode
-						UncleIndex = GrandRight
-					else if GrandRight == ParentNode
-						UncleIndex = GrandLeft
+			var NewNode = make_rb_node(Value, RBColor.Red, RBChild.None)
+			insert_recursive(NewNode, node_head)
+			if inner_size < 3 // at least 3 nodes.
+				return inner_size
 
-					if valid(UncleIndex) {
-						UncleNode = at(UncleIndex)
-						if UncleNode.color == RED { // The brother of parent is red.
-							show_debug_message("05-1")
-							retouch(PrePreIndex)
-						} else { // The brother of parent is black.
-							show_debug_message("05-2")
-							var ParentLeft = left(PreIndex), ParentRight = right(PreIndex)
-							var GrandParentNode = at(PrePreIndex)
-							if Index == ParentRight { // new node is at right of parent.
-								show_debug_message("06-1")
-								// ** Rotate to Left **
-								var MovedNewIndex = right(ParentLeft)
-								move_children(PreIndex, ParentLeft)
-								move_children_of_right(MovedNewIndex, PreIndex)
-								move_children(left(MovedNewIndex), MovedNewIndex)
-							} else if Index == ParentLeft { // new node is at left of parent.
-								show_debug_message("06-1")
-								// ** Rotate to Right **
-								GrandParentNode.color = RED
-								ParentNode.color = BLACK
-								move_children_of_right(PrePreIndex, UncleIndex)
-								move_children(ParentRight, left(UncleIndex))
-								move_children(PreIndex, PrePreIndex)
-							}
+			var Node = NewNode, Aunt = undefined
+			for (; Node.parent.color == RBColor.Red;) {
+	            if Node.parent.child_type == RBChild.Left {
+	                Aunt = Node.parent.parent.node_right
 
-							show_debug_message("07")
-						}
-					}
-				}
+	                if Aunt.color == RBColor.Red { // Recoloring
+	                    Node.parent.color = RBColor.Black
+	                    Aunt.color = RBColor.Black
+	                    Node.parent.parent.color = RBColor.Red
+
+	                    Node = Node.parent.parent
+	                } else { // parent's sibling has red and black children
+	                    if Node.child_type == RBChild.Right { // rotate right child to left
+	                        Node = Node.parent
+
+	                        rotate_left(Node)
+	                    }
+
+	                    Node.parent.color = RBColor.Black // propagate red up
+	                    Node.parent.parent.color = RBColor.Red
+	                    rotate_right(Node.parent.parent)
+	                }
+	            } else { // fixup red-red in right subtree
+	                Aunt = Node.parent.parent.node_left
+
+	                if Aunt.color == RBColor.Red { // Recoloring
+	                    Node.parent.color = RBColor.Black
+	                    Aunt.color = RBColor.Black
+	                    Node.parent.parent.color = RBColor.Red
+
+	                    Node = Node.parent.parent
+	                } else { // parent's sibling has red and black children
+	                    if Node == Node.parent.node_left { // rotate left child to right
+	                        Node = Node.parent
+	                        rotate_right(Node)
+	                    }
+
+	                    Node.parent.color = RBColor.Black // propagate red up
+	                    Node.parent.parent.color = RBColor.Red
+	                    rotate_left(Node.parent.parent)
+	                }
+	            }
 			}
+			node_head.color = RBColor.Black
 		}
+		return inner_size
 	}
 
 	///@function set_key_comp(compare_function)
@@ -188,13 +250,11 @@ function RedBlack_Tree(): Container() constructor {
 	static set_check_comp = function(Func) { check_comparator = method(other, Func) }
 
 	type = RedBlack_Tree
-	key_comparator = compare_less
+	key_comparator = compare_complex_less
 	check_comparator = compare_equal
 	key_inquire_compare = function(a, b) { return key_comparator(a.value, b.value) }
 	check_inquire_compare = function(a, b) { return check_comparator(a.value, b.value) }
 	node_head = undefined
-	node_smallest = undefined
-	node_largest = undefined
 	inner_size = 0
 
 	// ** Assigning **
