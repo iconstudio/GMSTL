@@ -49,7 +49,7 @@ function Heap_Tree(): Binary_Tree() constructor {
 			Index = MinPosition
 			Left = left(Index)
 			Right = right(Index)
-        }
+		}
 	}
 
 	///@function set_key_comp(compare_function)
