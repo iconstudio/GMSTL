@@ -66,11 +66,11 @@ function BinarySearch_Tree(): Binary_Tree() constructor {
 			return insert_recursive(Value, right(0))
 	}
 
-	///@function set_key_comp(compare_function)
-	static set_key_comp = function(Func) { key_comparator = method(other, Func) }
+	///@function set_key_compare(compare_function)
+	static set_key_compare = function(Func) { key_comparator = method(other, Func) }
 
-	///@function set_check_comp(compare_function)
-	static set_check_comp = function(Func) { check_comparator = method(other, Func) }
+	///@function set_check_compare(compare_function)
+	static set_check_compare = function(Func) { check_comparator = method(other, Func) }
 
 	type = BinarySearch_Tree
 	key_comparator = compare_less

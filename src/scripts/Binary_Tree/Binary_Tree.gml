@@ -9,12 +9,6 @@ function Binary_Tree(): List() constructor {
 	///@description larger
 	static right = function(Index) { return Index * 2 + 2 }
 
-	///@function at_left(index)
-	static at_left = function(Index) { return at(left(Index)) }
-
-	///@function at_right(index)
-	static at_right = function(Index) { return at(right(Index)) }
-
 	///@function find_of(value)
 	static find_of = function(Value) { return ds_list_find_index(raw, Value) }
 
