@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Advanced",
-    "path": "folders/Scripts/Advanced.yy",
+    "name": "Scripts",
+    "path": "folders/Scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "Priority_Queue",
+  "name": "GM_Priority",
   "tags": [],
   "resourceType": "GMScript",
 }
