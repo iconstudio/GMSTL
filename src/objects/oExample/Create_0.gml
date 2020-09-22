@@ -6,6 +6,9 @@ randomize()
 ///@function print(container)
 function print(Cont) { foreach(Cont.first(), Cont.last(), show_debug_message) }
 
+
+
+/*
 test1 = new List(4, 2, 8, 13, 11, 9) // 6
 test2 = new Array(3, 3.5, 26, 7, 10, 15, 5, 4.5) // 8
 test_sum = new List()
