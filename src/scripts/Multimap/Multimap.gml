@@ -144,8 +144,8 @@ function Multimap(): Container() constructor {
 		ds_map_set(raw, Key2, Temp)
 	}
 
-	///@function set_key_comp(compare_function)
-	function set_key_comp(Func) { key_comparator = method(other, Func) return self }
+	///@function set_key_compare(compare_function)
+	function set_key_compare(Func) { key_comparator = method(other, Func) return self }
 
 	///@function set_value_comp(compare_function)
 	function set_value_comp(Func) { value_comparator = method(other, Func) return self }

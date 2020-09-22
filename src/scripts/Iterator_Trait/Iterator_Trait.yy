@@ -6,7 +6,7 @@
     "path": "folders/Scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "Unordered_Map",
+  "name": "Iterator_Trait",
   "tags": [],
   "resourceType": "GMScript",
 }

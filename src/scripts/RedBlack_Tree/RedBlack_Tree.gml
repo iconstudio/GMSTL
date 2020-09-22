@@ -1,30 +1,33 @@
 enum RBColor { Black, Red }
-enum RBChild { Left, Right, None }
 
 ///@function RBNode(value, color, [parent=undefined])
 function RBNode(Value, Color) constructor {
-	color = Color
 	value = Value
-	child_type = RBChild.None
+	color = Color
 	parent = 2 < argument_count ? argument[2] : undefined
 	node_left = undefined
 	node_right = undefined
-	next = undefined
+	node_next = undefined
+	node_before = undefined
 
 	///@function set_left(node)
 	static set_left = function(Node) {
 		node_left = Node
-		Node.child_type = RBChild.Left
-		Node.next = self
-		Node.parent = self
+		node_before = Node
+		if !is_undefined(Node) {
+			Node.node_next = self
+			Node.parent = self
+		}
 	}
 
 	///@function set_right(node)
 	static set_right = function(Node) {
 		node_right = Node
-		Node.child_type = RBChild.Right
-		next = Node
-		Node.parent = self
+		node_next = Node
+		if !is_undefined(Node) {
+			Node.node_before = self
+			Node.parent = self
+		}
 	}
 
 	static toString = function() {
@@ -32,11 +35,9 @@ function RBNode(Value, Color) constructor {
 	}
 }
 
-///@function make_rb_node(value, color, [child_type=none], [parent=undefined])
-function make_rb_node(Value, Color, Chty, Parent) {
-	var NewNode = new RBNode(Value, Color, Parent)
-	NewNode.child_type = select_argument(Chty, RBChild.None)
-	return NewNode
+///@function make_rb_node(value, color, [parent=undefined])
+function make_rb_node(Value, Color, Parent) {
+	return (new RBNode(Value, Color, Parent))
 }
 
 function RedBlack_Tree(): Container() constructor {
@@ -124,38 +125,42 @@ function RedBlack_Tree(): Container() constructor {
 
 	///@function rotate_left(axis_node)
 	static rotate_left = function(Node) {
-		var Right = Node.node_left
-		var LeftofRight = Right.node_right
-        Node.set_right(LeftofRight)
+		var Right = Node.node_right
+		var MoveTemp = Right.node_left
+		if valid(MoveTemp)
+			Node.set_right(MoveTemp)
 
-        if Node == node_head {
+		var Parent = Node.parent
+		Right.parent = Parent // can be undefined.
+		if Node == node_head {
 			node_head = Right
-		} else {
-			var Parent = Node.parent
-			if Node.child_type == RBChild.Left
+		} else if valid(Parent) {
+			if Node == Parent.node_left
 				Parent.set_left(Right)
 			else
 				Parent.set_right(Right)
 		}
-        Right.set_left(Node)
+		Right.set_left(Node)
 	}
 
 	///@function rotate_right(node)
 	static rotate_right = function(Node) {
 		var Left = Node.node_left
-		var RightofLeft = Left.node_right
-        Node.set_left(RightofLeft)
+		var MoveTemp = Left.node_right
+		if valid(MoveTemp)
+			Node.set_left(MoveTemp)
 
-        if Node == node_head {
+		var Parent = Node.parent
+		Left.parent = Parent // can be undefined.
+		if Node == node_head {
 			node_head = Left
-		} else {
-			var Parent = Node.parent
-			if Node.child_type == RBChild.Right
+		} else if valid(Parent) {
+			if Node == Parent.node_right
 				Parent.set_right(Left)
 			else
 				Parent.set_left(Left)
 		}
-        Left.set_right(Node)
+		Left.set_right(Node)
 	}
 
 	///@function insert_recursive(node, start_node)
@@ -164,7 +169,6 @@ function RedBlack_Tree(): Container() constructor {
 			var Next = StartNode.node_left
 			if !valid(Next) {
 				StartNode.set_left(Node)
-				show_debug_message(string(StartNode) + "'s LEFT: " + string(Node))
 			} else {
 				return insert_recursive(Node, Next)
 			}
@@ -172,7 +176,6 @@ function RedBlack_Tree(): Container() constructor {
 			var Next = StartNode.node_right
 			if !valid(Next) {
 				StartNode.set_right(Node)
-				show_debug_message(string(StartNode) + "'s RIGHT: " + string(Node))
 			} else {
 				return insert_recursive(Node, Next)
 			}
@@ -185,75 +188,74 @@ function RedBlack_Tree(): Container() constructor {
 	static insert = function(Value) { // This is a pure value.
 		var Size = inner_size++
 		if 0 == Size {
-			node_head = make_rb_node(Value, RBColor.Black, RBChild.None)
-			node_head.parent = node_head
-			//node_head.node_left = node_head
-			//node_head.node_right = node_head
+			node_head = make_rb_node(Value, RBColor.Black)
 		} else {
-			var NewNode = make_rb_node(Value, RBColor.Red, RBChild.None)
+			var NewNode = make_rb_node(Value, RBColor.Red)
 			insert_recursive(NewNode, node_head)
-			if inner_size < 3 // at least 3 nodes.
-				return inner_size
 
 			var Node = NewNode, Aunt = undefined
-			for (; Node.parent.color == RBColor.Red;) {
-	            if Node.parent.child_type == RBChild.Left {
-	                Aunt = Node.parent.parent.node_right
+			for (; Node.parent.color == RBColor.Red;) { // both are red.
+				if !valid(Node.parent.parent)
+					break
 
-	                if Aunt.color == RBColor.Red { // Recoloring
-	                    Node.parent.color = RBColor.Black
-	                    Aunt.color = RBColor.Black
-	                    Node.parent.parent.color = RBColor.Red
+				if Node.parent == Node.parent.parent.node_left {
+					Aunt = Node.parent.parent.node_right
 
-	                    Node = Node.parent.parent
-	                } else { // parent's sibling has red and black children
-	                    if Node.child_type == RBChild.Right { // rotate right child to left
-	                        Node = Node.parent
+					if valid(Aunt) and Aunt.color == RBColor.Red { // Recoloring
+						Node.parent.color = RBColor.Black
+						Aunt.color = RBColor.Black
+						Node.parent.parent.color = RBColor.Red
 
-	                        rotate_left(Node)
-	                    }
+						Node = Node.parent.parent
+					} else if Aunt.color == RBColor.Black { // parent's sibling has red and black children
+						if Node == Node.parent.node_right { // rotate right child to left
+							Node = Node.parent
+							rotate_left(Node)
+						}
 
-	                    Node.parent.color = RBColor.Black // propagate red up
-	                    Node.parent.parent.color = RBColor.Red
-	                    rotate_right(Node.parent.parent)
-	                }
-	            } else { // fixup red-red in right subtree
-	                Aunt = Node.parent.parent.node_left
+						Node.parent.color = RBColor.Black // propagate red up
+						Node.parent.parent.color = RBColor.Red
+						rotate_right(Node.parent.parent)
+					}
+				} else { // fixup red-red in right subtree
+					Aunt = Node.parent.parent.node_left
 
-	                if Aunt.color == RBColor.Red { // Recoloring
-	                    Node.parent.color = RBColor.Black
-	                    Aunt.color = RBColor.Black
-	                    Node.parent.parent.color = RBColor.Red
+					if valid(Aunt) and Aunt.color == RBColor.Red { // Recoloring
+						Node.parent.color = RBColor.Black
+						Aunt.color = RBColor.Black
+						Node.parent.parent.color = RBColor.Red
 
-	                    Node = Node.parent.parent
-	                } else { // parent's sibling has red and black children
-	                    if Node == Node.parent.node_left { // rotate left child to right
-	                        Node = Node.parent
-	                        rotate_right(Node)
-	                    }
+						Node = Node.parent.parent
+					} else if Aunt.color == RBColor.Black { // parent's sibling has red and black children
+						if Node.parent == Node.parent.parent.node_left { // rotate left child to right
+							Node = Node.parent
+							rotate_right(Node)
+						}
 
-	                    Node.parent.color = RBColor.Black // propagate red up
-	                    Node.parent.parent.color = RBColor.Red
-	                    rotate_left(Node.parent.parent)
-	                }
-	            }
+						Node.parent.color = RBColor.Black // propagate red up
+						Node.parent.parent.color = RBColor.Red
+						rotate_left(Node.parent.parent)
+					}
+				}
+				if valid(Node) or !valid(Node.parent)
+					break
 			}
 			node_head.color = RBColor.Black
 		}
 		return inner_size
 	}
 
-	///@function set_key_comp(compare_function)
-	static set_key_comp = function(Func) { key_comparator = method(other, Func) }
+	///@function set_key_compare(compare_function)
+	static set_key_compare = function(Func) { key_inquire_compare = method(other, Func) }
 
-	///@function set_check_comp(compare_function)
-	static set_check_comp = function(Func) { check_comparator = method(other, Func) }
+	///@function set_check_compare(compare_function)
+	static set_check_compare = function(Func) { check_inquire_compare = method(other, Func) }
 
 	type = RedBlack_Tree
-	key_comparator = compare_complex_less
-	check_comparator = compare_equal
-	key_inquire_compare = function(a, b) { return key_comparator(a.value, b.value) }
-	check_inquire_compare = function(a, b) { return check_comparator(a.value, b.value) }
+	key_inquire_compare = compare_complex_less
+	check_inquire_compare = compare_equal
+	key_comparator = function(a, b) { return key_inquire_compare(a.value, b.value) }
+	check_comparator = function(a, b) { return check_inquire_compare(a.value, b.value) }
 	node_head = undefined
 	inner_size = 0
 

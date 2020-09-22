@@ -6,24 +6,27 @@ randomize()
 ///@function print(container)
 function print(Cont) { foreach(Cont.first(), Cont.last(), show_debug_message) }
 
+
+
+/*
 test1 = new List(4, 2, 8, 13, 11, 9) // 6
 test2 = new Array(3, 3.5, 26, 7, 10, 15, 5, 4.5) // 8
 test_sum = new List()
 show_debug_message("\nThe First List")
 sort(test1.first(), test1.last())
-print(test1)
-show_debug_message("Is sorted: " + string(is_sorted(test1.first(), test1.last())))
-show_debug_message("bsearch(11): " + string(binary_search(test1.first(), test1.last(), 11)))
+//print(test1)
+//show_debug_message("Is sorted: " + string(is_sorted(test1.first(), test1.last())))
+//show_debug_message("bsearch(11): " + string(binary_search(test1.first(), test1.last(), 11)))
 
 show_debug_message("\nThe Second Array")
 stable_sort(test2.first(), test2.last())
-print(test2)
-show_debug_message("Is sorted: " + string(is_sorted(test2.first(), test2.last())))
-show_debug_message("bsearch(2): " + string(binary_search(test2.first(), test2.last(), 2)))
+//print(test2)
+//show_debug_message("Is sorted: " + string(is_sorted(test2.first(), test2.last())))
+//show_debug_message("bsearch(2): " + string(binary_search(test2.first(), test2.last(), 2)))
 
 show_debug_message("\nThe Summary List")
 merge(test1.first(), test1.last(), test2.first(), test2.last(), test_sum.first())
-print(test_sum)
+//print(test_sum)
 //random_shuffle(test_sum.first(), test_sum.last())
 
 function index_tree_print(Cont, Index, Msg) {
@@ -55,7 +58,6 @@ function node_tree_print(Cont, NodeStart, Msg) {
 
 	if LeftChk {
 		node_tree_print(Cont, LeftNode, "LEFT(" + string(NodeStart) + ") -> [" + string(LeftNode) + "]\t")
-		show_debug_message("--------")
 	}
 
 	if RightChk {

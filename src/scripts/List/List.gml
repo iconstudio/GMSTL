@@ -10,9 +10,6 @@
 
 	Initialize:
 		new List()
-
-	Usage:
-		
 */
 function List(): Container() constructor {
 	///@function size()
@@ -24,8 +21,8 @@ function List(): Container() constructor {
 	///@function at(index)
 	static at = function(Index) { return ds_list_find_value(raw, Index) }
 
-	///@function seek(value)
-	static seek = function(Value) { return ds_list_find_index(raw, Value) }
+	///@function index_of(value)
+	static index_of = function(Value) { return ds_list_find_index(raw, Value) }
 
 	///@function front()
 	static front = function() { return at(0) }
@@ -52,13 +49,13 @@ function List(): Container() constructor {
 	static push_back = function(Value) { ds_list_add(raw, Value) }
 
 	///@function erase_at(index)
-	static erase_at = function(Index) { ds_list_delete(raw, Index) }
+	static erase_at = function(Index) { var Result = at(Index); ds_list_delete(raw, Index); return Result }
 
 	///@function pop_front()
-	static pop_front = function() { erase_at(0) }
+	static pop_front = function() { return erase_at(0) }
 
 	///@function pop_back()
-	static pop_back = function() { erase_at(size() - 1) }
+	static pop_back = function() { return erase_at(size() - 1) }
 
 	///@function clear()
 	static clear = function() { ds_list_clear(raw) }
@@ -107,7 +104,7 @@ function List(): Container() constructor {
 				for (var i = 0; i < inner_size; ++i) push_back(Item[| i])
 			} else if is_struct(Item) and is_iterable(Item) {
 				// (*) Container
-				assign(Item.first(), Item.last())
+				foreach(Item.first(), Item.last(), push_back)
 			} else {
 				// (*) Arg
 				push_back(Item)

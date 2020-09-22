@@ -1,7 +1,5 @@
 ///@function Iterator(container, index)
 function Iterator(Cont, Index) constructor {
-	ITERATOR = true
-
 	///@function duplicate()
 	static duplicate = function() { return new type(container, index) }
 
@@ -280,7 +278,7 @@ function make_iterator(Param) {
 ///@function is_iterator(iterator)
 function is_iterator(iterator) {
 	if is_struct(iterator)
-		return bool(variable_struct_exists(iterator, "ITERATOR"))
+		return bool(iterator.__ITERATOR)
 	else
 		return false
 }
