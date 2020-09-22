@@ -186,31 +186,28 @@ function RedBlack_Tree(): Container() constructor {
 	///@function insert(item)
 	///@description Imported from Visual Studio.
 	static insert = function(Value) { // This is a pure value.
-		show_debug_message("Insert: " + string(Value))
 		var Size = inner_size++
 		if 0 == Size {
 			node_head = make_rb_node(Value, RBColor.Black)
 		} else {
 			var NewNode = make_rb_node(Value, RBColor.Red)
 			insert_recursive(NewNode, node_head)
-			show_debug_message("Node: " + string(NewNode))
 
-			var Node = NewNode, Aunt = undefined, GrandParent = undefined
-			for (; false and Node != node_head and Node.parent.color == RBColor.Red;) {
-				GrandParent = Node.parent.parent
-				if !valid(GrandParent) or !valid(Node.parent)
+			var Node = NewNode, Aunt = undefined
+			for (; Node.parent.color == RBColor.Red;) { // both are red.
+				if !valid(Node.parent.parent)
 					break
 
-				if Node.parent == GrandParent.node_left {
-					Aunt = GrandParent.node_right
+				if Node.parent == Node.parent.parent.node_left {
+					Aunt = Node.parent.parent.node_right
 
 					if valid(Aunt) and Aunt.color == RBColor.Red { // Recoloring
 						Node.parent.color = RBColor.Black
 						Aunt.color = RBColor.Black
-						GrandParent.color = RBColor.Red
+						Node.parent.parent.color = RBColor.Red
 
-						Node = GrandParent
-					} else { // parent's sibling has red and black children
+						Node = Node.parent.parent
+					} else if Aunt.color == RBColor.Black { // parent's sibling has red and black children
 						if Node == Node.parent.node_right { // rotate right child to left
 							Node = Node.parent
 							rotate_left(Node)
@@ -221,15 +218,15 @@ function RedBlack_Tree(): Container() constructor {
 						rotate_right(Node.parent.parent)
 					}
 				} else { // fixup red-red in right subtree
-					Aunt = GrandParent.node_left
+					Aunt = Node.parent.parent.node_left
 
 					if valid(Aunt) and Aunt.color == RBColor.Red { // Recoloring
 						Node.parent.color = RBColor.Black
 						Aunt.color = RBColor.Black
-						GrandParent.color = RBColor.Red
+						Node.parent.parent.color = RBColor.Red
 
-						Node = GrandParent
-					} else { // parent's sibling has red and black children
+						Node = Node.parent.parent
+					} else if Aunt.color == RBColor.Black { // parent's sibling has red and black children
 						if Node.parent == Node.parent.parent.node_left { // rotate left child to right
 							Node = Node.parent
 							rotate_right(Node)
@@ -240,6 +237,8 @@ function RedBlack_Tree(): Container() constructor {
 						rotate_left(Node.parent.parent)
 					}
 				}
+				if valid(Node) or !valid(Node.parent)
+					break
 			}
 			node_head.color = RBColor.Black
 		}
