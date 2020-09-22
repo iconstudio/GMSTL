@@ -245,17 +245,17 @@ function RedBlack_Tree(): Container() constructor {
 		return inner_size
 	}
 
-	///@function set_key_comp(compare_function)
-	static set_key_comp = function(Func) { key_comparator = method(other, Func) }
+	///@function set_key_compare(compare_function)
+	static set_key_compare = function(Func) { key_inquire_compare = method(other, Func) }
 
-	///@function set_check_comp(compare_function)
-	static set_check_comp = function(Func) { check_comparator = method(other, Func) }
+	///@function set_check_compare(compare_function)
+	static set_check_compare = function(Func) { check_inquire_compare = method(other, Func) }
 
 	type = RedBlack_Tree
-	key_comparator = compare_complex_less
-	check_comparator = compare_equal
-	key_inquire_compare = function(a, b) { return key_comparator(a.value, b.value) }
-	check_inquire_compare = function(a, b) { return check_comparator(a.value, b.value) }
+	key_inquire_compare = compare_complex_less
+	check_inquire_compare = compare_equal
+	key_comparator = function(a, b) { return key_inquire_compare(a.value, b.value) }
+	check_comparator = function(a, b) { return check_inquire_compare(a.value, b.value) }
 	node_head = undefined
 	inner_size = 0
 
