@@ -1,18 +1,18 @@
 global.__TLNULL = new (function() constructor {NULL = true})()
 #macro NODE_NULL global.__TLNULL
 function Binary_Tree(): List() constructor {
-	///@function left(index)
+	///@function 
 	///@description smaller
 	static left = function(Index) { return Index * 2 + 1 }
 
-	///@function right(index)
+	///@function 
 	///@description larger
 	static right = function(Index) { return Index * 2 + 2 }
 
 	///@function find_of(value)
 	static find_of = function(Value) { return ds_list_find_index(raw, Value) }
 
-	///@function find_parent(index)
+	///@function 
 	static find_parent = function(Index) { return floor((Index - 1) * 0.5) }
 
 	///@function contains(value)
@@ -139,7 +139,7 @@ function Binary_Tree(): List() constructor {
 	type = Binary_Tree
 	deallocator = undefined
 
-	// ** Assigning **
+	// ** Contructor **
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]

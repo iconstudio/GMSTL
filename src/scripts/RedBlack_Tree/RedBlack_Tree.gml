@@ -259,7 +259,7 @@ function RedBlack_Tree(): Container() constructor {
 	node_head = undefined
 	inner_size = 0
 
-	// ** Assigning **
+	// ** Contructor **
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]
