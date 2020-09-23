@@ -1,5 +1,7 @@
 ///@function Iterator(container, index)
 function Iterator(Cont, Index) constructor {
+	__ITERATOR = true
+
 	///@function duplicate()
 	static duplicate = function() { return new type(container, index) }
 
@@ -80,7 +82,7 @@ function ForwardIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	type = ForwardIterator
 
 	///@function set(value)
-	static set = function() { container.set(pointer, argument[0]) }
+	static set = function() { container.set_at(pointer, argument[0]) }
 
 	///@function swap(iterator)
 	static swap = function(Other) {
@@ -97,7 +99,7 @@ function BidirectionalIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	type = BidirectionalIterator
 
 	///@function set(value)
-	static set = function() { container.set(pointer, argument[0]) }
+	static set = function() { container.set_at(pointer, argument[0]) }
 
 	///@function back()
 	static back = function() { 
