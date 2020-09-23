@@ -1,6 +1,13 @@
 /*
 	Constructors:
 		Priority_Deque()
+		Priority_Deque(Priority_Deque) // duplicate
+		Priority_Deque(Arg)
+		Priority_Deque(Arg0, Arg1, ...)
+		Priority_Deque(Builtin-Array)
+		Priority_Deque(Builtin-List)
+		Priority_Deque(Container)
+		Priority_Deque(Iterator-Begin, Iterator-End)
 
 	Initialize:
 		new Priority_Deque()

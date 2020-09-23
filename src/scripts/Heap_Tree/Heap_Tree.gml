@@ -83,7 +83,7 @@ function Heap_Tree(): List() constructor {
 
 #region private
 	///@function 
-	static valid = function(Index) { return bool(0 <= Index and Index < size() and at(Index) != node_null) }
+	static valid = function(Index) { return bool(0 <= Index and Index < size()) }
 
 	///@function 
 	static left = function(Index) { return Index * 2 + 1 }
@@ -94,22 +94,6 @@ function Heap_Tree(): List() constructor {
 	///@function 
 	static find_parent = function(Index) { return floor((Index - 1) * 0.5) }
 
-	///@function 
-	/*
-	static set_at = function(Index, Value) {
-		var Size = size()
-		if Index < Size {
-			ds_list_set(raw, Index, Value)
-		} else {
-			var Times = Index - Size
-			repeat Times
-				push_back(node_null)
-			push_back(Value)
-		}
-		return self
-	}*/
-
-	node_null = { NULL: true }
 	key_comparator = compare_less
 #endregion
 

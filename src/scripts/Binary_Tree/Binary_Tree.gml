@@ -1,42 +1,33 @@
-global.__TLNULL = new (function() constructor {NULL = true})()
+global.__TLNULL = { NULL: true }
 #macro NODE_NULL global.__TLNULL
-function Binary_Tree(): List() constructor {
-	///@function 
-	///@description smaller
-	static left = function(Index) { return Index * 2 + 1 }
 
-	///@function 
-	///@description larger
-	static right = function(Index) { return Index * 2 + 2 }
+///@function Tree_Node(value)
+function Tree_Node(Value) constructor {
+	value = Value
+	parent = undefined
+	node_left = undefined
+	node_right = undefined
 
-	///@function find_of(value)
-	static find_of = function(Value) { return ds_list_find_index(raw, Value) }
+	///@function set_left(node)
+	static set_left = function(Node) {
+		node_left = Node
+		if !is_undefined(Node) {
+			Node.parent = self
+		}
+	}
 
-	///@function 
-	static find_parent = function(Index) { return floor((Index - 1) * 0.5) }
+	///@function set_right(node)
+	static set_right = function(Node) {
+		node_right = Node
+		if !is_undefined(Node) {
+			Node.parent = self
+		}
+	}
+}
 
+function Binary_Tree(): Container() constructor {
 	///@function contains(value)
 	static contains = function(Value) { return !is_undefined(find_of(Value)) }
-
-	///@function valid(index)
-	static valid = function(Index) { return bool(is_real(Index) and 0 <= Index and Index < size() and at(Index) != NODE_NULL) }
-
-	///@function head()
-	static head = function() { return front() }
-
-	///@function set(index, value)
-	static set = function(Index, Value) {
-		var Size = size()
-		if Index < Size {
-			ds_list_set(raw, Index, Value)
-		} else {
-			var Times = Index - Size
-			repeat Times
-				push_back(NODE_NULL)
-			push_back(Value)
-		}
-		return self
-	}
 
 	///@function insert(item)
 	static insert = function(Value) {
