@@ -1,16 +1,3 @@
-///@function assign(begin, end)
-function assign(First, Last) {
-	First = make_iterator(First)
-
-	var Output = first()
-	while First.not_equals(Last) {
-		Output.set(First.get())
-		First.go()
-		Output.go()
-	}
-	return Output
-}
-
 ///@function erase(begin, end)
 function erase(First, Last) {
 	if is_real(First) {
@@ -92,7 +79,7 @@ function find(First, Last, Value) {
 			return First
 		First.go()
 	}
-	return Last
+	return undefined
 }
 
 ///@function find_if(begin, end, predicate)
@@ -105,7 +92,7 @@ function find_if(First, Last, Pred) {
 			return First
 		First.go()
 	}
-	return Last
+	return undefined
 }
 
 ///@function count(begin, end, value)
