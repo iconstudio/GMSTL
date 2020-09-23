@@ -1,31 +1,77 @@
-global.__TLNULL = { NULL: true }
-#macro NODE_NULL global.__TLNULL
-
-///@function Tree_Node(value)
-function Tree_Node(Value) constructor {
-	value = Value
+///@function 
+function Tree_Node_Tratit() {
 	parent = undefined
 	node_left = undefined
 	node_right = undefined
 
-	///@function set_left(node)
-	static set_left = function(Node) {
+	///@function 
+	static underlying_set_parent = function(Node) { parent = Node }
+
+	///@function 
+	static underlying_set_left = function(Node) {
 		node_left = Node
 		if !is_undefined(Node) {
 			Node.parent = self
+			return false
 		}
+		return true
 	}
 
-	///@function set_right(node)
-	static set_right = function(Node) {
+	///@function 
+	static underlying_set_right = function(Node) {
 		node_right = Node
 		if !is_undefined(Node) {
 			Node.parent = self
+			return false
 		}
+		return true
 	}
 }
 
+///@function 
+function Tree_Node(Value) constructor {
+	Tree_Node_Tratit()
+	value = Value
+
+	///@function set_parent(node)
+	static set_parent = function(Node) { underlying_set_parent(Node) }
+
+	///@function set_left(node)
+	static set_left = function(Node) { underlying_set_left(Node) }
+
+	///@function set_right(node)
+	static set_right = function(Node) { underlying_set_right(Node) }
+}
+
 function Binary_Tree(): Container() constructor {
+#region public
+	///@function size()
+	static size = function() { return inner_size }
+
+	///@function empty()
+	static empty = function() { return bool(inner_size == 0) }
+
+	///@function valid(Index)
+	static valid = function(Index) { return bool(0 <= Index and Index < size()) }
+
+	///@function clear()
+	static clear = function() { ds_list_clear(raw) }
+
+	///@function at(index)
+	static at = function(Index) { return ds_list_find_value(raw, Index) }
+
+	///@function front()
+	static front = function() { return at(0) }
+
+	///@function back()
+	static back = function() { return at(size() - 1) }
+
+	///@function first()
+	static first = function() { return (new iterator_type(self, 0)).pure() }
+
+	///@function last()
+	static last = function() { return (new iterator_type(self, size())).pure() }
+
 	///@function contains(value)
 	static contains = function(Value) { return !is_undefined(find_of(Value)) }
 
@@ -128,7 +174,12 @@ function Binary_Tree(): Container() constructor {
 	}
 
 	type = Binary_Tree
+#endregion
+
+#region private
+	inner_size = 0
 	deallocator = undefined
+#endregion
 
 	// ** Contructor **
 	if 0 < argument_count {
