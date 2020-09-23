@@ -198,8 +198,9 @@ function replace(First, Last, OldVal, NewVal) {
 function replace_if(First, Last, Pred, NewVal) {
 	First = make_iterator(First)
 
+	var Value
 	while First.not_equals(Last) {
-		var Value = First.get()
+		Value = First.get()
 		if Pred(Value)
 			First.set(NewVal)
 		First.go()
@@ -211,8 +212,9 @@ function replace_copy(First, Last, Output, OldVal, NewVal) {
 	First = make_iterator(First)
 	Output = make_iterator(Output)
 
+	var Value
 	while First.not_equals(Last) {
-		var Value = First.get()
+		Value = First.get()
 		if Value == OldVal
 			Output.set(NewVal)
 		else
@@ -526,14 +528,14 @@ function stable_sort(First, Last) {
 function insertion_sort(First, Last) {
 	First = make_iterator(First).go()
 
-	var Compare
+	var Compare, It, Value
 	if 2 < argument_count
 		Compare = argument[2]
 	else
 		Compare = compare_less
 	while First.not_equals(Last) {
-		var Value = First.get()
-		for(var It = First.previous(); 0 <= It.get_index() and Compare(Value, It.get()); It.back()) {
+		Value = First.get()
+		for(It = First.previous(); 0 <= It.get_index() and Compare(Value, It.get()); It.back()) {
 			It.next().set(It.get())
 		}
 		It.next().set(Value)
@@ -633,8 +635,9 @@ function partition_by_median_guess(First, Last, Comparator) {
 			}
 		}
 
+		var _Gfore
 		for (; First.get_index() < _Glast.get_index(); _Glast.back()) {
-			var _Gfore = _Glast.previous()
+			_Gfore = _Glast.previous()
 			if Comparator(_Gfore.get(), _Pfirst.get()) {
 			} else if Comparator(_Pfirst.get(), _Gfore.get()) {
 				break
@@ -683,13 +686,13 @@ function nth_element(First, Nth, Last) {
 	if First.equals(Last) or Nth.equals(Last)
 		exit
 
-	var Compare
+	var Compare, Middle
 	if 3 < argument_count
 		Compare = argument[3]
 	else
 		Compare = compare_less
 	while 32 < First.distance(Last) { // divide and conquer, ordering partition containing Nth
-		var Middle = partition_by_median_guess(First, Last, Compare)
+		Middle = partition_by_median_guess(First, Last, Compare)
 
 		if Middle.index <= Nth.index {
 			First = Middle
@@ -808,7 +811,7 @@ function merge(First, Last, OtherFirst, OtherLast, Output) {
 	OtherFirst = make_iterator(OtherFirst)
 	OtherLast = make_iterator(OtherLast)
 
-	var Compare
+	var Compare, Src1_Val, Src2_Val
 	if 5 < argument_count
 		Compare = argument[5]
 	else
@@ -820,8 +823,8 @@ function merge(First, Last, OtherFirst, OtherLast, Output) {
 		if OtherFirst.equals(OtherLast)
 			return copy(First, Last, Output)
 
-		var Src1_Val = First.get()
-		var Src2_Val = OtherFirst.get()
+		Src1_Val = First.get()
+		Src2_Val = OtherFirst.get()
 		if Compare(Src2_Val, Src1_Val) {
 			Output.set(Src2_Val)
 			OtherFirst.go()
@@ -861,8 +864,7 @@ function shuffle(First, Last) {
 		Urng = argument[2]
 	else
 		Urng = irandom_range
-	var Dist = iterator_distance(First, Last)
-	for (var i = Dist - 1; 0 < i; --i) {
+	for (var i = iterator_distance(First, Last) - 1; 0 < i; --i) {
 	  swap(iterator_advance(First, i), iterator_advance(First, Urng(0, i)))
 	}
 }
@@ -876,8 +878,7 @@ function random_shuffle(First, Last) {
 		Gen = argument[2]
 	else
 		Gen = irandom
-	var Dist = iterator_distance(First, Last)
-	for (var i = Dist - 1; 0 < i; --i) {
+	for (var i = iterator_distance(First, Last) - 1; 0 < i; --i) {
 	  swap(iterator_advance(First, i), iterator_advance(First, Gen(i + 1)))
 	}
 }
