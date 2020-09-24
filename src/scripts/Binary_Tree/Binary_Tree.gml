@@ -4,6 +4,8 @@ function Tree_Node_Tratit() {
 	parent = undefined
 	node_left = undefined
 	node_right = undefined
+	node_next = undefined
+	node_previous = undefined
 
 	///@function 
 	static underlying_set_parent = function(Node) { parent = Node }
@@ -13,9 +15,9 @@ function Tree_Node_Tratit() {
 		node_left = Node
 		if !is_undefined(Node) {
 			Node.parent = self
-			return false
+			return true
 		}
-		return true
+		return false
 	}
 
 	///@function 
@@ -23,9 +25,9 @@ function Tree_Node_Tratit() {
 		node_right = Node
 		if !is_undefined(Node) {
 			Node.parent = self
-			return false
+			return true
 		}
-		return true
+		return false
 	}
 }
 
@@ -37,10 +39,23 @@ function Tree_Node() constructor {
 	static set_parent = function(Node) { underlying_set_parent(Node) }
 
 	///@function set_left(node)
-	static set_left = function(Node) { underlying_set_left(Node) }
+	static set_left = function(Node) { return underlying_set_left(Node) }
 
 	///@function set_right(node)
-	static set_right = function(Node) { underlying_set_right(Node) }
+	static set_right = function(Node) { return underlying_set_right(Node) }
+
+	///@function set_next(node)
+	static set_next = function(Node) {
+		if !is_undefined(node_next) {
+			node_next.node_previous = undefined
+		}
+		node_next = Node
+		if !is_undefined(Node) {
+			Node.node_previous = self
+			return true
+		}
+		return false
+	}
 
 	///@function find_leftest()
 	static find_leftest = function() {
@@ -61,11 +76,21 @@ function Tree_Node() constructor {
 		}
 		return Result
 	}
+
+	///@function 
+	static underlying_destroy = function() {
+		if !is_undefined(node_previous) {
+			Node.node_previous = self
+			return true
+		}
+		return false
+	}
 }
 
 ///@function 
 function Binary_Tree_Trait() {
-	head = undefined
+	node_head = undefined
+	node_tail = undefined
 	cash = array_create(64, undefined)
 
 	///@function 
@@ -78,11 +103,11 @@ function Binary_Tree_Trait() {
 
 		var Result = undefined
 		if 0 == Index {
-			Result = head
+			Result = node_head
 		} else if 1 == Index {
-			Result = head.left
+			Result = node_head.left
 		} else if 2 == Index {
-			Result = head.right
+			Result = node_head.right
 		} else {
 			var ParentIndex = floor((Index - 1) * 0.5)
 			if Index < 0
@@ -109,17 +134,17 @@ function Binary_Tree_Trait() {
 	}
 
 	///@function 
-	static underlying_sequence_by_index = function(Index) { // from head to left to right
+	static underlying_sequence_by_index = function(Index) { // from node_head to left to right
 		var Result = underlying_sequence_by_index_recursive(Index)
-		cash = 0
-		cash = array_create(64, undefined)
+		//cash = 0
+		//cash = array_create(64, undefined)
 		gc_collect()
 		return Result
 	}
 
 	///@function 
 	static underlying_sequence_by_sort = function(Index) { // from leftest
-		var First = head.find_leftest()
+		var First = node_head.find_leftest()
 		
 		var Node, Leftest = Node.find_leftest()
 		if Leftest == Node {
@@ -146,32 +171,55 @@ function Binary_Tree(): Container() constructor {
 	static valid = function(Node) { return !is_undefined(Node) }
 
 	///@function clear()
-	static clear = function() { head = undefined; inner_size = 0; gc_collect() }
+	static clear = function() { node_head = undefined; inner_size = 0; gc_collect() }
 
 	///@function front()
-	static front = function() { return head }
+	static front = function() { return node_head }
 
 	///@function back()
-	static back = function() { return at(size() - 1) }
+	static back = function() { return node_tail }
 
 	///@function first()
 	static first = function() { return (new iterator_type(self, 0)).pure() }
 
 	///@function last()
-	static last = function() { return (new iterator_type(self, size())).pure() }
+	static last = function() { return size() }
 
-	///@function contains(value)
-	static contains = function(Value) { return !is_undefined(find_of(Value)) }
+	///@function make_node(value)
+	static make_node = function(Value) {
+		var Node = underlying_make_node()
+		Node.value = Value
+		return Node
+	}
 
-	///@function make_node()
-	static make_node = function() {
+	///@function insert_recursive(node, start_node)
+	static insert_recursive = function(Node, StartNode) {
 		
 	}
 
 	///@function insert(item)
 	static insert = function(Value) {
-		push_back(Value)
-		return size()
+		var NewNode = make_node(Value)
+		node_tail = NewNode
+		var Size = inner_size
+		if Size < 64 and cash[Size] == undefined // memoization
+			cash[Size] = Value
+
+		if 0 == Size {
+			node_head = NewNode
+		} else if 1 == Size {
+			node_head.set_left(NewNode)
+			node_head.set_next(NewNode)
+		} else if 2 == Size {
+			node_head.set_right(NewNode)
+			node_head.left.set_next(NewNode)
+		} else {
+			var a = underlying_sequence_by_index(Index)
+			
+			insert_recursive(NewNode, node_head)
+		}
+
+		return inner_size++
 	}
 
 	///@function move_children(index, destination)
@@ -255,6 +303,20 @@ function Binary_Tree(): Container() constructor {
 		}
 	}
 
+	///@function location(value)
+	static location = function(Value) {
+		var Result = ds_list_find_index(raw, Value)
+		if Result == -1
+			return undefined
+		else
+			return Result
+	}
+
+	///@function contains(value)
+	static contains = function(Value) {
+		return !is_undefined(find_of(Value))
+	}
+
 	///@function set_deallocator(destroy_function)
 	static set_deallocator = function(Func) { deallocator = method(other, Func) }
 
@@ -263,7 +325,7 @@ function Binary_Tree(): Container() constructor {
 		var Elem = at(Index)
 		if !is_undefined(deallocator)
 			deallocator(Elem)
-		set(Index, NODE_NULL)
+		set(Index, undefined)
 	}
 
 	type = Binary_Tree
