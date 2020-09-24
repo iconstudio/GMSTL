@@ -146,7 +146,7 @@ test_map = new Map(test_mapped_list)
 print(test_map)
 
 show_debug_message("\nUnordered_Map")
-test_unomap = new Unordered_Map(test_mapped_list)
+test_unomap = new GM_Map(test_mapped_list)
 print(test_unomap)
 
 show_debug_message("\nMultimap")
