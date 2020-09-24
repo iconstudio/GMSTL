@@ -1,5 +1,6 @@
 ///@function 
 function Tree_Node_Tratit() {
+	value = undefined
 	parent = undefined
 	node_left = undefined
 	node_right = undefined
@@ -29,9 +30,8 @@ function Tree_Node_Tratit() {
 }
 
 ///@function 
-function Tree_Node(Value) constructor {
+function Tree_Node() constructor {
 	Tree_Node_Tratit()
-	value = Value
 
 	///@function set_parent(node)
 	static set_parent = function(Node) { underlying_set_parent(Node) }
@@ -41,9 +41,100 @@ function Tree_Node(Value) constructor {
 
 	///@function set_right(node)
 	static set_right = function(Node) { underlying_set_right(Node) }
+
+	///@function find_leftest()
+	static find_leftest = function() {
+		var Result = self, Next = left
+		while !is_undefined(Next) {
+			Result = Next
+			Next = Next.left
+		}
+		return Result
+	}
+
+	///@function find_rightest()
+	static find_rightest = function() {
+		var Result = self, Next = right
+		while !is_undefined(Next) {
+			Result = Next
+			Next = Next.right
+		}
+		return Result
+	}
+}
+
+///@function 
+function Binary_Tree_Trait() {
+	head = undefined
+	cash = array_create(64, undefined)
+
+	///@function 
+	static underlying_make_node = function() { return new Tree_Node() }
+
+	///@function 
+	static underlying_sequence_by_index_recursive = function(Index) {
+		if Index < 64 and cash[Index] != undefined
+			return cash[Index]
+
+		var Result = undefined
+		if 0 == Index {
+			Result = head
+		} else if 1 == Index {
+			Result = head.left
+		} else if 2 == Index {
+			Result = head.right
+		} else {
+			var ParentIndex = floor((Index - 1) * 0.5)
+			if Index < 0
+				return undefined
+
+			var Parent = underlying_sequence_by_index_recursive(ParentIndex)
+			if is_undefined(Parent)
+				return undefined
+
+			var ParentLeftIndex = ParentIndex * 2 + 1
+			var ResultIndex = Index - ParentLeftIndex
+			switch ResultIndex {
+			    case 0:
+					Result = Parent.left
+			        break
+			    case 1:
+					Result = Parent.right
+			        break
+			}
+		}
+		if Index < 64 and cash[Index] == undefined // memoization
+			cash[Index] = Result
+		return Result
+	}
+
+	///@function 
+	static underlying_sequence_by_index = function(Index) { // from head to left to right
+		var Result = underlying_sequence_by_index_recursive(Index)
+		cash = 0
+		cash = array_create(64, undefined)
+		gc_collect()
+		return Result
+	}
+
+	///@function 
+	static underlying_sequence_by_sort = function(Index) { // from leftest
+		var First = head.find_leftest()
+		
+		var Node, Leftest = Node.find_leftest()
+		if Leftest == Node {
+			
+		}
+	}
+
+	///@function 
+	static underlying_sequence_by_depth = function(Index) { // left first
+	}
 }
 
 function Binary_Tree(): Container() constructor {
+	Binary_Tree_Trait()
+
 #region public
 	///@function size()
 	static size = function() { return inner_size }
@@ -51,17 +142,14 @@ function Binary_Tree(): Container() constructor {
 	///@function empty()
 	static empty = function() { return bool(inner_size == 0) }
 
-	///@function valid(Index)
-	static valid = function(Index) { return bool(0 <= Index and Index < size()) }
+	///@function valid(node)
+	static valid = function(Node) { return !is_undefined(Node) }
 
 	///@function clear()
-	static clear = function() { ds_list_clear(raw) }
-
-	///@function at(index)
-	static at = function(Index) { return ds_list_find_value(raw, Index) }
+	static clear = function() { head = undefined; inner_size = 0; gc_collect() }
 
 	///@function front()
-	static front = function() { return at(0) }
+	static front = function() { return head }
 
 	///@function back()
 	static back = function() { return at(size() - 1) }
@@ -74,6 +162,11 @@ function Binary_Tree(): Container() constructor {
 
 	///@function contains(value)
 	static contains = function(Value) { return !is_undefined(find_of(Value)) }
+
+	///@function make_node()
+	static make_node = function() {
+		
+	}
 
 	///@function insert(item)
 	static insert = function(Value) {
