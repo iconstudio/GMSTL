@@ -1,16 +1,16 @@
 /*
 	Constructors:
-		Unordered_Map()
-		Unordered_Map(Arg)
-		Unordered_Map(Multimaps)
-		Unordered_Map(Paired-Container)
-		Unordered_Map(Builtin-Paired-Array)
-		Unordered_Map(Builtin-Paired-List)
-		Unordered_Map(Builtin-Map)
-		Unordered_Map(Arg0, Arg1, ...)
+		GM_Map()
+		GM_Map(Arg)
+		GM_Map(Multimaps)
+		GM_Map(Paired-Container)
+		GM_Map(Builtin-Paired-Array)
+		GM_Map(Builtin-Paired-List)
+		GM_Map(Builtin-Map)
+		GM_Map(Arg0, Arg1, ...)
 
 	Initialize:
-		new Unordered_Map()
+		new GM_Map()
 
 	Usage:
 		To Iterate values:
@@ -19,7 +19,7 @@
 			}
 		
 */
-function Unordered_Map(): Container() constructor {
+function GM_Map(): Container() constructor {
 	///@function size()
 	static size = function() { return ds_map_size(raw) }
 
@@ -115,7 +115,7 @@ function Unordered_Map(): Container() constructor {
 	///@function destroy()
 	static destroy = function() { ds_map_destroy(raw); gc_collect() }
 
-	type = Unordered_Map
+	type = GM_Map
 	raw = ds_map_create()
 	iterator_type = MapIterator
 
@@ -142,7 +142,7 @@ function Unordered_Map(): Container() constructor {
 				}
 			} else if is_struct(Item) {
 				var Type = instanceof(Item)
-				if Type == "Multimap" or Type == "Unordered_Multimap" {
+				if Type == "Multimap" {
 					// (*) Multimaps
 					foreach(Item.first(), Item.last(), function(Value) {
 						var Key = Value[0], KList = Value[1].duplicate()

@@ -1,6 +1,13 @@
 /*
 	Constructors:
 		Priority_Deque()
+		Priority_Deque(Priority_Deque) // duplicate
+		Priority_Deque(Arg)
+		Priority_Deque(Arg0, Arg1, ...)
+		Priority_Deque(Builtin-Array)
+		Priority_Deque(Builtin-List)
+		Priority_Deque(Container)
+		Priority_Deque(Iterator-Begin, Iterator-End)
 
 	Initialize:
 		new Priority_Deque()
@@ -64,6 +71,15 @@ function Priority_Deque(): Container() constructor {
 		}
 	}
 
+	///@function assign(begin, end)
+	static assign = function(First, Last) {
+		with raw {
+			clear()
+			foreach(First, Last, push_back)
+		}
+		stable_sort(raw.first(), raw.last(), key_comparator)
+	}
+
 	///@function pop()
 	static pop = function() { raw.pop_back() }
 
@@ -89,7 +105,7 @@ function Priority_Deque(): Container() constructor {
 	static write = function() { return raw.write() }
 
 	type = Priority_Deque
-	raw = undefined
+	raw = new List()
 	key_extractor = function(Value) { return Value }
 	key_inquire_compare = compare_less
 	key_comparator = function(a, b) {
@@ -100,15 +116,34 @@ function Priority_Deque(): Container() constructor {
 			return key_inquire_compare(A, B)
 	}
 
+	// ** Contructor **
 	if 0 < argument_count {
 		if argument_count == 1 {
-			raw = new List(argument[0])
+			var Item = argument[0]
+			if is_array(Item) {
+				// (*) Built-in Array
+				for (var i = 0; i < array_length(Item); ++i) push(Item[i])
+			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
+				// (*) Built-in List
+				for (var i = 0; i < ds_list_size(Item); ++i) push(Item[| i])
+			} else if is_struct(Item) and is_iterable(Item) {
+				// (*) Container
+				assign(Item.first(), Item.last())
+			} else {
+				// (*) Arg
+				push(Item)
+			}
 		} else {
-			raw = new List()
+			// (*) Iterator-Begin, Iterator-End
+			if argument_count == 2 {
+				if is_struct(argument[0]) and is_iterator(argument[0])
+				and is_struct(argument[1]) and is_iterator(argument[1]) {
+					assign(argument[0], argument[1])
+					exit
+				}
+			}
 			// (*) Arg0, Arg1, ...
 			for (var i = 0; i < argument_count; ++i) push(argument[i])
 		}
-	} else {
-		raw = new List()
 	}
 }

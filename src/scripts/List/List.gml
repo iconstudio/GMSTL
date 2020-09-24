@@ -10,19 +10,24 @@
 
 	Initialize:
 		new List()
+
 */
 function List(): Container() constructor {
+#region public
 	///@function size()
 	static size = function() { return ds_list_size(raw) }
 
 	///@function empty()
 	static empty = function() { return ds_list_empty(raw) }
 
+	///@function valid(Index)
+	static valid = function(Index) { return bool(0 <= Index and Index < size()) }
+
+	///@function clear()
+	static clear = function() { ds_list_clear(raw) }
+
 	///@function at(index)
 	static at = function(Index) { return ds_list_find_value(raw, Index) }
-
-	///@function index_of(value)
-	static index_of = function(Value) { return ds_list_find_index(raw, Value) }
 
 	///@function front()
 	static front = function() { return at(0) }
@@ -36,35 +41,41 @@ function List(): Container() constructor {
 	///@function last()
 	static last = function() { return (new iterator_type(self, size())).pure() }
 
-	//////@function set(index, value)
-	static set = function(Index, Value) { ds_list_set(raw, Index, Value); return self }
+	//////@function set_at(index, value)
+	static set_at = function(Index, Value) { ds_list_set(raw, Index, Value); return self }
 
-	//////@function index_insert(index, value)
-	static index_insert = function(Index, Value) { ds_list_insert(raw, Index, Value) }
+	//////@function insert_at(index, value)
+	static insert_at = function(Index, Value) { ds_list_insert(raw, Index, Value) }
 
 	///@function push_front(value)
-	static push_front = function(Value) { index_insert(0, Value) }
+	static push_front = function(Value) { insert_at(0, Value) }
 
 	///@function push_back(value)
 	static push_back = function(Value) { ds_list_add(raw, Value) }
+
+	///@function assign(begin, end)
+	static assign = function(First, Last) { clear(); foreach(First, Last, push_back) }
 
 	///@function erase_at(index)
 	static erase_at = function(Index) { var Result = at(Index); ds_list_delete(raw, Index); return Result }
 
 	///@function pop_front()
-	static pop_front = function() { return erase_at(0) }
+	static pop_front = function() { var Result = at(0); erase_at(0); return Result }
 
 	///@function pop_back()
-	static pop_back = function() { return erase_at(size() - 1) }
+	static pop_back = function() { var Result = at(size() - 1); erase_at(size() - 1); return Result }
 
-	///@function clear()
-	static clear = function() { ds_list_clear(raw) }
+	///@function location(value)
+	static location = function(Value) {
+		var Result = ds_list_find_index(raw, Value)
+		if Result == -1
+			return undefined
+		else
+			return Result
+	}
 
-	///@function sort_builtin(ascending)
-	static sort_builtin = function(Ascending) { ds_list_sort(raw, Ascending) }
-
-	///@function shuffle_builtin()
-	static shuffle_builtin = function() { ds_list_shuffle(raw) }
+	///@function contains(value)
+	static contains = function(Value) { return !is_undefined(location(Value)) }
 
 	///@function mark_list(index)
 	static mark_list = function(Index) { ds_list_mark_as_list(raw, Index) }
@@ -78,6 +89,12 @@ function List(): Container() constructor {
 	///@function is_map(index)
 	static is_map = function(Index) { return ds_list_is_map(raw, Index) }
 
+	///@function sort_builtin(ascending)
+	static sort_builtin = function(Ascending) { ds_list_sort(raw, Ascending) }
+
+	///@function shuffle_builtin()
+	static shuffle_builtin = function() { ds_list_shuffle(raw) }
+
 	///@function read(data_string)
 	static read = function(Str) { ds_list_read(raw, Str) }
 
@@ -87,12 +104,16 @@ function List(): Container() constructor {
 	///@function destroy()
 	static destroy = function() { ds_list_destroy(raw); gc_collect() }
 
-	raw = ds_list_create()
 	type = List
 	iterator_type = RandomIterator
-	clear() // To avoid the 0-populate-value problem.
+#endregion
 
-	// ** Assigning **
+#region private
+	raw = ds_list_create()
+	clear() // To avoid the 0-populate-value problem.
+#endregion
+
+	// ** Contructor **
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]
@@ -101,10 +122,10 @@ function List(): Container() constructor {
 				for (var i = 0; i < array_length(Item); ++i) push_back(Item[i])
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
-				for (var i = 0; i < inner_size; ++i) push_back(Item[| i])
+				for (var i = 0; i < ds_list_size(Item); ++i) push_back(Item[| i])
 			} else if is_struct(Item) and is_iterable(Item) {
 				// (*) Container
-				foreach(Item.first(), Item.last(), push_back)
+				assign(Item.first(), Item.last())
 			} else {
 				// (*) Arg
 				push_back(Item)

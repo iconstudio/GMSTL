@@ -76,7 +76,7 @@ function BinarySearch_Tree(): Binary_Tree() constructor {
 	key_comparator = compare_less
 	check_comparator = compare_equal
 
-	// ** Assigning **
+	// ** Contructor **
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]
