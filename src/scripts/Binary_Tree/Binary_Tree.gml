@@ -1,5 +1,5 @@
 ///@function 
-function Tree_Node_Tratit() {
+function Tree_Node_Tratit() constructor {
 	value = undefined
 	parent = undefined
 	node_left = undefined
@@ -29,12 +29,31 @@ function Tree_Node_Tratit() {
 		}
 		return false
 	}
+
+	///@function 
+	static underlying_destroy = function() {
+		if !is_undefined(parent) {
+			if self == parent.node_left {
+				parent.node_left = undefined
+			} else if self == parent.node_right {
+				parent.node_right = undefined
+			}
+		}
+
+		if !is_undefined(node_left) {
+			node_left.parent = undefined
+		}
+
+		if !is_undefined(node_right) {
+			node_right.parent = undefined
+		}
+	}
+
+	static toString = function() { return string(value) }
 }
 
 ///@function 
-function Tree_Node() constructor {
-	Tree_Node_Tratit()
-
+function Tree_Node(): Tree_Node_Tratit() constructor {
 	///@function set_parent(node)
 	static set_parent = function(Node) { underlying_set_parent(Node) }
 
@@ -55,6 +74,20 @@ function Tree_Node() constructor {
 			return true
 		}
 		return false
+	}
+
+	///@function destroy()
+	static destroy = function() {
+		underlying_destroy()
+
+		if !is_undefined(node_previous) {
+			if !is_undefined(node_next) {
+				throw "Deleting a node in between of two nodes is not allowed in Full binary tree!"
+			}
+			node_previous.set_next(undefined)
+		}
+
+		return node_previous
 	}
 
 	///@function find_leftest()
@@ -88,10 +121,17 @@ function Tree_Node() constructor {
 }
 
 ///@function 
-function Binary_Tree_Trait() {
+function Binary_Tree_Trait() constructor {
 	node_head = undefined
 	node_tail = undefined
-	cash = array_create(64, undefined)
+	cash_size = 64
+	cash = array_create(cash_size, undefined)
+
+	///@function 
+	static underlying_cash_allocate = function() {
+		cash = 0
+		cash = array_create(cash_size, undefined)
+	}
 
 	///@function 
 	static underlying_make_node = function() { return new Tree_Node() }
@@ -108,7 +148,8 @@ function Binary_Tree_Trait() {
 			Result = node_head.left
 		} else if 2 == Index {
 			Result = node_head.right
-		} else {
+		} else {		
+			
 			var ParentIndex = floor((Index - 1) * 0.5)
 			if Index < 0
 				return undefined
@@ -157,9 +198,7 @@ function Binary_Tree_Trait() {
 	}
 }
 
-function Binary_Tree(): Container() constructor {
-	Binary_Tree_Trait()
-
+function Binary_Tree(): Binary_Tree_Trait() constructor {
 #region public
 	///@function size()
 	static size = function() { return inner_size }
@@ -167,11 +206,24 @@ function Binary_Tree(): Container() constructor {
 	///@function empty()
 	static empty = function() { return bool(inner_size == 0) }
 
-	///@function valid(node)
-	static valid = function(Node) { return !is_undefined(Node) }
+	///@function valid(Index)
+	static valid = function(Index) { return bool(0 <= Index and Index < inner_size) }
 
 	///@function clear()
 	static clear = function() { node_head = undefined; inner_size = 0; gc_collect() }
+
+	///@function at(index)
+	static at = function(Index) {
+		if valid(Index) {
+			if Index < cash_size {
+				return cash[Index]
+			} else {
+				
+			}
+		} else {
+			return undefined
+		}
+	}
 
 	///@function front()
 	static front = function() { return node_head }
@@ -192,148 +244,100 @@ function Binary_Tree(): Container() constructor {
 		return Node
 	}
 
-	///@function insert_recursive(node, start_node)
-	static insert_recursive = function(Node, StartNode) {
-		
-	}
-
-	///@function insert(item)
+	///@function insert(value)
 	static insert = function(Value) {
-		var NewNode = make_node(Value)
-		node_tail = NewNode
-		var Size = inner_size
-		if Size < 64 and cash[Size] == undefined // memoization
-			cash[Size] = Value
+		var Index = inner_size, NewNode = make_node(Value)
+		if Index < cash_size
+			cash[Index] = Value // memoization
 
-		if 0 == Size {
+		if 0 == Index { // hardcoded
 			node_head = NewNode
-		} else if 1 == Size {
+			node_inserter_parent = NewNode
+			node_leftest = NewNode
+		} else if 1 == Index {
 			node_head.set_left(NewNode)
 			node_head.set_next(NewNode)
-		} else if 2 == Size {
+			node_leftest = NewNode
+		} else if 2 == Index {
 			node_head.set_right(NewNode)
-			node_head.left.set_next(NewNode)
+			node_tail.set_next(NewNode) // node_head.node_left
+			node_inserter_parent = node_tail
 		} else {
-			var a = underlying_sequence_by_index(Index)
-			
-			insert_recursive(NewNode, node_head)
+			var Height = log2(Index + 1) // the size is not increased yet
+
+			if is_undefined(node_inserter_parent.node_left) {
+				node_inserter_parent.set_left(NewNode)
+				node_tail.set_next(NewNode) // right, or most rightest node
+				if frac(Height) == 0 {
+					node_leftest = NewNode
+				}
+			} else if is_undefined(node_inserter_parent.node_right) {
+				node_inserter_parent.set_right(NewNode)
+				node_tail.set_next(NewNode) // left node
+
+				var CurrHeight = floor(Height)
+				var NextHeight = floor(log2(Index + 2))
+				if CurrHeight != NextHeight
+					node_inserter_parent = node_leftest
+				else
+					node_inserter_parent = node_inserter_parent.node_next
+			} else {
+				throw "Cannot found any valid child nodes to insert in!"
+			}
 		}
 
+		node_tail = NewNode
 		return inner_size++
 	}
 
-	///@function move_children(index, destination)
-	static move_children = function(Index, Target) {
-		var Left = left(Index), Right = right(Index)
-		var LeftChk = valid(Left), RightChk = valid(Right)
-		var Value = at(Index)
-		set(Index, NODE_NULL)
+	///@function push_back(value)
+	static push_back = function(Value) { insert(Value) }
 
-		if LeftChk {
-			move_children(Left, left(Target))
-		}
-		if RightChk {
-			move_children(Right, right(Target))
-		}
-		set(Target, Value)
-	}
+	///@function assign(begin, end)
+	static assign = function(First, Last) { clear(); foreach(First, Last, insert) }
 
-	///@function move_children_of_left(index, destination)
-	static move_children_of_left = function(Index, Target) {
-		var Left = left(Index), LeftChk = valid(Left)
-		var Value = at(Index)
-		set(Index, NODE_NULL)
-
-		if LeftChk
-			move_children(Left, left(Target))
-
-		set(Target, Value)
-	}
-
-	///@function move_children_of_right(index, destination)
-	static move_children_of_right = function(Index, Target) {
-		var Right = right(Index), RightChk = valid(Right)
-		var Value = at(Index)
-		set(Index, NODE_NULL)
-
-		if RightChk
-			move_children(Right, right(Target))
-
-		set(Target, Value)
-	}
-
-	///@function erase_at(index)
-	/*
-			Splice the case of erasing a key from the Tree.
-			
-			case 1: a leaf node
-				Just remove it.
-			
-			case 2: the node has one child
-				Remove it and pull up its children.
-			
-			case 3: the node has two children
-				Replace it with smallest one and remove the original smallest one.
-	*/
-	static erase_at = function(Index) {
-		if valid(Index) {
-			var Left = left(Index), Right = right(Index)
-			var LeftChk = valid(Left), RightChk = valid(Right)
-			deallocate(Index)
-
-			if !LeftChk and !RightChk { // has no child
-			} else if LeftChk and !RightChk { // on left
-				move_children(Left, Index)
-			} else if !LeftChk and RightChk { // on right
-				move_children(Right, Index)
-			} else { // two children
-				var Result = Left, LeftofLeft = left(Left)
-				while true {
-					if !valid(LeftofLeft) {
-						break
-					}
-					Result = LeftofLeft // the smallest
-					LeftofLeft = left(Result) 
+	///@function pop_back()
+	static pop_back = function() {
+		if 0 == inner_size {
+			return undefined
+		} else {
+			var Result
+			if 1 == inner_size-- {
+				Result = cash[0]
+				delete node_head
+				node_head = undefined
+				cash[0] = undefined
+			} else {
+				if inner_size <= cash_size {
+					Result = cash[inner_size - 1]
+					cash[inner_size - 1] = undefined
+				} else {
+					Result = node_tail.value
 				}
-				set(Index, at(Result))
-				erase_at(Result)
+				
+				var Prev = node_tail.destroy()
+				delete node_tail
+				node_tail = Prev
 			}
-
-			gc_collect()
+			return Result
 		}
 	}
 
 	///@function location(value)
 	static location = function(Value) {
-		var Result = ds_list_find_index(raw, Value)
-		if Result == -1
-			return undefined
-		else
-			return Result
+		
 	}
 
 	///@function contains(value)
-	static contains = function(Value) {
-		return !is_undefined(find_of(Value))
-	}
-
-	///@function set_deallocator(destroy_function)
-	static set_deallocator = function(Func) { deallocator = method(other, Func) }
-
-	///@function deallocate(index)
-	static deallocate = function(Index) {
-		var Elem = at(Index)
-		if !is_undefined(deallocator)
-			deallocator(Elem)
-		set(Index, undefined)
-	}
+	static contains = function(Value) { return !is_undefined(location(Value)) }
 
 	type = Binary_Tree
 #endregion
 
 #region private
 	inner_size = 0
-	deallocator = undefined
+	node_inserter_parent = undefined
+	node_leftest = undefined
 #endregion
 
 	// ** Contructor **

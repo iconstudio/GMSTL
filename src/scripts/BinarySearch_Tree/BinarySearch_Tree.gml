@@ -66,6 +66,101 @@ function BinarySearch_Tree(): Binary_Tree() constructor {
 			return insert_recursive(Value, right(0))
 	}
 
+	///@function move_children(index, destination)
+	static move_children = function(Index, Target) {
+		var Left = left(Index), Right = right(Index)
+		var LeftChk = valid(Left), RightChk = valid(Right)
+		var Value = at(Index)
+		set(Index, undefined)
+
+		if LeftChk {
+			move_children(Left, left(Target))
+		}
+		if RightChk {
+			move_children(Right, right(Target))
+		}
+		set(Target, Value)
+	}
+
+	///@function move_children_of_left(index, destination)
+	static move_children_of_left = function(Index, Target) {
+		var Left = left(Index), LeftChk = valid(Left)
+		var Value = at(Index)
+		set(Index, undefined)
+
+		if LeftChk
+			move_children(Left, left(Target))
+
+		set(Target, Value)
+	}
+
+	///@function move_children_of_right(index, destination)
+	static move_children_of_right = function(Index, Target) {
+		var Right = right(Index), RightChk = valid(Right)
+		var Value = at(Index)
+		set(Index, undefined)
+
+		if RightChk
+			move_children(Right, right(Target))
+
+		set(Target, Value)
+	}
+
+	///@function erase_at(index)
+	/*
+			Splice the case of erasing a key from the Tree.
+			
+			case 1: a leaf node
+				Just remove it.
+			
+			case 2: the node has one child
+				Remove it and pull up its children.
+			
+			case 3: the node has two children
+				Replace it with smallest one and remove the original smallest one.
+	*/
+	static erase_at = function(Index) {
+		if valid(Index) {
+			var Left = left(Index), Right = right(Index)
+			var LeftChk = valid(Left), RightChk = valid(Right)
+			deallocate(Index)
+
+			if !LeftChk and !RightChk { // has no child
+			} else if LeftChk and !RightChk { // on left
+				move_children(Left, Index)
+			} else if !LeftChk and RightChk { // on right
+				move_children(Right, Index)
+			} else { // two children
+				var Result = Left, LeftofLeft = left(Left)
+				while true {
+					if !valid(LeftofLeft) {
+						break
+					}
+					Result = LeftofLeft // the smallest
+					LeftofLeft = left(Result) 
+				}
+				set(Index, at(Result))
+				erase_at(Result)
+			}
+
+			gc_collect()
+		}
+	}
+
+	///@function location(value)
+	static location = function(Value) {
+		var Result = ds_list_find_index(raw, Value)
+		if Result == -1
+			return undefined
+		else
+			return Result
+	}
+
+	///@function contains(value)
+	static contains = function(Value) {
+		return !is_undefined(find_of(Value))
+	}
+
 	///@function set_key_compare(compare_function)
 	static set_key_compare = function(Func) { key_comparator = method(other, Func) }
 

@@ -50,7 +50,7 @@ function node_tree_print(Cont, NodeStart, Msg) {
 	show_debug_message(Msg)
 
 	var LeftNode = NodeStart.node_left, RightNode = NodeStart.node_right
-	var LeftChk = Cont.valid(LeftNode), RightChk = Cont.valid(RightNode)
+	var LeftChk = !is_undefined(LeftNode), RightChk = !is_undefined(RightNode)
 
 	if LeftChk {
 		node_tree_print(Cont, LeftNode, "LEFT(" + string(NodeStart) + ") -> [" + string(LeftNode) + "]\t")
@@ -61,9 +61,10 @@ function node_tree_print(Cont, NodeStart, Msg) {
 	}
 }
 show_debug_message("\nTree")
-random_shuffle(test_sum.first(), test_sum.last())
-test_tree = new Heap_Tree(test_sum)
-
+//random_shuffle(test_sum.first(), test_sum.last())
+test_tree = new Binary_Tree(test_sum)
+node_tree_print(test_tree, test_tree.node_head)
+/*
 do {
 	show_debug_message("tree[" + string(test_tree.size()) + "] = " + string(test_tree.pop_front()))
 } until test_tree.empty()
