@@ -14,7 +14,7 @@
 
 	Usage:
 		To Iterate values:
-			for (var It = Container.first(); It.not_equals(Container.last()); It.go()) {
+			for (var It = Container.first(); It.not_equals(Container.last()); It.go_next()) {
 				myfunc(It.get())
 			}
 		

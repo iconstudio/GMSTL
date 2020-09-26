@@ -1,18 +1,18 @@
 /*
 	Constructors:
-		Heap_Tree()
-		Heap_Tree(Arg)
-		Heap_Tree(Arg0, Arg1, ...)
-		Heap_Tree(Builtin-Array)
-		Heap_Tree(Builtin-List)
-		Heap_Tree(Container)
-		Heap_Tree(Iterator-Begin, Iterator-End)
+		Heap_tree()
+		Heap_tree(Arg)
+		Heap_tree(Arg0, Arg1, ...)
+		Heap_tree(Builtin-Array)
+		Heap_tree(Builtin-List)
+		Heap_tree(Container)
+		Heap_tree(Iterator-Begin, Iterator-End)
 
 	Initialize:
-		new Heap_Tree()
+		new Heap_tree()
 
 */
-function Heap_Tree(): List() constructor {
+function Heap_tree(): List() constructor {
 #region public
 	///@function insert(value)
 	static insert = function(Value) {
@@ -78,7 +78,7 @@ function Heap_Tree(): List() constructor {
 	///@function set_key_compare(compare_function)
 	static set_key_compare = function(Func) { key_comparator = method(other, Func) }
 
-	type = Heap_Tree
+	type = Heap_tree
 #endregion
 
 #region private

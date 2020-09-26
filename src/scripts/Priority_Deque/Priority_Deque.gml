@@ -1,16 +1,16 @@
 /*
 	Constructors:
-		Priority_Deque()
-		Priority_Deque(Priority_Deque) // duplicate
-		Priority_Deque(Arg)
-		Priority_Deque(Arg0, Arg1, ...)
-		Priority_Deque(Builtin-Array)
-		Priority_Deque(Builtin-List)
-		Priority_Deque(Container)
-		Priority_Deque(Iterator-Begin, Iterator-End)
+		Priority_deque()
+		Priority_deque(Priority_deque) // duplicate
+		Priority_deque(Arg)
+		Priority_deque(Arg0, Arg1, ...)
+		Priority_deque(Builtin-Array)
+		Priority_deque(Builtin-List)
+		Priority_deque(Container)
+		Priority_deque(Iterator-Begin, Iterator-End)
 
 	Initialize:
-		new Priority_Deque()
+		new Priority_deque()
 
 	Usage:
 		si = 0
@@ -20,7 +20,7 @@
 			index = Index
 		}
 
-		AI_Buildorder = new Priority_Deque()
+		AI_Buildorder = new Priority_deque()
 		AI_Buildorder.set_key_extract(function(build) {
 			return build.priority
 		})
@@ -41,10 +41,10 @@
 		// Above items of priority 80 would not mixed up, because it is stable.
 
 */
-function Priority_Deque(): Container() constructor {
+function Priority_deque(): Container() constructor {
 	///@function duplicate()
 	static duplicate = function() {
-		var Result = new Priority_Deque()
+		var Result = new Priority_deque()
 		copy(raw.first(), raw.last(), Result.raw.first())
 		return Result
 	}
@@ -104,7 +104,7 @@ function Priority_Deque(): Container() constructor {
 	///@function write()
 	static write = function() { return raw.write() }
 
-	type = Priority_Deque
+	type = Priority_deque
 	raw = new List()
 	key_extractor = function(Value) { return Value }
 	key_inquire_compare = compare_less
