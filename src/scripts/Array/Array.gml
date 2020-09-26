@@ -48,7 +48,7 @@ function Array(): Container() constructor {
 		var Output = 0
 		while First.not_equals(Last) {
 			set_at(Output++, First.get())
-			First.go()
+			First.go_next()
 		}
 	}
 

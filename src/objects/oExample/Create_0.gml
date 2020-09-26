@@ -62,8 +62,16 @@ function node_tree_print(Cont, NodeStart, Msg) {
 }
 show_debug_message("\nTree")
 //random_shuffle(test_sum.first(), test_sum.last())
-test_tree = new Binary_Tree(test_sum)
+test_tree = new Binary_tree(test_sum)
+for (var It = test_tree.node_head; It != undefined; It = It.node_next)
+	show_debug_message(It.value)
+
 node_tree_print(test_tree, test_tree.node_head)
+
+test_tree.pop_back()
+test_tree.pop_back()
+for (It = test_tree.node_head; It != undefined; It = It.node_next)
+	show_debug_message(It.value)
 /*
 do {
 	show_debug_message("tree[" + string(test_tree.size()) + "] = " + string(test_tree.pop_front()))
@@ -147,7 +155,7 @@ test_map = new Map(test_mapped_list)
 print(test_map)
 
 show_debug_message("\nUnordered_Map")
-test_unomap = new GM_Map(test_mapped_list)
+test_unomap = new Unordered_map(test_mapped_list)
 print(test_unomap)
 
 show_debug_message("\nMultimap")
