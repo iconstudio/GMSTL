@@ -1,25 +1,25 @@
 /*
 	Constructors:
-		GM_Map()
-		GM_Map(Arg)
-		GM_Map(Multimaps)
-		GM_Map(Paired-Container)
-		GM_Map(Builtin-Paired-Array)
-		GM_Map(Builtin-Paired-List)
-		GM_Map(Builtin-Map)
-		GM_Map(Arg0, Arg1, ...)
+		Unordered_map()
+		Unordered_map(Arg)
+		Unordered_map(Multimaps)
+		Unordered_map(Paired-Container)
+		Unordered_map(Builtin-Paired-Array)
+		Unordered_map(Builtin-Paired-List)
+		Unordered_map(Builtin-Map)
+		Unordered_map(Arg0, Arg1, ...)
 
 	Initialize:
-		new GM_Map()
+		new Unordered_map()
 
 	Usage:
 		To Iterate values:
-			for (var It = Container.first(); It.not_equals(Container.last()); It.go()) {
+			for (var It = Container.first(); It.not_equals(Container.last()); It.go_next()) {
 				myfunc(It.get())
 			}
 		
 */
-function GM_Map(): Container() constructor {
+function Unordered_map(): Container() constructor {
 	///@function size()
 	static size = function() { return ds_map_size(raw) }
 
@@ -115,7 +115,7 @@ function GM_Map(): Container() constructor {
 	///@function destroy()
 	static destroy = function() { ds_map_destroy(raw); gc_collect() }
 
-	type = GM_Map
+	type = Unordered_map
 	raw = ds_map_create()
 	iterator_type = MapIterator
 
