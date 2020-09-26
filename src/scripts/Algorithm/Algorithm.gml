@@ -13,7 +13,7 @@ function erase(First, Last) {
 	var Result = First.duplicate() // last
 	while First.not_equals(Last) {
 		Cont.erase_at(First.get_index())
-		First.go()
+		First.go_next()
 	}
 	return Result
 }
@@ -25,7 +25,7 @@ function check_all(First, Last, Pred) {
 	while First.not_equals(Last) {
 		if !Pred(First.get())
 			return false
-		First.go()
+		First.go_next()
 	}
 	return true
 }
@@ -37,7 +37,7 @@ function check_any(First, Last, Pred) {
 	while First.not_equals(Last) {
 		if Pred(First.get())
 			return true
-		First.go()
+		First.go_next()
 	}
 	return false
 }
@@ -49,7 +49,7 @@ function check_none(First, Last, Pred) {
 	while First.not_equals(Last) {
 		if Pred(First.get())
 			return false
-		First.go()
+		First.go_next()
 	}
 	return true
 }
@@ -60,7 +60,7 @@ function foreach(First, Last, Pred) {
 
 	while First.not_equals(Last) {
 		Pred(First.get())
-		First.go()
+		First.go_next()
 	}
 	return Pred
 }
@@ -77,7 +77,7 @@ function find(First, Last, Value) {
 	while First.not_equals(Last) {
 		if Compare(First.get(), Value)
 			return First
-		First.go()
+		First.go_next()
 	}
 	return undefined
 }
@@ -90,7 +90,7 @@ function find_if(First, Last, Pred) {
 		var Value = First.get()
 		if Pred(Value)
 			return First
-		First.go()
+		First.go_next()
 	}
 	return undefined
 }
@@ -103,7 +103,7 @@ function count(First, Last, Value) {
 	while First.not_equals(Last) {
 		if First.get() == Value
 			Result++
-		First.go()
+		First.go_next()
 	}
 	return Result
 }
@@ -116,7 +116,7 @@ function count_if(First, Last, Pred) {
 	while First.not_equals(Last) {
 		if Pred(First.get())
 			Result++
-		First.go()
+		First.go_next()
 	}
 	return Result
 }
@@ -135,8 +135,8 @@ function swap_range(First, Last, Output) {
 
 	while First.not_equals(Last) {
 	  swap(First, Output)
-		First.go()
-		Output.go()
+		First.go_next()
+		Output.go_next()
 	}
 	return Output
 }
@@ -148,8 +148,8 @@ function copy(First, Last, Output) {
 
 	while First.not_equals(Last) {
 		Output.set(First.get())
-		First.go()
-		Output.go()
+		First.go_next()
+		Output.go_next()
 	}
 	return Output
 }
@@ -161,8 +161,8 @@ function copy_n(First, Number, Output) {
 
 	repeat Number {
 		Output.set(First.get())
-		First.go()
-		Output.go()
+		First.go_next()
+		Output.go_next()
 	}
 	return Output
 }
@@ -177,8 +177,8 @@ function copy_if(First, Last, Output, Pred) {
 		Value = First.get()
 		if Pred(Value)
 			Output.set(Value)
-		First.go()
-		Output.go()
+		First.go_next()
+		Output.go_next()
 	}
 	return Output
 }
@@ -190,7 +190,7 @@ function replace(First, Last, OldVal, NewVal) {
 	while First.not_equals(Last) {
 		if First.get() == OldVal
 			First.set(NewVal)
-		First.go()
+		First.go_next()
 	}
 }
 
@@ -203,7 +203,7 @@ function replace_if(First, Last, Pred, NewVal) {
 		Value = First.get()
 		if Pred(Value)
 			First.set(NewVal)
-		First.go()
+		First.go_next()
 	}
 }
 
@@ -219,8 +219,8 @@ function replace_copy(First, Last, Output, OldVal, NewVal) {
 			Output.set(NewVal)
 		else
 			Output.set(Value)
-		First.go()
-		Output.go()
+		First.go_next()
+		Output.go_next()
 	}
 	return Output
 }
@@ -242,8 +242,8 @@ function remove(First, Last, Value) {
 		if First.get() == Value
 			Cont.erase_at(Result.get_index())
 		else
-			Result.go()
-		First.go()
+			Result.go_next()
+		First.go_next()
 	}
 	return Result
 }
@@ -265,8 +265,8 @@ function remove_if(First, Last, Pred) {
 		if Pred(First.get())
 			Cont.erase_at(Result.get_index())
 		else
-			Result.go()
-		First.go()
+			Result.go_next()
+		First.go_next()
 	}
 	return Result
 }
@@ -279,8 +279,8 @@ function move(First, Last, Output) {
 	while First.not_equals(Last) {
 		Output.set(First.get())
 
-		First.go()
-		Output.go()
+		First.go_next()
+		Output.go_next()
 	}
 	erase(First, Last)
 	return Output
@@ -292,7 +292,7 @@ function fill(First, Last, Value) {
 
 	while First.not_equals(Last) {
 		First.set(Value)
-		First.go()
+		First.go_next()
 	}
 }
 
@@ -304,8 +304,8 @@ function rotate(First, Middle, Last) {
 	var Next = Middle // copied
 	while First.equals(Next) {
 		First.swap(Next)
-		First.go()
-		Next.go()
+		First.go_next()
+		Next.go_next()
 
 		if Next.equals(Last)
 			Next = Middle
@@ -324,7 +324,7 @@ function reverse(First, Last) {
 		if First.equals(Last)
 			break
 	  First.swap(Last)
-	  First.go()
+	  First.go_next()
 	}
 }
 
@@ -336,8 +336,8 @@ function transform(First, Last, Output, Pred) {
 
 	while First.not_equals(Last) {
 		Output.set(Pred(First.get()))
-		First.go()
-		Output.go()
+		First.go_next()
+		Output.go_next()
 	}
 	return Output
 }
@@ -350,9 +350,9 @@ function transform_binary(First, Last, PairFirst, Output, Pred) {
 
 	while First.not_equals(Last) {
 		Output.set(Pred(First.get(), PairFirst.get()))
-		First.go()
-		PairFirst.go()
-		Output.go()
+		First.go_next()
+		PairFirst.go_next()
+		Output.go_next()
 	}
 	return Output
 }
@@ -374,7 +374,7 @@ function min_element(First, Last) {
 			delete Result
 		  Result = Cursor.duplicate()
 		}
-		Cursor.go()
+		Cursor.go_next()
 	}
 	delete Cursor
 	gc_collect()
@@ -398,7 +398,7 @@ function max_element(First, Last) {
 			delete Result
 		  Result = Cursor.duplicate()
 		}
-		Cursor.go()
+		Cursor.go_next()
 	}
 	delete Cursor
 	gc_collect()
@@ -420,7 +420,7 @@ function lower_bound(First, Last, Value) { // return the first and largest eleme
 		It = iterator_advance(First, Step)
 
 		if Compare(It.get(), Value) {
-			It.go()
+			It.go_next()
 		  First = It
 		  count -= Step + 1
 		} else {
@@ -445,7 +445,7 @@ function upper_bound(First, Last, Value) { // return a greater element to the va
 		It = iterator_advance(First, Step)
 
 		if !Compare(Value, It.get()) {
-			It.go()
+			It.go_next()
 		  First = It
 		  count -= Step + 1
 		} else {
@@ -483,7 +483,7 @@ function sort(First, Last) {
 	else
 		Compare = compare_less
 	var Pivot = First.duplicate(), Pivot_Next, Value = 0
-	for (var It = First.next(); It.index < First.index + Last.index; It.go()) {
+	for (var It = First.next(); It.index < First.index + Last.index; It.go_next()) {
 		Value = It.get()
 		if Compare(Value, Pivot.get()) {
 			Pivot_Next = Pivot.next()
@@ -492,7 +492,7 @@ function sort(First, Last) {
 			Pivot_Next.set(Pivot.get())
 			Pivot.set(Value)
 
-			Pivot.go()
+			Pivot.go_next()
 		}
 	}
 	delete It
@@ -518,7 +518,7 @@ function stable_sort(First, Last) {
 	while First.not_equals(Last) {
 		selection = min_element(First, Last, Compare)
 		selection.swap(First)
-		First.go()
+		First.go_next()
 		delete selection
 	}
 	gc_collect()
@@ -526,7 +526,7 @@ function stable_sort(First, Last) {
 
 ///@function insertion_sort(begin, end, [comparator=compare_less])
 function insertion_sort(First, Last) {
-	First = make_iterator(First).go()
+	First = make_iterator(First).go_next()
 
 	var Compare, It, Value
 	if 2 < argument_count
@@ -540,7 +540,7 @@ function insertion_sort(First, Last) {
 		}
 		It.next().set(Value)
 
-		First.go()
+		First.go_next()
 		delete It
 	}
 	gc_collect()
@@ -617,21 +617,21 @@ function partition_by_median_guess(First, Last, Comparator) {
 	delete _Pbefore
 
 	while _Plast.get_index() < Last.get_index() && !Comparator(_Plast.get(), _Pfirst.get()) && !Comparator(_Pfirst.get(), _Plast.get()) {
-		_Plast.go()
+		_Plast.go_next()
 	}
 
 	var _Gfirst = _Plast.duplicate()
 	var _Glast = _Pfirst.duplicate()
 	for (;;) { // partition
-		for (; _Gfirst < Last; _Gfirst.go()) {
+		for (; _Gfirst < Last; _Gfirst.go_next()) {
 			if Comparator(_Pfirst.get(), _Gfirst.get()) {
 			} else if Comparator(_Gfirst.get(), _Pfirst.get()) {
 				break
 			} else if _Plast.not_equals(_Gfirst) {
 				swap(_Plast, _Gfirst)
-				_Plast.go()
+				_Plast.go_next()
 			} else {
-				_Plast.go()
+				_Plast.go_next()
 			}
 		}
 
@@ -656,10 +656,10 @@ function partition_by_median_guess(First, Last, Comparator) {
 				swap(_Pfirst, _Plast)
 			}
 
-			_Plast.go()
+			_Plast.go_next()
 			_Pfirst.swap(_Gfirst)
-			_Pfirst.go()
-			_Gfirst.go()
+			_Pfirst.go_next()
+			_Gfirst.go_next()
 		} else if _Gfirst.equals(Last) { // no room at top, rotate pivot downward
 			if _Glast.back().not_equals(_Pfirst.back()) {
 				swap(_Glast, _Pfirst)
@@ -668,7 +668,7 @@ function partition_by_median_guess(First, Last, Comparator) {
 			swap(_Pfirst, _Plast.back())
 		} else {
 			swap(_Gfirst, _Glast.back())
-			_Gfirst.go()
+			_Gfirst.go_next()
 		}
 	}
 	delete _Pfirst
@@ -724,8 +724,8 @@ function is_sorted(First, Last) {
 			gc_collect()
 		  return false
 		}
-		First.go()
-		Next.go()
+		First.go_next()
+		Next.go_next()
 	}
 	delete Next
 	gc_collect()
@@ -744,7 +744,7 @@ function unguarded_partition(First, Last, Pivot) {
 		Compare = compare_less
 	while true {
 	  while Compare(First.get(), Pivot.get())
-			First.go()
+			First.go_next()
 
 	  Last.back()
 	  while Compare(Pivot.get(), Last.get())
@@ -753,7 +753,7 @@ function unguarded_partition(First, Last, Pivot) {
 	  if !(First.get_index() < Last.get_index())
 			return First
 	  First.swap(Last)
-	  First.go()
+	  First.go_next()
 	}
 }
 
@@ -766,7 +766,7 @@ function partition(First, Last, Pred) {
 	while First.not_equals(Last) {
 		var Value = First.get()
 		while !is_undefined(Value) and Pred(Value) {
-		  First.go()
+		  First.go_next()
 		  if First.equals(Last)
 				return First
 			Value = First.get()
@@ -780,7 +780,7 @@ function partition(First, Last, Pred) {
 		} until !is_undefined(Value) and Pred(Value)
 
 		First.swap(Last)
-		First.go()
+		First.go_next()
 	}
 	return First
 }
@@ -791,14 +791,14 @@ function is_partitioned(First, Last, Pred) {
 
 	var Value = First.get()
 	while First.not_equals(Last) and !is_undefined(Value) and Pred(Value) {
-		First.go()
+		First.go_next()
 		Value = First.get()
 	}
 
 	while First.not_equals(Last) {
 		if !is_undefined(Value) and Pred(Value)
 			return false
-		First.go()
+		First.go_next()
 		Value = First.get()
 	}
 	return true
@@ -827,13 +827,13 @@ function merge(First, Last, OtherFirst, OtherLast, Output) {
 		Src2_Val = OtherFirst.get()
 		if Compare(Src2_Val, Src1_Val) {
 			Output.set(Src2_Val)
-			OtherFirst.go()
+			OtherFirst.go_next()
 		} else {
 			Output.set(Src1_Val)
-			First.go()
+			First.go_next()
 		}
 
-		Output.go()
+		Output.go_next()
 	}
 	return Output
 }

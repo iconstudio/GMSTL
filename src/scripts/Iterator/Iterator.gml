@@ -1,7 +1,23 @@
-///@function Iterator(container, index)
-function Iterator(Cont, Index) constructor {
-	__ITERATOR = true
 
+function tag_forward_iterator() {}
+
+function tag_bidirectional_iterator() {}
+
+function tag_random_access_iterator() {}
+
+///@function 
+function Iterator_trait() {
+	__ITERATOR = true
+	tag = tag_forward_iterator
+
+	container = undefined
+
+	index = 0 // Wrapper Index of container
+	pointer_index = 0 // Actual index of container
+}
+
+///@function Iterator(container, index)
+function Iterator(Cont, Index): Iterator_trait() constructor {
 	///@function duplicate()
 	static duplicate = function() { return new type(container, index) }
 
@@ -12,22 +28,22 @@ function Iterator(Cont, Index) constructor {
 	static impure = function() { is_pure = false; return self }
 
 	///@function get()
-	static get = function() { return container.at(pointer) }
+	static get = function() { return container.at(pointer_index) }
 
 	///@function get_index()
 	static get_index = function() { return index }
 
-	///@function go()
-	static go = function() { 
+	///@function go_next()
+	static go_next = function() { 
 		index++
-		pointer++
+		pointer_index++
 		is_pure = false
 		return self
 	}
 
 	///@function next()
 	static next = function() {
-		var Result = duplicate().go()
+		var Result = duplicate().go_next()
 		return Result
 	}
 
@@ -35,9 +51,9 @@ function Iterator(Cont, Index) constructor {
 	///@desc add it multiple times
 	static advance = function(Other) {
 		if is_iterator(Other)
-			repeat Other.index go()
+			repeat Other.index go_next()
 		else if is_real(Other) and 0 < Other
-			repeat Other go()
+			repeat Other go_next()
 		else
 			throw "Cannot use the negative index for advancing normal iterators."
 		return self
@@ -71,9 +87,9 @@ function Iterator(Cont, Index) constructor {
 	}
 
 	container = Cont
+	index = Index
+	pointer_index = Index
 	type = Iterator
-	index = Index // Wrapper Index of container
-	pointer = Index // Actual index of container
 	is_pure = false
 }
 
@@ -82,7 +98,7 @@ function ForwardIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	type = ForwardIterator
 
 	///@function set(value)
-	static set = function() { container.set_at(pointer, argument[0]) }
+	static set = function() { container.set_at(pointer_index, argument[0]) }
 
 	///@function swap(iterator)
 	static swap = function(Other) {
@@ -99,12 +115,12 @@ function BidirectionalIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	type = BidirectionalIterator
 
 	///@function set(value)
-	static set = function() { container.set_at(pointer, argument[0]) }
+	static set = function() { container.set_at(pointer_index, argument[0]) }
 
 	///@function back()
 	static back = function() { 
 		index--
-		pointer--
+		pointer_index--
 		is_pure = false
 		return self
 	}
@@ -119,10 +135,10 @@ function BidirectionalIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	///@desc add or sub it multiple times
 	static advance = function(Other) {
 		if is_iterator(Other) {
-			repeat Other.index go()
+			repeat Other.index go_next()
 		} else if is_real(Other) {
 			if 0 < Other
-				repeat Other go()
+				repeat Other go_next()
 			else if Other < 0
 				repeat -Other back()
 		} else {
@@ -159,7 +175,7 @@ function RandomIterator(Cont, Index): BidirectionalIterator(Cont, Index) constru
 	static set_index = function(Index) {
 		if index != Index {
 			index = Index
-			pointer = Index
+			pointer_index = Index
 			is_pure = false
 		}
 		return self
@@ -169,11 +185,11 @@ function RandomIterator(Cont, Index): BidirectionalIterator(Cont, Index) constru
 	static advance = function(Other) {
 		if is_iterator(Other) {
 			index += Other.index
-			pointer += Other.index
+			pointer_index += Other.index
 			is_pure = false
 		} else if is_real(Other) {
 			index += Other
-			pointer += Other
+			pointer_index += Other
 			is_pure = false
 		} 
 		return self
@@ -202,10 +218,10 @@ function MapIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	///@function get_key()
 	function get_key() { return key }
 
-	///@function go()
-	static go = function() { 
+	///@function go_next()
+	static go_next = function() { 
 		index++
-		pointer++
+		pointer_index++
 		is_pure = false
 		if !is_undefined(key)
 			key = ds_map_find_next(container.data(), key)
@@ -215,7 +231,7 @@ function MapIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	///@function back()
 	static back = function() { 
 		index--
-		pointer--
+		pointer_index--
 		is_pure = false
 		if !is_undefined(key)
 			key = ds_map_find_previous(container.data(), key)
@@ -225,12 +241,12 @@ function MapIterator(Cont, Index): Iterator(Cont, Index) constructor {
 	///@function advance(other)
 	static advance = function(Other) {
 		if is_iterator(Other) {
-			repeat Other.index go()
+			repeat Other.index go_next()
 		} else if is_real(Other) {
 			if Other < 0
 				repeat -Other back()
 			else
-				repeat Other go()
+				repeat Other go_next()
 		} 
 		return self
 	}
@@ -280,7 +296,7 @@ function make_iterator(Param) {
 ///@function is_iterator(iterator)
 function is_iterator(iterator) {
 	if is_struct(iterator)
-		return bool(iterator.__ITERATOR)
+		return variable_struct_exists(iterator, "__ITERATOR")
 	else
 		return false
 }
