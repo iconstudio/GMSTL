@@ -21,22 +21,6 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 	///@function count_of(value)
 	static count_of = function(Value) {
-		if 0 == size()
-			return undefined
-
-		var CompVal, Index = 0, Size = size(), Result = 0
-		while Index < Size {
-			CompVal = at(Index)
-			if check_comparator(Value, CompVal) {
-				Result++
-			} else {
-				if key_comparator(Value, CompVal)
-					Index = left(Index)
-				else
-					Index = right(Index)
-			}
-		}
-		return Result
 	}
 
 	///@function insert_recursive(value, hint)

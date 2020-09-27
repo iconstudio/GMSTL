@@ -129,14 +129,6 @@ function Const_iterator(Storage): Iterator_trait(Storage) constructor {
 		return self
 	}
 
-	///@function swap(iterator)
-	static swap = function(It) {
-		is_pure = false
-		var Temp = get()
-		self.set(It.get())
-		It.set(Temp)
-	}
-
 	static type = Const_iterator
 	static category = tag_const_iterator
 }
@@ -156,6 +148,14 @@ function Forward_iterator(Storage): Const_iterator(Storage) constructor {
 
 	///@function insert(value)
 	static insert = function(Value) { return underlying_iterator_insert(index, Value) }
+
+	///@function swap(iterator)
+	static swap = function(It) {
+		is_pure = false
+		var Temp = get()
+		self.set(It.get())
+		It.set(Temp)
+	}
 
 	static category = tag_forward_iterator
 }

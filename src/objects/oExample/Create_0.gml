@@ -24,7 +24,7 @@ show_debug_message("bsearch(2): " + string(binary_search(test2.first(), test2.la
 show_debug_message("\nThe Summary List")
 merge(test1.first(), test1.last(), test2.first(), test2.last(), test_sum.first())
 print(test_sum)
-/*
+
 function index_tree_print(Cont, Index, Msg) {
 	Msg = select_argument(Msg, "[" + string(Index) + "]\t")
 	show_debug_message(Msg + string(Cont.at(Index)))
@@ -63,15 +63,11 @@ function node_tree_print(Cont, NodeStart, Msg) {
 show_debug_message("\nTree")
 //random_shuffle(test_sum.first(), test_sum.last())
 test_tree = new Binary_tree(test_sum)
-for (var It = test_tree.node_head; It != undefined; It = It.node_next)
-	show_debug_message(It.value)
-
-node_tree_print(test_tree, test_tree.node_head)
+print(test_tree)
 
 test_tree.pop_back()
 test_tree.pop_back()
-for (It = test_tree.node_head; It != undefined; It = It.node_next)
-	show_debug_message(It.value)
+print(test_tree)
 /*
 do {
 	show_debug_message("tree[" + string(test_tree.size()) + "] = " + string(test_tree.pop_front()))

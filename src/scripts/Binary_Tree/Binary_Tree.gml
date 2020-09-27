@@ -124,7 +124,7 @@ function Binary_tree_trait() constructor {
 	}
 
 	///@function 
-	static underlying_make_node = function() { return new Tree_Node() }
+	static underlying_make_node = function() { return new Tree_node() }
 
 	///@function 
 	static underlying_sequence_by_index_recursive = function(Index) {
@@ -194,10 +194,10 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	static back = function() { return node_tail }
 
 	///@function first()
-	static first = function() { return (new iterator_type(self, 0)).pure() }
+	static first = function() { return Iterator(node_head) }
 
 	///@function last()
-	static last = function() { return inner_size }
+	static last = function() { return undefined }
 
 	///@function make_node(value)
 	static make_node = function(Value) {
@@ -297,12 +297,27 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	static contains = function(Value) { return !is_undefined(location(Value)) }
 
 	type = Binary_tree
+	iterator_type = Bidirectional_iterator
 	value_comparator = function(Node, Value) {
 		return bool(Node.value == Value)
 	}
 #endregion
 
 #region private
+	///@function 
+	static underlying_iterator_set = function(Index, Value) { return Index.value = Value; return self }
+
+	///@function 
+	static underlying_iterator_get = function(Index) { return Index.value }
+
+	///@function 
+	static underlying_iterator_next = function(Index) { return Index.node_next }
+
+	///@function 
+	static underlying_iterator_prev = function(Index) { return Index.node_previous }
+
+	///@function 
+	static underlying_iterator_insert = undefined
 
 	///@function 
 	static underlying_at = function(Index) {
