@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Scripts",
-    "path": "folders/Scripts.yy",
+    "name": "Graph",
+    "path": "folders/Scripts/Graph.yy",
   },
   "resourceVersion": "1.0",
-  "name": "Binary_Tree",
+  "name": "Binary_tree",
   "tags": [],
   "resourceType": "GMScript",
 }

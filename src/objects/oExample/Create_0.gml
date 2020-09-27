@@ -6,28 +6,24 @@ randomize()
 ///@function print(container)
 function print(Cont) { foreach(Cont.first(), Cont.last(), show_debug_message) }
 
-
-
-/*
 test1 = new List(4, 2, 8, 13, 11, 9) // 6
 test2 = new Array(3, 3.5, 26, 7, 10, 15, 5, 4.5) // 8
 test_sum = new List()
 show_debug_message("\nThe First List")
 sort(test1.first(), test1.last())
-//print(test1)
-//show_debug_message("Is sorted: " + string(is_sorted(test1.first(), test1.last())))
-//show_debug_message("bsearch(11): " + string(binary_search(test1.first(), test1.last(), 11)))
+print(test1)
+show_debug_message("Is sorted: " + string(is_sorted(test1.first(), test1.last())))
+show_debug_message("bsearch(11): " + string(binary_search(test1.first(), test1.last(), 11)))
 
 show_debug_message("\nThe Second Array")
 stable_sort(test2.first(), test2.last())
-//print(test2)
-//show_debug_message("Is sorted: " + string(is_sorted(test2.first(), test2.last())))
-//show_debug_message("bsearch(2): " + string(binary_search(test2.first(), test2.last(), 2)))
+print(test2)
+show_debug_message("Is sorted: " + string(is_sorted(test2.first(), test2.last())))
+show_debug_message("bsearch(2): " + string(binary_search(test2.first(), test2.last(), 2)))
 
 show_debug_message("\nThe Summary List")
 merge(test1.first(), test1.last(), test2.first(), test2.last(), test_sum.first())
-//print(test_sum)
-//random_shuffle(test_sum.first(), test_sum.last())
+print(test_sum)
 
 function index_tree_print(Cont, Index, Msg) {
 	Msg = select_argument(Msg, "[" + string(Index) + "]\t")
@@ -54,7 +50,7 @@ function node_tree_print(Cont, NodeStart, Msg) {
 	show_debug_message(Msg)
 
 	var LeftNode = NodeStart.node_left, RightNode = NodeStart.node_right
-	var LeftChk = Cont.valid(LeftNode), RightChk = Cont.valid(RightNode)
+	var LeftChk = !is_undefined(LeftNode), RightChk = !is_undefined(RightNode)
 
 	if LeftChk {
 		node_tree_print(Cont, LeftNode, "LEFT(" + string(NodeStart) + ") -> [" + string(LeftNode) + "]\t")
@@ -65,8 +61,18 @@ function node_tree_print(Cont, NodeStart, Msg) {
 	}
 }
 show_debug_message("\nTree")
-test_tree = new RedBlack_Tree(test_sum)
-node_tree_print(test_tree, test_tree.node_head)
+//random_shuffle(test_sum.first(), test_sum.last())
+test_tree = new Binary_tree(test_sum)
+print(test_tree)
+
+test_tree.pop_back()
+test_tree.pop_back()
+print(test_tree)
+/*
+do {
+	show_debug_message("tree[" + string(test_tree.size()) + "] = " + string(test_tree.pop_front()))
+} until test_tree.empty()
+
 
 /*
 tree_print(test_tree, 0, "Head(0)\t")
@@ -102,7 +108,7 @@ var part_point = partition(test_sum.first(), test_sum.last(), test_predicate)
 var is_parted = is_partitioned(test_sum.first(), test_sum.last(), test_predicate)
 print(test_sum)
 show_debug_message("Is parted: " + string(is_parted))
-show_debug_message("Parted on: " + string(part_point.get_index()))
+show_debug_message("Parted on: " + string(part_point.index))
 
 var nth = 8
 show_debug_message("\nNth Sorting (" + string(nth) + ")")
@@ -110,12 +116,12 @@ random_shuffle(test_sum.first(), test_sum.last())
 var nth_interator = iterator_advance(test_sum.first(), nth)
 var nth_value = nth_interator.get()
 nth_element(test_sum.first(), nth_interator, test_sum.last())
-show_debug_message("Rearranged On: " + string(nth_interator.get_index()))
+show_debug_message("Rearranged On: " + string(nth_interator.index))
 show_debug_message("The Stand Value: " + string(nth_value))
 
 var nth_result_iterator = iterator_advance(test_sum.first(), nth)
 var nth_result_value = nth_result_iterator.get()
-show_debug_message("The " + string(nth) + "th Iterator: " + string(nth_result_iterator.get_index()))
+show_debug_message("The " + string(nth) + "th Iterator: " + string(nth_result_iterator.index))
 show_debug_message("The " + string(nth) + "th Value: " + string(nth_result_value))
 print(test_sum)
 
@@ -145,7 +151,7 @@ test_map = new Map(test_mapped_list)
 print(test_map)
 
 show_debug_message("\nUnordered_Map")
-test_unomap = new Unordered_Map(test_mapped_list)
+test_unomap = new Unordered_map(test_mapped_list)
 print(test_unomap)
 
 show_debug_message("\nMultimap")

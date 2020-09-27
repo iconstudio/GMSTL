@@ -236,7 +236,7 @@ function GridIterator(Cont, Index): Iterator(Cont, Index) constructor {
 		return index
 	}
 
-	static go = function() {
+	static go_next = function() {
 		++index
 		update_coordinates()
 		return index

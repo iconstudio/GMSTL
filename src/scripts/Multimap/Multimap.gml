@@ -14,7 +14,7 @@
 
 	Usage:
 		To Iterate values on lists:
-			for (var It = Container.first(); It.not_equal(Container.last()); It.go()) {
+			for (var It = Container.first(); It.not_equal(Container.last()); It.go_next()) {
 				var KList = It.get()
 				foreach(KList.first(), KList.first(), function(Value) {
 					myfunc(Value)
@@ -23,14 +23,14 @@
 
 		To Iterate values in a key:
 			var Bucket = Container.seek("KEY")
-			for (var It = Bucket.first(); It.not_equal(Bucket.last()); It.go())
+			for (var It = Bucket.first(); It.not_equal(Bucket.last()); It.go_next())
 				myfunc(It.get())
 
 		To Iterate values with find_of indexes:
 			var KList, Key, Values
 			for (var i = 0; i < Container.bucket_count(); ++i) {
 				KList = Container.at(i)
-				for (var It = KList.first(); It.not_equal(KList.last()); It.go())
+				for (var It = KList.first(); It.not_equal(KList.last()); It.go_next())
 					myfunc(It.get())
 			}
 

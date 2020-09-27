@@ -1,19 +1,25 @@
 enum RBColor { Black, Red }
 
+///@function 
+function RBNode_Trait() constructor {
+	Tree_Node_Tratit()
+	color = RBColor.Red
+}
+
 ///@function RBNode(value, color, [parent=undefined])
 function RBNode(Value, Color) constructor {
+	Tree_Node_Tratit()
+
 	value = Value
 	color = Color
 	parent = 2 < argument_count ? argument[2] : undefined
-	node_left = undefined
-	node_right = undefined
 	node_next = undefined
-	node_before = undefined
+	node_previous = undefined
 
 	///@function set_left(node)
 	static set_left = function(Node) {
 		node_left = Node
-		node_before = Node
+		node_previous = Node
 		if !is_undefined(Node) {
 			Node.node_next = self
 			Node.parent = self
@@ -25,7 +31,7 @@ function RBNode(Value, Color) constructor {
 		node_right = Node
 		node_next = Node
 		if !is_undefined(Node) {
-			Node.node_before = self
+			Node.node_previous = self
 			Node.parent = self
 		}
 	}
@@ -259,7 +265,7 @@ function RedBlack_Tree(): Container() constructor {
 	node_head = undefined
 	inner_size = 0
 
-	// ** Assigning **
+	// ** Contructor **
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]

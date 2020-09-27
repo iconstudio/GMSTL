@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Advanced",
-    "path": "folders/Scripts/Advanced.yy",
+    "name": "Graph",
+    "path": "folders/Scripts/Graph.yy",
   },
   "resourceVersion": "1.0",
-  "name": "BinarySearch_Tree",
+  "name": "BinarySearch_tree",
   "tags": [],
   "resourceType": "GMScript",
 }

@@ -10,33 +10,21 @@
 
 	Initialize:
 		new Array()
-
-	Usage:
-		
+	
 */
 function Array(): Container() constructor {
+#region public
 	///@function size()
 	static size = function() { return inner_size }
 
 	///@function empty()
 	static empty = function() { return bool(inner_size == 0) }
 
-	///@function at(index)
-	///@description Checks the boundary
-	static at = function(Index) {
-		if Index < 0 or inner_size <= Index
-			return undefined
-		return raw[Index]
-	}
+	///@function valid(Index)
+	static valid = function(Index) { return bool(0 <= Index and Index < inner_size) }
 
-	///@function seek(value)
-	static seek = function(Value) {
-		for (var i = 0; i < inner_size; ++i) {
-			if at(i) == Value
-				return i
-		}
-		return undefined
-	}
+	///@function at(index)
+	static at = function(Index) { if !valid(Index) return undefined; return raw[Index] }
 
 	///@function front()
 	static front = function() { return at(0) }
@@ -45,50 +33,85 @@ function Array(): Container() constructor {
 	static back = function() { return at(inner_size - 1) }
 
 	///@function first()
-	static first = function() { return (new iterator_type(self, 0)).pure() }
+	static first = function() { return Iterator(0) }
 
 	///@function last()
-	static last = function() { return (new iterator_type(self, inner_size)).pure() }
+	static last = function() { return Iterator(inner_size) }
 
-	//////@function set(index, value)
-	static set = function(Index, Value) {
-		raw[Index] = Value
-		return self
+	//////@function set_at(index, value)
+	static set_at = function(Index, Value) { raw[Index] = Value; return self }
+
+	///@function assign(begin, end)
+	static assign = function(First, Last) {
+		First = check_iterator(First)
+
+		var Output = 0
+		while First.not_equals(Last) {
+			set_at(Output++, First.get())
+			First.go_next()
+		}
 	}
+
+	///@function location(value)
+	static location = function(Value) { return find(first(), last(), Value) }
+
+	///@function contains(value)
+	static contains = function(Value) { return !is_undefined(location(Value)) }
 
 	///@function destroy()
 	static destroy = function() { raw = 0; gc_collect() }
 
-	///@function allocate(size)
-	static allocate = function(Size) {
+	type = Array
+	iterator_type = Random_iterator
+#endregion
+
+#region private
+	///@function 
+	static underlying_iterator_set = function(Index, Value) { return set_at(Index, Value) }
+
+	///@function 
+	static underlying_iterator_get = function(Index) { return at(Index) }
+
+	///@function 
+	static underlying_iterator_next = function(Index) { return Index + 1 }
+
+	///@function 
+	static underlying_iterator_prev = function(Index) { return Index - 1 }
+
+	///@function 
+	static underlying_iterator_insert = undefined
+
+	///@function
+	static underlying_reserve = function(Size) {
+		raw = 0
 		inner_size = Size
 		raw = array_create(Size)
 	}
 
-	type = Array
-	iterator_type = RandomIterator
+	raw = -1
 	inner_size = 0
+#endregion
 
-	// ** Assigning **
+	// ** Contructor **
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]
 			if is_array(Item) {
 				// (*) Built-in Array
-				allocate(array_length(Item))
+				underlying_reserve(array_length(Item))
 				array_copy(raw, 0, Item, 0, inner_size)
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
-				allocate(ds_list_size(Item))
-				for (var i = 0; i < inner_size; ++i) set(i, Item[| i])
+				underlying_reserve(ds_list_size(Item))
+				for (var i = 0; i < inner_size; ++i) set_at(i, Item[| i])
 			} else if is_struct(Item) and is_iterable(Item) {
 				// (*) Container
-				allocate(Item.size())
+				underlying_reserve(Item.size())
 				assign(Item.first(), Item.last())
 			} else {
 				// (*) Arg
-				allocate(1)
-				set(0, Item)
+				underlying_reserve(1)
+				set_at(0, Item)
 			}
 		} else {
 			// (*) Iterator-Begin, Iterator-End
@@ -100,8 +123,8 @@ function Array(): Container() constructor {
 				}
 			}
 			// (*) Arg0, Arg1, ...
-			allocate(argument_count)
-			for (var i = 0; i < argument_count; ++i) set(i, argument[i])
+			underlying_reserve(argument_count)
+			for (var i = 0; i < argument_count; ++i) set_at(i, argument[i])
 		}
 	}
 }

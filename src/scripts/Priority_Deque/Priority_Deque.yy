@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Advanced",
-    "path": "folders/Scripts/Advanced.yy",
+    "name": "Adapter",
+    "path": "folders/Scripts/Adapter.yy",
   },
   "resourceVersion": "1.0",
-  "name": "Priority_Deque",
+  "name": "Priority_deque",
   "tags": [],
   "resourceType": "GMScript",
 }
