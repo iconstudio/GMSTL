@@ -1,3 +1,42 @@
+///@function 
+function BSTree_node(): Tree_node_tratit() constructor {
+	///@function set_parent(node)
+	static set_parent = function(Node) { underlying_set_parent(Node) }
+
+	///@function set_left(node)
+	static set_left = function(Node) { return underlying_set_left(Node) }
+
+	///@function set_right(node)
+	static set_right = function(Node) { return underlying_set_right(Node) }
+
+	///@function set_next(node)
+	static set_next = function(Node) {
+		if !is_undefined(node_next) {
+			node_next.node_previous = undefined
+		}
+		node_next = Node
+		if !is_undefined(Node) {
+			Node.node_previous = self
+			return true
+		}
+		return false
+	}
+
+	///@function destroy()
+	static destroy = function() {
+		if !is_undefined(node_previous) {
+			if !is_undefined(node_next) {
+				node_previous.set_next(node_next)
+			} else {
+				node_previous.set_next(undefined)
+			}
+		}
+		underlying_destroy()
+
+		return node_previous
+	}
+}
+
 function BinarySearch_tree(): Binary_tree() constructor {
 	///@function find_of(value)
 	static find_of = function(Value) {
@@ -131,20 +170,6 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		}
 	}
 
-	///@function location(value)
-	static location = function(Value) {
-		var Result = ds_list_find_index(raw, Value)
-		if Result == -1
-			return undefined
-		else
-			return Result
-	}
-
-	///@function contains(value)
-	static contains = function(Value) {
-		return !is_undefined(find_of(Value))
-	}
-
 	///@function set_key_compare(compare_function)
 	static set_key_compare = function(Func) { key_comparator = method(other, Func) }
 
@@ -152,6 +177,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static set_check_compare = function(Func) { check_comparator = method(other, Func) }
 
 	type = BinarySearch_tree
+	value_type = BSTree_node
 	key_comparator = compare_less
 	check_comparator = compare_equal
 

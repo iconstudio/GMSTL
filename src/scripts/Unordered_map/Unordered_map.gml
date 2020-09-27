@@ -2,7 +2,6 @@
 	Constructors:
 		Unordered_map()
 		Unordered_map(Arg)
-		Unordered_map(Multimaps)
 		Unordered_map(Paired-Container)
 		Unordered_map(Builtin-Paired-Array)
 		Unordered_map(Builtin-Paired-List)
@@ -14,62 +13,51 @@
 
 	Usage:
 		To Iterate values:
-			for (var It = Container.first(); It.not_equals(Container.last()); It.go_next()) {
-				myfunc(It.get())
-			}
+			foreach(Container.first(), Container.last(), myfunc)
 		
 */
 function Unordered_map(): Container() constructor {
+#region public
 	///@function size()
 	static size = function() { return ds_map_size(raw) }
 
 	///@function empty()
 	static empty = function() { return ds_map_empty(raw) }
 
-	///@function contains(key)
-	static contains = function(K) { return ds_map_exists(raw, K) }
+	///@function clear()
+	static clear = function() { ds_map_clear(raw) }
 
-	///@function seek(key)
-	static seek = function(K) { return ds_map_find_value(raw, K) }
-
-	///@function at(index)
-	static at = function(Index) { return (new iterator_type(self, Index)).get() }
-
-	///@function back()
-	static back = function() { return at(0) }
+	///@function at(key)
+	static at = function(K) { return ds_map_find_value(raw, K) }
 
 	///@function front()
-	static front = function() {  return at(size()) }
+	static front = function() {  return at(ds_map_find_first(raw)) }
+
+	///@function back()
+	static back = function() { return at(ds_map_find_last(raw)) }
 
 	///@function first()
-	static first = function() { return (new iterator_type(self, 0)).pure() }
+	static first = function() { return Iterator(ds_map_find_first(raw)) }
 
 	///@function last()
-	static last = function() { return (new iterator_type(self, size())).pure() }
+	static last = function() { return undefined }
 
-	///@function set(key, value)
-	static set = function(K, Value) { ds_map_set(raw, K, Value) return self }
-
-	///@function insert(item)
-	static insert = function() {
-		var Key, Value
-		if argument_count == 2 {
-			Key = argument[0]
-			Value = argument[1]
-		} else {
-			var Pair = argument[0]
-			Key = Pair[0]
-			Value = Pair[1]
-		}
-		ds_map_set(raw, Pair[0], Pair[1])
+	///@function insert([key, index])
+	static insert_at = function(values) {
+		var Key = values[0]
+		var Value = values[1]
+		ds_map_set(raw, Key, Value)
 		return self
 	}
 
+	///@function set_at(key, value)
+	static set_at = function(K, Value) { ds_map_set(raw, K, Value); return self }
+
 	///@function set_list(key, builtin_list_id)
-	static set_list = function(K, Value) { ds_map_add_list(raw, K, Value) }
+	static set_list = function(K, Value) { ds_map_add_list(raw, K, Value); return self }
 
 	///@function set_map(key, builtin_map_id)
-	static set_map = function(K, Value) { ds_map_add_map(raw, K, Value)  }
+	static set_map = function(K, Value) { ds_map_add_map(raw, K, Value); return self  }
 
 	///@function erase_at(key)
 	static erase_at = function(K) {
@@ -78,8 +66,16 @@ function Unordered_map(): Container() constructor {
 		return Temp
 	}
 
-	///@function clear()
-	static clear = function() { ds_map_clear(raw) }
+	///@function seek(value)
+	static seek = function(Value) { return find(first(), last(), Value) }
+
+	///@function location(key)
+	static location = function(K) { return find(first(), last(), K, function (It, Key) {
+		return bool(It[0] == Key)
+	})}
+
+	///@function contains(key)
+	static contains = function(K) { return ds_map_exists(raw, K) }
 
 	///@function key_swap(key_1, key_2)
 	static key_swap = function(Key1, Key2) {
@@ -95,19 +91,7 @@ function Unordered_map(): Container() constructor {
 	static is_map = function(K) { return ds_map_is_map(raw, K) }
 
 	///@function read(data_string)
-	static read = function(Str) {
-		var loaded = ds_map_create()
-		ds_map_read(loaded, Str)
-		if 0 < ds_map_size(loaded) {
-			var MIt = ds_map_find_first(loaded)
-			while true {
-				insert(MIt, ds_map_find_value(loaded, MIt))
-				MIt = ds_map_find_next(loaded, MIt)
-				if is_undefined(MIt)
-					break
-			}
-		} 
-	}
+	static read = function(Str) { ds_map_read(raw, Str) }
 
 	///@function write()
 	static write = function() { return ds_map_write(raw) }
@@ -116,8 +100,27 @@ function Unordered_map(): Container() constructor {
 	static destroy = function() { ds_map_destroy(raw); gc_collect() }
 
 	type = Unordered_map
+	iterator_type = Bidirectional_iterator
+#endregion
+
+#region private
+	///@function 
+	static underlying_iterator_set = function(Index, Value) { return set_at(Index, Value) }
+
+	///@function 
+	static underlying_iterator_get = function(Index) { return [Index, at(Index)] }
+
+	///@function 
+	static underlying_iterator_next = function(Index) { return ds_map_find_next(raw, Index) }
+
+	///@function 
+	static underlying_iterator_prev = function(Index) { return ds_map_find_previous(raw, Index) }
+
+	///@function 
+	static underlying_iterator_insert = undefined
+
 	raw = ds_map_create()
-	iterator_type = MapIterator
+#endregion
 
 	if 0 < argument_count {
 		if argument_count == 1 {
@@ -141,14 +144,7 @@ function Unordered_map(): Container() constructor {
 					}
 				}
 			} else if is_struct(Item) {
-				var Type = instanceof(Item)
-				if Type == "Multimap" {
-					// (*) Multimaps
-					foreach(Item.first(), Item.last(), function(Value) {
-						var Key = Value[0], KList = Value[1].duplicate()
-						insert(Key, KList)
-					})
-				} else if is_iterable(Item) {
+				if is_iterable(Item) {
 					// (*) Paired-Container
 					foreach(Item.first(), Item.last(), function(Value) {
 						insert(Value)
