@@ -320,7 +320,7 @@ function reverse(First, Last) {
 	First = make_iterator(First)
 
 	while First.not_equals(Last) {
-		Last.back()
+		Last.go_prev()
 		if First.equals(Last)
 			break
 	  First.swap(Last)
@@ -535,7 +535,7 @@ function insertion_sort(First, Last) {
 		Compare = compare_less
 	while First.not_equals(Last) {
 		Value = First.get()
-		for(It = First.previous(); 0 <= It.get_index() and Compare(Value, It.get()); It.back()) {
+		for(It = First.previous(); 0 <= It.get_index() and Compare(Value, It.get()); It.go_prev()) {
 			It.next().set(It.get())
 		}
 		It.next().set(Value)
@@ -611,8 +611,8 @@ function partition_by_median_guess(First, Last, Comparator) {
 	var _Pbefore = _Pfirst.previous()
 	var _Plast = _Pfirst.next()
 	while First.get_index() < _Pfirst.get_index() && !Comparator(_Pbefore.get(), _Pfirst.get()) && !Comparator(_Pfirst.get(), _Pbefore.get()) {
-		_Pfirst.back()
-		_Pbefore.back()
+		_Pfirst.go_prev()
+		_Pbefore.go_prev()
 	}
 	delete _Pbefore
 
@@ -636,12 +636,12 @@ function partition_by_median_guess(First, Last, Comparator) {
 		}
 
 		var _Gfore
-		for (; First.get_index() < _Glast.get_index(); _Glast.back()) {
+		for (; First.get_index() < _Glast.get_index(); _Glast.go_prev()) {
 			_Gfore = _Glast.previous()
 			if Comparator(_Gfore.get(), _Pfirst.get()) {
 			} else if Comparator(_Pfirst.get(), _Gfore.get()) {
 				break
-			} else if _Pfirst.back().not_equals(_Gfore) {
+			} else if _Pfirst.go_prev().not_equals(_Gfore) {
 				swap(_Pfirst, _Gfore)
 			}
 			delete _Gfore
@@ -661,13 +661,13 @@ function partition_by_median_guess(First, Last, Comparator) {
 			_Pfirst.go_next()
 			_Gfirst.go_next()
 		} else if _Gfirst.equals(Last) { // no room at top, rotate pivot downward
-			if _Glast.back().not_equals(_Pfirst.back()) {
+			if _Glast.go_prev().not_equals(_Pfirst.go_prev()) {
 				swap(_Glast, _Pfirst)
 			}
 
-			swap(_Pfirst, _Plast.back())
+			swap(_Pfirst, _Plast.go_prev())
 		} else {
-			swap(_Gfirst, _Glast.back())
+			swap(_Gfirst, _Glast.go_prev())
 			_Gfirst.go_next()
 		}
 	}
@@ -746,9 +746,9 @@ function unguarded_partition(First, Last, Pivot) {
 	  while Compare(First.get(), Pivot.get())
 			First.go_next()
 
-	  Last.back()
+	  Last.go_prev()
 	  while Compare(Pivot.get(), Last.get())
-			Last.back()
+			Last.go_prev()
 
 	  if !(First.get_index() < Last.get_index())
 			return First
@@ -773,7 +773,7 @@ function partition(First, Last, Pred) {
 		}
 
 		do {
-		  Last.back()
+		  Last.go_prev()
 		  if First.equals(Last)
 				return First
 			Value = Last.get()

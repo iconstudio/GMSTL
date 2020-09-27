@@ -41,17 +41,20 @@ function List(): Container() constructor {
 	///@function last()
 	static last = function() { return (new iterator_type(self, size())).pure() }
 
+	//////@function insert(value)
+	static insert = function(Value) { var It = last(); ds_list_add(raw, Value); return It }
+
 	//////@function set_at(index, value)
 	static set_at = function(Index, Value) { ds_list_set(raw, Index, Value); return self }
 
 	//////@function insert_at(index, value)
-	static insert_at = function(Index, Value) { ds_list_insert(raw, Index, Value) }
+	static insert_at = function(Index, Value) { ds_list_insert(raw, Index, Value); return self }
 
 	///@function push_front(value)
-	static push_front = function(Value) { insert_at(0, Value) }
+	static push_front = function(Value) { insert_at(0, Value); return self }
 
 	///@function push_back(value)
-	static push_back = function(Value) { ds_list_add(raw, Value) }
+	static push_back = function(Value) { ds_list_add(raw, Value); return self }
 
 	///@function assign(begin, end)
 	static assign = function(First, Last) { clear(); foreach(First, Last, push_back) }

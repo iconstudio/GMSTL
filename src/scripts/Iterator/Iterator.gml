@@ -1,3 +1,6 @@
+function tag_none_iterator() {}
+
+function tag_const_iterator() {}
 
 function tag_forward_iterator() {}
 
@@ -5,27 +8,163 @@ function tag_bidirectional_iterator() {}
 
 function tag_random_access_iterator() {}
 
-///@function 
-function Iterator_trait() {
-	__ITERATOR = true
-	tag = tag_forward_iterator
+///@function Iterator_trait(container)
+function Iterator_trait(Storage) constructor {
+	///@function 
+	static underlying_copy = function(Other) {
+		if category != Other.category
+			throw "Types of two iterators unmatched."
+		value = Other.value
+		index = Other.index
+		pointer_index = Other.pointer_index
+		index_modified = false
+		return Other
+	}
 
-	container = undefined
+	///@function 
+	static underlying_duplicate = function() {
+		var Result = new type(container)
+		return Result.underlying_copy(self)
+	}
 
-	index = 0 // Wrapper Index of container
-	pointer_index = 0 // Actual index of container
-}
-
-///@function Iterator(container, index)
-function Iterator(Cont, Index): Iterator_trait() constructor {
-	///@function duplicate()
-	static duplicate = function() { return new type(container, index) }
+	///@function 
+	static underlying_move = function(Other) {
+		var Result = Other.underlying_copy(self)
+		delete Other
+		gc_collect()
+		return Result
+	}
 
 	///@function pure()
 	static pure = function() { is_pure = true; return self }
 
 	///@function impure()
 	static impure = function() { is_pure = false; return self }
+
+	///@function swap_with(iterator)
+	static swap_with = function(It) {
+		is_pure = false
+		var Temp = get()
+		self.set(It.get())
+		It.set(Temp)
+	}
+
+	__ITERATOR = true
+	category = tag_none_iterator
+	storage = Storage
+	underlying_iterator_get = method(Storage, Storage.underlying_iterator_get)
+	underlying_iterator_next = method(Storage, Storage.underlying_iterator_next)
+
+	container = undefined
+	is_pure = false
+
+	value = undefined
+	index = 0
+	index_modified = true
+}
+
+function Const_iterator(Storage): Iterator_trait(Storage) constructor {
+	///@function get()
+	static get = function() {
+		if index_modified {
+			value = underlying_iterator_get(index)
+			index_modified = false
+		}
+		return value
+	}
+
+	///@function go_next()
+	static go_next = function() { return underlying_iterator_next(index) }
+
+	///@function make_next()
+	static make_next = function() { return (underlying_duplicate().go_next()) }
+
+	///@function equals(iterator)
+	static equals = function(It) {
+		if is_real(It) {
+			return bool(It == index)
+		} else {
+			if It.category != category
+				throw "Cannot compare different type of iterators."
+			else
+				return bool(It.container == container and It.index == index)
+		}
+		return false
+	}
+
+	///@function not_equals(iterator)
+	static not_equals = function(It) {
+		if is_real(It) {
+			return bool(It != index)
+		} else {
+			if It.category != category
+				throw "Cannot compare different type of iterators."
+			else
+				return bool(It.container != container or It.index != index)
+		}
+		return false
+	}
+
+	category = tag_const_iterator
+}
+
+function Forward_iterator(Storage): Const_iterator(Storage) constructor {
+	///@function set(value)
+	static set = function(Value) { return underlying_iterator_set(index, Value) }
+
+	///@function insert(value)
+	static insert = function(Value) { return underlying_iterator_insert(index, Value) }
+
+	category = tag_forward_iterator
+	underlying_iterator_set = method(Storage, Storage.underlying_iterator_set)
+	underlying_iterator_insert = method(Storage, Storage.underlying_iterator_insert)
+}
+
+function Bidirectional_iterator(Storage): Forward_iterator(Storage) constructor {
+	///@function go_prev()
+	static go_prev = function() { return underlying_iterator_next(index) }
+
+	///@function make_previous()
+	static make_previous = function() { return (underlying_duplicate().go_prev()) }
+
+	category = tag_bidirectional_iterator
+}
+
+function Random_iterator(Storage): Bidirectional_iterator(Storage) constructor {
+	///@function less_than(iterator)
+	static less_than = function(It) {
+		if is_real(It) {
+			return bool(index < It)
+		} else {
+			if It.category != category
+				throw "Cannot compare different type of iterators."
+			else
+				return bool(It.container == container and index < It.index)
+		}
+		return false
+	}
+
+	///@function greater_than(iterator)
+	static greater_than = function(It) {
+		if is_real(It) {
+			return bool(It < index)
+		} else {
+			if It.category != category
+				throw "Cannot compare different type of iterators."
+			else
+				return bool(It.container == container and It.index < index)
+		}
+		return false
+	}
+
+	category = tag_random_access_iterator
+}
+
+
+///@function Iterator(container, index)
+function Iterator(Cont, Index): Iterator_trait() constructor {
+	///@function duplicate()
+	static duplicate = function() { return underlying_duplicate() }
 
 	///@function get()
 	static get = function() { return container.at(pointer_index) }

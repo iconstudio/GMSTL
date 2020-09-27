@@ -51,8 +51,8 @@ function Map(): Container() constructor {
 	///@function last()
 	static last = function() { return (new iterator_type(self, size())).pure() }
 
-	//////@function set(index, value)
-	static set = function(Index, Value) { 
+	//////@function set_at(index, value)
+	static set_at = function(Index, Value) { 
 		var Key = cash.at(Index)
 		if !is_undefined(Key)
 			ds_map_set(raw, Key, Value)
