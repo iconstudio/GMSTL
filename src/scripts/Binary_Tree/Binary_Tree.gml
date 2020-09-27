@@ -1,5 +1,5 @@
 ///@function 
-function Tree_Node_Tratit() constructor {
+function Tree_node_tratit() constructor {
 	value = undefined
 	parent = undefined
 	node_left = undefined
@@ -53,7 +53,7 @@ function Tree_Node_Tratit() constructor {
 }
 
 ///@function 
-function Tree_Node(): Tree_Node_Tratit() constructor {
+function Tree_node(): Tree_node_tratit() constructor {
 	///@function set_parent(node)
 	static set_parent = function(Node) { underlying_set_parent(Node) }
 
@@ -78,14 +78,13 @@ function Tree_Node(): Tree_Node_Tratit() constructor {
 
 	///@function destroy()
 	static destroy = function() {
-		underlying_destroy()
-
 		if !is_undefined(node_previous) {
 			if !is_undefined(node_next) {
 				throw "Deleting a node in between of two nodes is not allowed in Full binary tree!"
 			}
 			node_previous.set_next(undefined)
 		}
+		underlying_destroy()
 
 		return node_previous
 	}
@@ -109,19 +108,10 @@ function Tree_Node(): Tree_Node_Tratit() constructor {
 		}
 		return Result
 	}
-
-	///@function 
-	static underlying_destroy = function() {
-		if !is_undefined(node_previous) {
-			Node.node_previous = self
-			return true
-		}
-		return false
-	}
 }
 
 ///@function 
-function Binary_Tree_Trait() constructor {
+function Binary_tree_trait() constructor {
 	node_head = undefined
 	node_tail = undefined
 	cash_size = 64
@@ -177,28 +167,13 @@ function Binary_Tree_Trait() constructor {
 	///@function 
 	static underlying_sequence_by_index = function(Index) { // from node_head to left to right
 		var Result = underlying_sequence_by_index_recursive(Index)
-		//cash = 0
-		//cash = array_create(64, undefined)
 		gc_collect()
 		return Result
 	}
 
-	///@function 
-	static underlying_sequence_by_sort = function(Index) { // from leftest
-		var First = node_head.find_leftest()
-		
-		var Node, Leftest = Node.find_leftest()
-		if Leftest == Node {
-			
-		}
-	}
-
-	///@function 
-	static underlying_sequence_by_depth = function(Index) { // left first
-	}
 }
 
-function Binary_Tree(): Binary_Tree_Trait() constructor {
+function Binary_tree(): Binary_tree_trait() constructor {
 #region public
 	///@function size()
 	static size = function() { return inner_size }
@@ -212,19 +187,6 @@ function Binary_Tree(): Binary_Tree_Trait() constructor {
 	///@function clear()
 	static clear = function() { node_head = undefined; inner_size = 0; gc_collect() }
 
-	///@function at(index)
-	static at = function(Index) {
-		if valid(Index) {
-			if Index < cash_size {
-				return cash[Index]
-			} else {
-				
-			}
-		} else {
-			return undefined
-		}
-	}
-
 	///@function front()
 	static front = function() { return node_head }
 
@@ -235,7 +197,7 @@ function Binary_Tree(): Binary_Tree_Trait() constructor {
 	static first = function() { return (new iterator_type(self, 0)).pure() }
 
 	///@function last()
-	static last = function() { return size() }
+	static last = function() { return inner_size }
 
 	///@function make_node(value)
 	static make_node = function(Value) {
@@ -302,39 +264,66 @@ function Binary_Tree(): Binary_Tree_Trait() constructor {
 			return undefined
 		} else {
 			var Result
-			if 1 == inner_size-- {
+			if 1 == inner_size {
 				Result = cash[0]
 				delete node_head
 				node_head = undefined
+				node_tail = undefined
 				cash[0] = undefined
-			} else {
+				inner_size--
+			} else if 1 < inner_size {
 				if inner_size <= cash_size {
 					Result = cash[inner_size - 1]
 					cash[inner_size - 1] = undefined
 				} else {
 					Result = node_tail.value
 				}
-				
-				var Prev = node_tail.destroy()
+
+				var Prev = node_tail.node_previous
+				Prev.set_next(undefined)
+				node_tail.destroy()
 				delete node_tail
 				node_tail = Prev
+				inner_size--
 			}
 			return Result
 		}
 	}
 
 	///@function location(value)
-	static location = function(Value) {
-		
-	}
+	static location = function(Value) { return find(first(), last(), Value, value_comparator) }
 
 	///@function contains(value)
 	static contains = function(Value) { return !is_undefined(location(Value)) }
 
-	type = Binary_Tree
+	type = Binary_tree
+	value_comparator = function(Node, Value) {
+		return bool(Node.value == Value)
+	}
 #endregion
 
 #region private
+
+	///@function 
+	static underlying_at = function(Index) {
+		if valid(Index) {
+			if Index < cash_size {
+				return cash[Index]
+			} else {
+				var Target, It = node_tail, Max = Index - cash_size + 1
+				repeat Max {
+					Target = It.node_next
+					if is_undefined(Target)
+						break
+					It = Target
+				}
+				return It.value
+			}
+		} else {
+			return undefined
+		}
+	}
+
 	inner_size = 0
 	node_inserter_parent = undefined
 	node_leftest = undefined

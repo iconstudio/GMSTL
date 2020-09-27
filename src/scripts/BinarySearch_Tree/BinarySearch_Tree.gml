@@ -1,4 +1,4 @@
-function BinarySearch_Tree(): Binary_Tree() constructor {
+function BinarySearch_tree(): Binary_tree() constructor {
 	///@function find_of(value)
 	static find_of = function(Value) {
 		if 0 == size()
@@ -167,7 +167,7 @@ function BinarySearch_Tree(): Binary_Tree() constructor {
 	///@function set_check_compare(compare_function)
 	static set_check_compare = function(Func) { check_comparator = method(other, Func) }
 
-	type = BinarySearch_Tree
+	type = BinarySearch_tree
 	key_comparator = compare_less
 	check_comparator = compare_equal
 
