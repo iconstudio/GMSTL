@@ -33,17 +33,17 @@ function Array(): Container() constructor {
 	static back = function() { return at(inner_size - 1) }
 
 	///@function first()
-	static first = function() { return (new iterator_type(self, 0)).pure() }
+	static first = function() { return Iterator(0) }
 
 	///@function last()
-	static last = function() { return (new iterator_type(self, inner_size)).pure() }
+	static last = function() { return Iterator(inner_size) }
 
 	//////@function set_at(index, value)
 	static set_at = function(Index, Value) { raw[Index] = Value; return self }
 
 	///@function assign(begin, end)
 	static assign = function(First, Last) {
-		First = make_iterator(First)
+		First = check_iterator(First)
 
 		var Output = 0
 		while First.not_equals(Last) {
@@ -62,12 +62,27 @@ function Array(): Container() constructor {
 	static destroy = function() { raw = 0; gc_collect() }
 
 	type = Array
-	iterator_type = RandomIterator
+	iterator_type = Random_iterator
 #endregion
 
 #region private
+	///@function 
+	static underlying_iterator_set = function(Index, Value) { return set_at(Index, Value) }
+
+	///@function 
+	static underlying_iterator_get = function(Index) { return at(Index) }
+
+	///@function 
+	static underlying_iterator_next = function(Index) { return Index + 1 }
+
+	///@function 
+	static underlying_iterator_prev = function(Index) { return Index - 1 }
+
+	///@function 
+	static underlying_iterator_insert = undefined
+
 	///@function
-	static reserve = function(Size) {
+	static underlying_reserve = function(Size) {
 		raw = 0
 		inner_size = Size
 		raw = array_create(Size)
@@ -83,19 +98,19 @@ function Array(): Container() constructor {
 			var Item = argument[0]
 			if is_array(Item) {
 				// (*) Built-in Array
-				reserve(array_length(Item))
+				underlying_reserve(array_length(Item))
 				array_copy(raw, 0, Item, 0, inner_size)
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
-				reserve(ds_list_size(Item))
+				underlying_reserve(ds_list_size(Item))
 				for (var i = 0; i < inner_size; ++i) set_at(i, Item[| i])
 			} else if is_struct(Item) and is_iterable(Item) {
 				// (*) Container
-				reserve(Item.size())
+				underlying_reserve(Item.size())
 				assign(Item.first(), Item.last())
 			} else {
 				// (*) Arg
-				reserve(1)
+				underlying_reserve(1)
 				set_at(0, Item)
 			}
 		} else {
@@ -108,7 +123,7 @@ function Array(): Container() constructor {
 				}
 			}
 			// (*) Arg0, Arg1, ...
-			reserve(argument_count)
+			underlying_reserve(argument_count)
 			for (var i = 0; i < argument_count; ++i) set_at(i, argument[i])
 		}
 	}

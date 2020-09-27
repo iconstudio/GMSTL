@@ -12,7 +12,7 @@ function erase(First, Last) {
 
 	var Result = First.duplicate() // last
 	while First.not_equals(Last) {
-		Cont.erase_at(First.get_index())
+		Cont.erase_at(First.index)
 		First.go_next()
 	}
 	return Result
@@ -20,7 +20,7 @@ function erase(First, Last) {
 
 ///@function check_all(begin, end, predicate)
 function check_all(First, Last, Pred) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	while First.not_equals(Last) {
 		if !Pred(First.get())
@@ -32,7 +32,7 @@ function check_all(First, Last, Pred) {
 
 ///@function check_any(begin, end, predicate)
 function check_any(First, Last, Pred) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	while First.not_equals(Last) {
 		if Pred(First.get())
@@ -44,7 +44,7 @@ function check_any(First, Last, Pred) {
 
 ///@function check_none(begin, end, predicate)
 function check_none(First, Last, Pred) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	while First.not_equals(Last) {
 		if Pred(First.get())
@@ -56,7 +56,7 @@ function check_none(First, Last, Pred) {
 
 ///@function foreach(begin, end, predicate)
 function foreach(First, Last, Pred) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	while First.not_equals(Last) {
 		Pred(First.get())
@@ -67,7 +67,7 @@ function foreach(First, Last, Pred) {
 
 ///@function find(begin, end, value, [comparator=compare_equal])
 function find(First, Last, Value) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	var Compare
 	if 3 < argument_count
@@ -84,7 +84,7 @@ function find(First, Last, Value) {
 
 ///@function find_if(begin, end, predicate)
 function find_if(First, Last, Pred) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	while First.not_equals(Last) {
 		var Value = First.get()
@@ -97,7 +97,7 @@ function find_if(First, Last, Pred) {
 
 ///@function count(begin, end, value)
 function count(First, Last, Value) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	var Result = 0
 	while First.not_equals(Last) {
@@ -110,7 +110,7 @@ function count(First, Last, Value) {
 
 ///@function count_if(begin, end, predicate)
 function count_if(First, Last, Pred) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	var Result = 0
 	while First.not_equals(Last) {
@@ -130,8 +130,8 @@ function swap(ItA, ItB) {
 
 ///@function swap_range(begin, end, output)
 function swap_range(First, Last, Output) {
-	First = make_iterator(First)
-	Output = make_iterator(Output)
+	First = check_iterator(First)
+	Output = check_iterator(Output)
 
 	while First.not_equals(Last) {
 	  swap(First, Output)
@@ -143,8 +143,8 @@ function swap_range(First, Last, Output) {
 
 ///@function copy(begin, end, output)
 function copy(First, Last, Output) {
-	First = make_iterator(First)
-	Output = make_iterator(Output)
+	First = check_iterator(First)
+	Output = check_iterator(Output)
 
 	while First.not_equals(Last) {
 		Output.set(First.get())
@@ -156,8 +156,8 @@ function copy(First, Last, Output) {
 
 ///@function copy_n(begin, number, output)
 function copy_n(First, Number, Output) {
-	First = make_iterator(First)
-	Output = make_iterator(Output)
+	First = check_iterator(First)
+	Output = check_iterator(Output)
 
 	repeat Number {
 		Output.set(First.get())
@@ -169,8 +169,8 @@ function copy_n(First, Number, Output) {
 
 ///@function copy_if(begin, end, output, predicate)
 function copy_if(First, Last, Output, Pred) {
-	First = make_iterator(First)
-	Output = make_iterator(Output)
+	First = check_iterator(First)
+	Output = check_iterator(Output)
 
 	var Value = 0
 	while First.not_equals(Last) {
@@ -185,7 +185,7 @@ function copy_if(First, Last, Output, Pred) {
 
 ///@function replace(begin, end, old_value, new_value)
 function replace(First, Last, OldVal, NewVal) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	while First.not_equals(Last) {
 		if First.get() == OldVal
@@ -196,7 +196,7 @@ function replace(First, Last, OldVal, NewVal) {
 
 ///@function replace_if(begin, end, predicate, new_value)
 function replace_if(First, Last, Pred, NewVal) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	var Value
 	while First.not_equals(Last) {
@@ -209,8 +209,8 @@ function replace_if(First, Last, Pred, NewVal) {
 
 ///@function replace_copy(begin, end, output, old_value, new_value)
 function replace_copy(First, Last, Output, OldVal, NewVal) {
-	First = make_iterator(First)
-	Output = make_iterator(Output)
+	First = check_iterator(First)
+	Output = check_iterator(Output)
 
 	var Value
 	while First.not_equals(Last) {
@@ -240,7 +240,7 @@ function remove(First, Last, Value) {
 	var Result = First.duplicate()
 	while First.not_equals(Last) {
 		if First.get() == Value
-			Cont.erase_at(Result.get_index())
+			Cont.erase_at(Result.index)
 		else
 			Result.go_next()
 		First.go_next()
@@ -263,7 +263,7 @@ function remove_if(First, Last, Pred) {
 	var Result = First.duplicate()
 	while First.not_equals(Last) {
 		if Pred(First.get())
-			Cont.erase_at(Result.get_index())
+			Cont.erase_at(Result.index)
 		else
 			Result.go_next()
 		First.go_next()
@@ -273,8 +273,8 @@ function remove_if(First, Last, Pred) {
 
 ///@function move(begin, end, output)
 function move(First, Last, Output) {
-	First = make_iterator(First)
-	Output = make_iterator(Output)
+	First = check_iterator(First)
+	Output = check_iterator(Output)
 
 	while First.not_equals(Last) {
 		Output.set(First.get())
@@ -288,7 +288,7 @@ function move(First, Last, Output) {
 
 ///@function fill(begin, end, value)
 function fill(First, Last, Value) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	while First.not_equals(Last) {
 		First.set(Value)
@@ -298,8 +298,8 @@ function fill(First, Last, Value) {
 
 ///@function rotate(begin, middle, end)
 function rotate(First, Middle, Last) {
-	First = make_iterator(First)
-	Middle = make_iterator(Middle)
+	First = check_iterator(First)
+	Middle = check_iterator(Middle)
 
 	var Next = Middle // copied
 	while First.equals(Next) {
@@ -317,7 +317,7 @@ function rotate(First, Middle, Last) {
 
 ///@function reverse(begin, end)
 function reverse(First, Last) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	while First.not_equals(Last) {
 		Last.go_prev()
@@ -330,8 +330,8 @@ function reverse(First, Last) {
 
 ///@function transform(begin, end, output, unary_predicate)
 function transform(First, Last, Output, Pred) {
-	First = make_iterator(First)
-	Output = make_iterator(Output)
+	First = check_iterator(First)
+	Output = check_iterator(Output)
 	Pred = method(other, Pred)
 
 	while First.not_equals(Last) {
@@ -344,9 +344,9 @@ function transform(First, Last, Output, Pred) {
 
 ///@function transform_binary(begin, end, another_begin, output, binary_predicate)
 function transform_binary(First, Last, PairFirst, Output, Pred) {
-	First = make_iterator(First)
-	PairFirst = make_iterator(PairFirst)
-	Output = make_iterator(Output)
+	First = check_iterator(First)
+	PairFirst = check_iterator(PairFirst)
+	Output = check_iterator(Output)
 
 	while First.not_equals(Last) {
 		Output.set(Pred(First.get(), PairFirst.get()))
@@ -363,7 +363,7 @@ function min_element(First, Last) {
 		return Last
 
 	var Result = First.duplicate()
-	var Cursor = First.next()
+	var Cursor = First.make_next()
 	var Compare
 	if 2 < argument_count
 		Compare = argument[2]
@@ -387,7 +387,7 @@ function max_element(First, Last) {
 		return Last
 
 	var Result = First.duplicate()
-	var Cursor = First.next()
+	var Cursor = First.make_next()
 	var Compare
 	if 2 < argument_count
 		Compare = argument[2]
@@ -407,7 +407,7 @@ function max_element(First, Last) {
 
 ///@function lower_bound(begin, end, value, [comparator=compare_less])
 function lower_bound(First, Last, Value) { // return the first and largest element which less than value.
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	var Compare
 	if 3 < argument_count
@@ -432,7 +432,7 @@ function lower_bound(First, Last, Value) { // return the first and largest eleme
 
 ///@function upper_bound(begin, end, value, [comparator=compare_less])
 function upper_bound(First, Last, Value) { // return a greater element to the value.
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	var Compare
 	if 3 < argument_count
@@ -457,7 +457,7 @@ function upper_bound(First, Last, Value) { // return a greater element to the va
 
 ///@function binary_search(begin, end, value, [comparator=compare_less])
 function binary_search(First, Last, Value) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	var Compare
 	if 3 < argument_count
@@ -472,8 +472,8 @@ function binary_search(First, Last, Value) {
 ///@function sort(begin, end, [comparator])
 ///@description quick sort
 function sort(First, Last) {
-	First = make_iterator(First)
-	Last = make_iterator(Last)
+	First = check_iterator(First)
+	Last = check_iterator(Last)
 	if Last.index <= 1
 		exit
 
@@ -483,10 +483,10 @@ function sort(First, Last) {
 	else
 		Compare = compare_less
 	var Pivot = First.duplicate(), Pivot_Next, Value = 0
-	for (var It = First.next(); It.index < First.index + Last.index; It.go_next()) {
+	for (var It = First.make_next(); It.index < First.index + Last.index; It.go_next()) {
 		Value = It.get()
 		if Compare(Value, Pivot.get()) {
-			Pivot_Next = Pivot.next()
+			Pivot_Next = Pivot.make_next()
 
 			It.set(Pivot_Next.get())
 			Pivot_Next.set(Pivot.get())
@@ -497,9 +497,9 @@ function sort(First, Last) {
 	}
 	delete It
 
-	sort(First, Pivot.duplicate().subtract(First), Compare)
+	sort(First, Pivot.duplicate().advance(-First.index), Compare)
 	if Pivot.index < First.index + Last.index
-		sort(Pivot.next().pure(), Last.subtract(Pivot.distance(First) + 1), Compare)
+		sort(Pivot.make_next().pure(), Last.advance(-Pivot.distance(First) - 1), Compare)
 	delete Pivot
 	delete Pivot_Next
 	gc_collect()
@@ -508,7 +508,7 @@ function sort(First, Last) {
 ///@function stable_sort(begin, end, [comparator=compare_less])
 ///@description selection sort
 function stable_sort(First, Last) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	var selection, Compare
 	if 2 < argument_count
@@ -526,7 +526,7 @@ function stable_sort(First, Last) {
 
 ///@function insertion_sort(begin, end, [comparator=compare_less])
 function insertion_sort(First, Last) {
-	First = make_iterator(First).go_next()
+	First = check_iterator(First).go_next()
 
 	var Compare, It, Value
 	if 2 < argument_count
@@ -535,10 +535,10 @@ function insertion_sort(First, Last) {
 		Compare = compare_less
 	while First.not_equals(Last) {
 		Value = First.get()
-		for(It = First.previous(); 0 <= It.get_index() and Compare(Value, It.get()); It.go_prev()) {
-			It.next().set(It.get())
+		for(It = First.previous(); 0 <= It.index and Compare(Value, It.get()); It.go_prev()) {
+			It.make_next().set(It.get())
 		}
-		It.next().set(Value)
+		It.make_next().set(Value)
 
 		First.go_next()
 		delete It
@@ -548,8 +548,8 @@ function insertion_sort(First, Last) {
 
 ///@function merge_sort(begin, end, [comparator=compare_less])
 function merge_sort(First, Last) {
-	First = make_iterator(First)
-	Last = make_iterator(Last)
+	First = check_iterator(First)
+	Last = check_iterator(Last)
 	var Dist = First.distance(Last)
 	if Dist <= 1
 		exit
@@ -582,8 +582,8 @@ function sort_median(First, Middle, Last, Comparator) {
 ///@function IMPLEMENTED FROM VS
 ///@description sort median element to middle
 function predict_median(First, Middle, Last, Comparator) {
-	First = make_iterator(First)
-	Middle = make_iterator(Middle)
+	First = check_iterator(First)
+	Middle = check_iterator(Middle)
 
 	var Distance = iterator_distance(First, Last)
 	if 40 < Distance { // Tukey's ninther
@@ -601,22 +601,22 @@ function predict_median(First, Middle, Last, Comparator) {
 ///@function IMPLEMENTED FROM VS
 ///@description partition [First, Last), using Comparator
 function partition_by_median_guess(First, Last, Comparator) {
-	First = make_iterator(First)
-	Last = make_iterator(Last)
+	First = check_iterator(First)
+	Last = check_iterator(Last)
 
 	var Middle = iterator_advance(First, (iterator_distance(First, Last) >> 1)) // shift for codegen (== * 0.5)
 	predict_median(First, Middle, Last.previous(), Comparator)
 
 	var _Pfirst = Middle.duplicate()
 	var _Pbefore = _Pfirst.previous()
-	var _Plast = _Pfirst.next()
-	while First.get_index() < _Pfirst.get_index() && !Comparator(_Pbefore.get(), _Pfirst.get()) && !Comparator(_Pfirst.get(), _Pbefore.get()) {
+	var _Plast = _Pfirst.make_next()
+	while First.index < _Pfirst.index && !Comparator(_Pbefore.get(), _Pfirst.get()) && !Comparator(_Pfirst.get(), _Pbefore.get()) {
 		_Pfirst.go_prev()
 		_Pbefore.go_prev()
 	}
 	delete _Pbefore
 
-	while _Plast.get_index() < Last.get_index() && !Comparator(_Plast.get(), _Pfirst.get()) && !Comparator(_Pfirst.get(), _Plast.get()) {
+	while _Plast.index < Last.index && !Comparator(_Plast.get(), _Pfirst.get()) && !Comparator(_Pfirst.get(), _Plast.get()) {
 		_Plast.go_next()
 	}
 
@@ -636,7 +636,7 @@ function partition_by_median_guess(First, Last, Comparator) {
 		}
 
 		var _Gfore
-		for (; First.get_index() < _Glast.get_index(); _Glast.go_prev()) {
+		for (; First.index < _Glast.index; _Glast.go_prev()) {
 			_Gfore = _Glast.previous()
 			if Comparator(_Gfore.get(), _Pfirst.get()) {
 			} else if Comparator(_Pfirst.get(), _Gfore.get()) {
@@ -680,9 +680,9 @@ function partition_by_median_guess(First, Last, Comparator) {
 
 ///@function nth_element(begin, nth, end, [comparator=compare_less])
 function nth_element(First, Nth, Last) {
-	First = make_iterator(First)
-	Nth = make_iterator(Nth)
-	Last = make_iterator(Last)
+	First = check_iterator(First)
+	Nth = check_iterator(Nth)
+	Last = check_iterator(Last)
 	if First.equals(Last) or Nth.equals(Last)
 		exit
 
@@ -708,7 +708,7 @@ function nth_element(First, Nth, Last) {
 
 ///@function is_sorted(begin, end, [comparator=compare_less])
 function is_sorted(First, Last) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 	if First.equals(Last)
 		return true
 
@@ -717,7 +717,7 @@ function is_sorted(First, Last) {
 		Compare = argument[2]
 	else
 		Compare = compare_less
-	var Next = First.next()
+	var Next = First.make_next()
 	while Next.not_equals(Last) {
 		if Compare(Next.get(), First.get()) {
 			delete Next
@@ -734,8 +734,8 @@ function is_sorted(First, Last) {
 
 ///@function unguarded_partition(begin, end, pivot, [comparator=compare_less])
 function unguarded_partition(First, Last, Pivot) {
-	First = make_iterator(First)
-	Last = make_iterator(Last)
+	First = check_iterator(First)
+	Last = check_iterator(Last)
 
 	var Compare
 	if 3 < argument_count
@@ -750,7 +750,7 @@ function unguarded_partition(First, Last, Pivot) {
 	  while Compare(Pivot.get(), Last.get())
 			Last.go_prev()
 
-	  if !(First.get_index() < Last.get_index())
+	  if !(First.index < Last.index)
 			return First
 	  First.swap(Last)
 	  First.go_next()
@@ -759,8 +759,8 @@ function unguarded_partition(First, Last, Pivot) {
 
 ///@function partition(begin, end, predicate)
 function partition(First, Last, Pred) {
-	First = make_iterator(First)
-	Last = make_iterator(Last)
+	First = check_iterator(First)
+	Last = check_iterator(Last)
 	Pred = method(other, Pred)
 
 	while First.not_equals(Last) {
@@ -787,16 +787,16 @@ function partition(First, Last, Pred) {
 
 ///@function is_partitioned(begin, end, predicate)
 function is_partitioned(First, Last, Pred) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	var Value = First.get()
-	while First.not_equals(Last) and !is_undefined(Value) and Pred(Value) {
+	while First.not_equals(Last) and Pred(Value) {
 		First.go_next()
 		Value = First.get()
 	}
 
 	while First.not_equals(Last) {
-		if !is_undefined(Value) and Pred(Value)
+		if Pred(Value)
 			return false
 		First.go_next()
 		Value = First.get()
@@ -806,10 +806,10 @@ function is_partitioned(First, Last, Pred) {
 
 ///@function merge(begin, end, other_begin, other_end, output, [comparator=compare_less])
 function merge(First, Last, OtherFirst, OtherLast, Output) {
-	First = make_iterator(First)
-	Last = make_iterator(Last)
-	OtherFirst = make_iterator(OtherFirst)
-	OtherLast = make_iterator(OtherLast)
+	First = check_iterator(First)
+	Last = check_iterator(Last)
+	OtherFirst = check_iterator(OtherFirst)
+	OtherLast = check_iterator(OtherLast)
 
 	var Compare, Src1_Val, Src2_Val
 	if 5 < argument_count
@@ -840,9 +840,9 @@ function merge(First, Last, OtherFirst, OtherLast, Output) {
 
 ///@function inplace_merge(begin, middle, end, [comparator=compare_less])
 function inplace_merge(First, Middle, Last) {
-	First = make_iterator(First)
-	Middle = make_iterator(Middle)
-	Last = make_iterator(Last)
+	First = check_iterator(First)
+	Middle = check_iterator(Middle)
+	Last = check_iterator(Last)
 
 	var Compare
 	if 3 < argument_count
@@ -857,7 +857,7 @@ function inplace_merge(First, Middle, Last) {
 
 ///@function shuffle(begin, end, [engine=irandom_range])
 function shuffle(First, Last) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	var Urng
 	if 2 < argument_count
@@ -871,7 +871,7 @@ function shuffle(First, Last) {
 
 ///@function random_shuffle(begin, end, [generator=irandom])
 function random_shuffle(First, Last) {
-	First = make_iterator(First)
+	First = check_iterator(First)
 
 	var Gen
 	if 2 < argument_count
