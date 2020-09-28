@@ -22,6 +22,12 @@ function BSTree_node(): Tree_node_tratit() constructor {
 		return false
 	}
 
+	///@function set(value)
+	static set = function(Value) { value = Value; return self }
+
+	///@function get()
+	static get = function() { return value; }
+
 	///@function destroy()
 	static destroy = function() {
 		if !is_undefined(node_previous) {
@@ -37,96 +43,69 @@ function BSTree_node(): Tree_node_tratit() constructor {
 	}
 }
 
+enum BSTree_child {
+	none = 0,
+	left,
+	right
+}
+
+function BSTree_location() {
+	node = undefined
+	dir = BSTree_child.none // 0: self, 1: left, 2: right
+}
+
 function BinarySearch_tree(): Binary_tree() constructor {
-	///@function find_of(value)
-	static find_of = function(Value) {
-		if 0 == size()
-			return undefined
-
-		var CompVal, Index = 0, Size = size()
-		while Index < Size {
-			CompVal = at(Index)
-			if check_comparator(Value, CompVal) {
-				return Index
-			} else {
-				if key_comparator(Value, CompVal)
-					Index = left(Index)
-				else
-					Index = right(Index)
-			}
+#region public
+	///@function 
+	static underlying_insert = function(Hint, Value) {
+		if is_undefined(Hint) {
+			
+		} else {
+			
 		}
-		return undefined
+
+		var Position = Hint.node, Node_direction = Hint.dir
+		switch Node_direction {
+			case BSTree_child.none:
+			
+				break
+
+			case BSTree_child.left:
+			
+				break
+
+			case BSTree_child.right:
+			
+				break
+		}
 	}
 
-	///@function count_of(value)
-	static count_of = function(Value) {
-	}
-
-	///@function insert_recursive(value, hint)
-	static insert_recursive = function(Value, Hint) {
+	///@function insert_at(hint, value)
+	static insert_at = function(Hint, Value) {
 		if !valid(Hint) {
-			set(Hint, Value)
+			//Hint.value = Value
 			return Hint
 		} else {
 			var CompVal = at(Hint)
 			if key_comparator(Value, CompVal)
-				return insert_recursive(Value, left(Hint))
+				return insert_at(Hint.node_left, Value, )
 			else
-				return insert_recursive(Value, right(Hint))
+				return insert_at(right(Hint),Value, )
 		}
 	}
 
 	///@function insert(item)
 	static insert = function(Value) {
+		var NewNode
 		if 0 == size() {
-			push_back(Value)
+			NewNode = make_node(Value)
 			return 0
 		}
 
-		if key_comparator(Value, head())
-			return insert_recursive(Value, left(0))
+		if key_comparator(Value, node_head.value)
+			return insert_at(Value, left(0))
 		else
-			return insert_recursive(Value, right(0))
-	}
-
-	///@function move_children(index, destination)
-	static move_children = function(Index, Target) {
-		var Left = left(Index), Right = right(Index)
-		var LeftChk = valid(Left), RightChk = valid(Right)
-		var Value = at(Index)
-		set(Index, undefined)
-
-		if LeftChk {
-			move_children(Left, left(Target))
-		}
-		if RightChk {
-			move_children(Right, right(Target))
-		}
-		set(Target, Value)
-	}
-
-	///@function move_children_of_left(index, destination)
-	static move_children_of_left = function(Index, Target) {
-		var Left = left(Index), LeftChk = valid(Left)
-		var Value = at(Index)
-		set(Index, undefined)
-
-		if LeftChk
-			move_children(Left, left(Target))
-
-		set(Target, Value)
-	}
-
-	///@function move_children_of_right(index, destination)
-	static move_children_of_right = function(Index, Target) {
-		var Right = right(Index), RightChk = valid(Right)
-		var Value = at(Index)
-		set(Index, undefined)
-
-		if RightChk
-			move_children(Right, right(Target))
-
-		set(Target, Value)
+			return insert_at(Value, right(0))
 	}
 
 	///@function erase_at(index)
@@ -170,16 +149,85 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		}
 	}
 
+	///@function find_of(value)
+	static find_of = function(Value) {
+		if 0 == size()
+			return undefined
+
+		var CompVal, Index = 0, Size = size()
+		while Index < Size {
+			CompVal = at(Index)
+			if check_comparator(Value, CompVal) {
+				return Index
+			} else {
+				if key_comparator(Value, CompVal)
+					Index = left(Index)
+				else
+					Index = right(Index)
+			}
+		}
+		return undefined
+	}
+
+	///@function count_of(value)
+	static count_of = function(Value) {
+	}
+
 	///@function set_key_compare(compare_function)
 	static set_key_compare = function(Func) { key_comparator = method(other, Func) }
 
 	///@function set_check_compare(compare_function)
 	static set_check_compare = function(Func) { check_comparator = method(other, Func) }
 
-	type = BinarySearch_tree
-	value_type = BSTree_node
+	static type = BinarySearch_tree
+	static value_type = BSTree_node
+	static iterator_type = Bidirectional_iterator
+#endregion
+
+#region private
+	///@function 
+	static move_children = function(Index, Target) {
+		var Left = left(Index), Right = right(Index)
+		var LeftChk = valid(Left), RightChk = valid(Right)
+		var Value = at(Index)
+		set(Index, undefined)
+
+		if LeftChk {
+			move_children(Left, left(Target))
+		}
+		if RightChk {
+			move_children(Right, right(Target))
+		}
+		set(Target, Value)
+	}
+
+	///@function 
+	static move_children_of_left = function(Index, Target) {
+		var Left = left(Index), LeftChk = valid(Left)
+		var Value = at(Index)
+		set(Index, undefined)
+
+		if LeftChk
+			move_children(Left, left(Target))
+
+		set(Target, Value)
+	}
+
+	///@function 
+	static move_children_of_right = function(Index, Target) {
+		var Right = right(Index), RightChk = valid(Right)
+		var Value = at(Index)
+		set(Index, undefined)
+
+		if RightChk
+			move_children(Right, right(Target))
+
+		set(Target, Value)
+	}
+
 	key_comparator = compare_less
 	check_comparator = compare_equal
+#endregion
 
 	// ** Contructor **
 	if 0 < argument_count {

@@ -111,7 +111,7 @@ function Tree_node(): Tree_node_tratit() constructor {
 }
 
 ///@function 
-function Binary_tree_trait() constructor {
+function Binary_tree_trait(): Container() constructor {
 	///@function 
 	static underlying_cash_allocate = function() {
 		cash = 0
@@ -278,6 +278,14 @@ function Binary_tree(): Binary_tree_trait() constructor {
 					cash[inner_size - 1] = undefined
 				} else {
 					Result = node_tail.value
+				}
+
+				var Butt = node_tail.parent
+				if node_tail == node_leftest {
+					node_leftest = Butt
+					node_inserter_parent = Butt
+				} else if node_tail == Butt.node_left { // back
+					node_inserter_parent = node_inserter_parent.node_previous
 				}
 
 				var Prev = node_tail.node_previous

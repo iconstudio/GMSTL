@@ -13,7 +13,7 @@ function Wrapper(Value) constructor {
 }
 
 ///@function Iterator_trait(storage)
-function Iterator_trait(Storage) constructor {
+function Iterator_trait(Index) constructor {
 	///@function 
 	static underlying_iterator_get = function() { return storage.underlying_iterator_get(index) }
 
@@ -55,16 +55,16 @@ function Iterator_trait(Storage) constructor {
 	static impure = function() { is_pure = false; return self }
 
 	__ITERATOR = true
-	storage = Storage
+	storage = undefined
 	is_pure = false
 	value = undefined
-	index = 0
+	index = Index
 	index_modified = true
 	static type = undefined
 	static category = tag_none_iterator
 }
 
-function Const_iterator(Storage): Iterator_trait(Storage) constructor {
+function Const_iterator(Index): Iterator_trait(Index) constructor {
 	///@function duplicate()
 	static duplicate = function() { return underlying_duplicate() }
 
@@ -133,7 +133,7 @@ function Const_iterator(Storage): Iterator_trait(Storage) constructor {
 	static category = tag_const_iterator
 }
 
-function Forward_iterator(Storage): Const_iterator(Storage) constructor {
+function Forward_iterator(Index): Const_iterator(Index) constructor {
 	///@function 
 	static underlying_iterator_set = function(Index, Value) { return storage.underlying_iterator_set(Index, Value) }
 
@@ -196,7 +196,7 @@ function Bidirectional_iterator(Index): Forward_iterator(Index) constructor {
 	static category = tag_bidirectional_iterator
 }
 
-function Random_iterator(Storage): Bidirectional_iterator(Storage) constructor {
+function Random_iterator(Index): Bidirectional_iterator(Index) constructor {
 	///@function advance(other)
 	static advance = function(Other) {
 		if is_real(Other) {
@@ -256,9 +256,7 @@ function Iterator(Index) {
 	if !is_struct(self)
 		throw "Cannot make a iterator on outer scope!"
 
-	var It = (new iterator_type(self)).pure()
-	It.index = Index
-	return It
+	return underlying_make_iterator(Index).pure()
 }
 
 ///@function iterator_distance(iterator_1, iterator_2)
