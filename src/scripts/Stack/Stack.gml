@@ -54,7 +54,7 @@ function Stack(): Container() constructor {
 	///@function destroy()
 	static destroy = function() { ds_stack_destroy(raw); gc_collect() }
 
-	type = Stack
+	static type = Stack
 #endregion
 
 #region private

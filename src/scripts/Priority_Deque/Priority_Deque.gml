@@ -42,6 +42,7 @@
 
 */
 function Priority_deque(): Container() constructor {
+#region public
 	///@function duplicate()
 	static duplicate = function() {
 		var Result = new Priority_deque()
@@ -104,7 +105,10 @@ function Priority_deque(): Container() constructor {
 	///@function write()
 	static write = function() { return raw.write() }
 
-	type = Priority_deque
+	static type = Priority_deque
+#endregion
+
+#region private
 	raw = new List()
 	key_extractor = function(Value) { return Value }
 	key_inquire_compare = compare_less
@@ -115,6 +119,7 @@ function Priority_deque(): Container() constructor {
 		else
 			return key_inquire_compare(A, B)
 	}
+#endregion
 
 	// ** Contructor **
 	if 0 < argument_count {

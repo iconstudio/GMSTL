@@ -61,8 +61,8 @@ function Array(): Container() constructor {
 	///@function destroy()
 	static destroy = function() { raw = 0; gc_collect() }
 
-	type = Array
-	iterator_type = Random_iterator
+	static type = Array
+	static iterator_type = Random_iterator
 #endregion
 
 #region private

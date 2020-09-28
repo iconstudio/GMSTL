@@ -112,12 +112,6 @@ function Tree_node(): Tree_node_tratit() constructor {
 
 ///@function 
 function Binary_tree_trait() constructor {
-	value_type = Tree_node
-	node_head = undefined
-	node_tail = undefined
-	cash_size = 64
-	cash = array_create(cash_size, undefined)
-
 	///@function 
 	static underlying_cash_allocate = function() {
 		cash = 0
@@ -171,6 +165,12 @@ function Binary_tree_trait() constructor {
 		gc_collect()
 		return Result
 	}
+
+	node_head = undefined
+	node_tail = undefined
+	cash_size = 64
+	cash = array_create(cash_size, undefined)
+	static value_type = Tree_node
 
 }
 
@@ -297,8 +297,8 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	///@function contains(value)
 	static contains = function(Value) { return !is_undefined(location(Value)) }
 
-	type = Binary_tree
-	iterator_type = Bidirectional_iterator
+	static type = Binary_tree
+	static iterator_type = Bidirectional_iterator
 #endregion
 
 #region private

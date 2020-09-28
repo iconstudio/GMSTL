@@ -21,6 +21,7 @@
 */
 #macro Dictionary Map
 function Map(): Container() constructor {
+#region public
 	///@function empty()
 	static empty = function() { return ds_map_empty(raw) }
 
@@ -142,11 +143,15 @@ function Map(): Container() constructor {
 	///@function destroy()
 	static destroy = function() { ds_map_destroy(raw); cash.destroy(); delete cash; gc_collect() }
 
-	type = Map
+	static type = Map
+	static iterator_type = Forward_iterator
+#endregion
+
+#region private
 	raw = ds_map_create()
-	iterator_type = ForwardIterator
 	cash = new List()
-	
+#endregion
+
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]

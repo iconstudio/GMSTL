@@ -74,7 +74,7 @@ function List(): Container() constructor {
 		if Result == -1
 			return undefined
 		else
-			return Result
+			return Iterator(Result)
 	}
 
 	///@function contains(value)
@@ -107,8 +107,8 @@ function List(): Container() constructor {
 	///@function destroy()
 	static destroy = function() { ds_list_destroy(raw); gc_collect() }
 
-	type = List
-	iterator_type = Random_iterator
+	static type = List
+	static iterator_type = Random_iterator
 #endregion
 
 #region private

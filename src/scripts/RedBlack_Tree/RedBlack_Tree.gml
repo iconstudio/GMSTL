@@ -47,6 +47,7 @@ function make_rb_node(Value, Color, Parent) {
 }
 
 function RedBlack_Tree(): Container() constructor {
+#region public
 	///@function size()
 	static size = function() { return inner_size }
 
@@ -257,12 +258,17 @@ function RedBlack_Tree(): Container() constructor {
 	///@function set_check_compare(compare_function)
 	static set_check_compare = function(Func) { check_inquire_compare = method(other, Func) }
 
-	type = RedBlack_Tree
+	static type = RedBlack_Tree
+	static iterator_type = Bidirectional_iterator
+	node_head = undefined
+#endregion
+
+#region private
 	key_inquire_compare = compare_complex_less
 	check_inquire_compare = compare_equal
 	key_comparator = function(a, b) { return key_inquire_compare(a.value, b.value) }
 	check_comparator = function(a, b) { return check_inquire_compare(a.value, b.value) }
-	node_head = undefined
+	
 	inner_size = 0
 
 	// ** Contructor **

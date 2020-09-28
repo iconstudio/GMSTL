@@ -99,8 +99,8 @@ function Unordered_map(): Container() constructor {
 	///@function destroy()
 	static destroy = function() { ds_map_destroy(raw); gc_collect() }
 
-	type = Unordered_map
-	iterator_type = Bidirectional_iterator
+	static type = Unordered_map
+	static iterator_type = Bidirectional_iterator
 #endregion
 
 #region private
