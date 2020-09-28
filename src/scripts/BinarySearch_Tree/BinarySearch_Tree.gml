@@ -94,15 +94,18 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		}
 	}
 
-	///@function insert(item)
+	///@function 
+	static extract = function(Node) { return Node.value }
+
+	///@function insert(value)
 	static insert = function(Value) {
-		var NewNode
+		var NewNode = make_node(Value)
 		if 0 == size() {
-			NewNode = make_node(Value)
-			return 0
+			node_head = NewNode
+			return node_head
 		}
 
-		if key_comparator(Value, node_head.value)
+		if key_comparator(Value, extract(node_head))
 			return insert_at(Value, left(0))
 		else
 			return insert_at(Value, right(0))
