@@ -40,6 +40,7 @@
 		
 */
 function Multimap(): Container() constructor {
+#region public
 	///@function size()
 	static size = function() { return ds_map_size(raw) }
 
@@ -181,12 +182,16 @@ function Multimap(): Container() constructor {
 	///@function destroy()
 	static destroy = function() { ds_map_destroy(raw); cash.destroy(); delete cash; gc_collect() }
 
-	type = Map
+	static type = Multimap
+	static iterator_type = Forward_iterator
+#endregion
+
+#region private
 	raw = ds_map_create()
-	iterator_type = ForwardIterator
+	cash = new List()
 	key_comparator = compare_complex_less
 	value_comparator = compare_less
-	cash = new List()
+#endregion
 
 	if 0 < argument_count {
 		if argument_count == 1 {

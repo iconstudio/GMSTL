@@ -1,93 +1,156 @@
-function BinarySearch_tree(): Binary_tree() constructor {
-	///@function find_of(value)
-	static find_of = function(Value) {
-		if 0 == size()
-			return undefined
+///@function 
+function BSTree_node(): Tree_node_tratit() constructor {
+	///@function set_parent(node)
+	static set_parent = function(Node) { underlying_set_parent(Node) }
 
-		var CompVal, Index = 0, Size = size()
-		while Index < Size {
-			CompVal = at(Index)
-			if check_comparator(Value, CompVal) {
-				return Index
+	///@function set_left(node)
+	static set_left = function(Node) { return underlying_set_left(Node) }
+
+	///@function set_right(node)
+	static set_right = function(Node) { return underlying_set_right(Node) }
+
+	///@function set_next(node)
+	static set_next = function(Node) {
+		if !is_undefined(node_next) {
+			node_next.node_previous = undefined
+		}
+		node_next = Node
+		if !is_undefined(Node) {
+			Node.node_previous = self
+			return true
+		}
+		return false
+	}
+
+	///@function set(value)
+	static set = function(Value) { value = Value; return self }
+
+	///@function get()
+	static get = function() { return value; }
+
+	///@function destroy()
+	static destroy = function() {
+		if !is_undefined(node_previous) {
+			if !is_undefined(node_next) {
+				node_previous.set_next(node_next)
 			} else {
-				if key_comparator(Value, CompVal)
-					Index = left(Index)
-				else
-					Index = right(Index)
+				node_previous.set_next(undefined)
 			}
 		}
-		return undefined
-	}
+		underlying_destroy()
 
-	///@function count_of(value)
-	static count_of = function(Value) {
+		return node_previous
 	}
+}
 
-	///@function insert_recursive(value, hint)
-	static insert_recursive = function(Value, Hint) {
-		if !valid(Hint) {
-			set(Hint, Value)
-			return Hint
+enum BSTree_child {
+	none = 0,
+	left,
+	right
+}
+
+function BSTree_location() {
+	node = undefined
+	dir = BSTree_child.none // 0: self, 1: left, 2: right
+}
+
+function BinarySearch_tree(): Binary_tree() constructor {
+#region public
+	///@function front()
+	static front = function() { return node_leftest }
+
+	///@function back()
+	static back = function() { return node_rightest }
+
+	///@function first()
+	static first = function() { return Iterator(node_leftest) }
+
+	///@function last()
+	static last = function() { return undefined }
+
+	///@function 
+	static extract = function(Node) { return Node.value }
+
+	///@function 
+	static underlying_insert_by_node = function(Hint, Value) {
+		if key_comparator(Value, extract(Hint)) {
+			if is_undefined(Hint.node_left) {
+				var NewNode = make_node(Value)
+				Hint.set_left(NewNode)
+				var Prev = Hint.node_previous
+				if !is_undefined(Prev)
+					Prev.set_next(NewNode)
+				NewNode.set_next(Hint)
+				return NewNode
+			} else {
+				return underlying_insert_by_node(Hint.node_left, Value)
+			}
 		} else {
-			var CompVal = at(Hint)
-			if key_comparator(Value, CompVal)
-				return insert_recursive(Value, left(Hint))
-			else
-				return insert_recursive(Value, right(Hint))
+			if is_undefined(Hint.node_right) {
+				var NewNode = make_node(Value)
+				Hint.set_right(NewNode)
+				var Promote = Hint.parent, ProValue, Upheal
+				while !is_undefined(Promote) {
+					ProValue = extract(Promote)
+					if key_comparator(Value, ProValue) {
+						break
+					} else {
+						Upheal = Promote.parent
+						if is_undefined(Upheal)
+							break
+
+						Promote = Upheal
+					}
+				}
+				NewNode.set_next(Promote)
+				Hint.set_next(NewNode)
+				return NewNode
+			} else {
+				return underlying_insert_by_node(Hint.node_right, Value)
+			}
 		}
 	}
 
-	///@function insert(item)
+	///@function insert(value)
 	static insert = function(Value) {
-		if 0 == size() {
-			push_back(Value)
-			return 0
+		var NewNode
+		if 0 == inner_size++ {
+			NewNode = make_node(Value)
+			node_head = NewNode
+			node_leftest = NewNode
+			node_rightest = NewNode
+			return NewNode
 		}
 
-		if key_comparator(Value, head())
-			return insert_recursive(Value, left(0))
-		else
-			return insert_recursive(Value, right(0))
-	}
+		if key_comparator(Value, extract(node_head)) {
+			if is_undefined(node_head.node_left) { // 1 == size
+				NewNode = make_node(Value)
+				node_leftest = NewNode
+				node_head.set_left(NewNode)
+				NewNode.set_next(node_head)
+				return Iterator(NewNode)
+			} else {
+				var Result = underlying_insert_by_node(node_head.node_left, Value)
+				if key_comparator(Value, extract(node_leftest))
+					node_leftest = Result
 
-	///@function move_children(index, destination)
-	static move_children = function(Index, Target) {
-		var Left = left(Index), Right = right(Index)
-		var LeftChk = valid(Left), RightChk = valid(Right)
-		var Value = at(Index)
-		set(Index, undefined)
+				return Iterator(Result)
+			}
+		} else {
+			if is_undefined(node_head.node_right) { // 2 == size
+				NewNode = make_node(Value)
+				node_rightest = NewNode
+				node_head.set_right(NewNode)
+				node_head.set_next(NewNode)
+				return Iterator(NewNode)
+			} else {
+				var Result = underlying_insert_by_node(node_head.node_right, Value)
+				if !key_comparator(Value, extract(node_rightest))
+					node_rightest = Result
 
-		if LeftChk {
-			move_children(Left, left(Target))
+				return Iterator(Result)
+			}
 		}
-		if RightChk {
-			move_children(Right, right(Target))
-		}
-		set(Target, Value)
-	}
-
-	///@function move_children_of_left(index, destination)
-	static move_children_of_left = function(Index, Target) {
-		var Left = left(Index), LeftChk = valid(Left)
-		var Value = at(Index)
-		set(Index, undefined)
-
-		if LeftChk
-			move_children(Left, left(Target))
-
-		set(Target, Value)
-	}
-
-	///@function move_children_of_right(index, destination)
-	static move_children_of_right = function(Index, Target) {
-		var Right = right(Index), RightChk = valid(Right)
-		var Value = at(Index)
-		set(Index, undefined)
-
-		if RightChk
-			move_children(Right, right(Target))
-
-		set(Target, Value)
 	}
 
 	///@function erase_at(index)
@@ -133,16 +196,26 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 	///@function location(value)
 	static location = function(Value) {
-		var Result = ds_list_find_index(raw, Value)
-		if Result == -1
+		if 0 == size()
 			return undefined
-		else
-			return Result
+
+		var CompVal, Index = 0, Size = size()
+		while Index < Size {
+			CompVal = at(Index)
+			if check_comparator(Value, CompVal) {
+				return Index
+			} else {
+				if key_comparator(Value, CompVal)
+					Index = left(Index)
+				else
+					Index = right(Index)
+			}
+		}
+		return undefined
 	}
 
-	///@function contains(value)
-	static contains = function(Value) {
-		return !is_undefined(find_of(Value))
+	///@function count_of(value)
+	static count_of = function(Value) {
 	}
 
 	///@function set_key_compare(compare_function)
@@ -151,9 +224,56 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	///@function set_check_compare(compare_function)
 	static set_check_compare = function(Func) { check_comparator = method(other, Func) }
 
-	type = BinarySearch_tree
+	static type = BinarySearch_tree
+	static value_type = BSTree_node
+	static iterator_type = Bidirectional_iterator
+#endregion
+
+#region private
+	///@function 
+	static move_children = function(Index, Target) {
+		var Left = left(Index), Right = right(Index)
+		var LeftChk = valid(Left), RightChk = valid(Right)
+		var Value = at(Index)
+		set(Index, undefined)
+
+		if LeftChk {
+			move_children(Left, left(Target))
+		}
+		if RightChk {
+			move_children(Right, right(Target))
+		}
+		set(Target, Value)
+	}
+
+	///@function 
+	static move_children_of_left = function(Index, Target) {
+		var Left = left(Index), LeftChk = valid(Left)
+		var Value = at(Index)
+		set(Index, undefined)
+
+		if LeftChk
+			move_children(Left, left(Target))
+
+		set(Target, Value)
+	}
+
+	///@function 
+	static move_children_of_right = function(Index, Target) {
+		var Right = right(Index), RightChk = valid(Right)
+		var Value = at(Index)
+		set(Index, undefined)
+
+		if RightChk
+			move_children(Right, right(Target))
+
+		set(Target, Value)
+	}
+
+	node_rightest = undefined
 	key_comparator = compare_less
 	check_comparator = compare_equal
+#endregion
 
 	// ** Contructor **
 	if 0 < argument_count {

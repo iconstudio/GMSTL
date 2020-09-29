@@ -62,12 +62,9 @@ function node_tree_print(Cont, NodeStart, Msg) {
 }
 show_debug_message("\nTree")
 //random_shuffle(test_sum.first(), test_sum.last())
-test_tree = new Binary_tree(test_sum)
+test_tree = new BinarySearch_tree(test_sum)
 print(test_tree)
 
-test_tree.pop_back()
-test_tree.pop_back()
-print(test_tree)
 /*
 do {
 	show_debug_message("tree[" + string(test_tree.size()) + "] = " + string(test_tree.pop_front()))

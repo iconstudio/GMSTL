@@ -60,7 +60,7 @@ function Queue(): Container() constructor {
 	///@function destroy()
 	static destroy = function() { ds_queue_destroy(raw); gc_collect() }
 
-	type = Queue
+	static type = Queue
 #endregion
 
 #region private

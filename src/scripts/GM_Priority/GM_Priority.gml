@@ -77,7 +77,7 @@ function GM_Priority(): Container() constructor {
 	///@function size()
 	static destroy = function() { ds_priority_destroy(raw); gc_collect() }
 
-	type = GM_Priority
+	static type = GM_Priority
 #endregion
 
 #region private

@@ -7,6 +7,26 @@ function Tree_node_tratit() constructor {
 	node_next = undefined
 	node_previous = undefined
 
+	///@function find_leftest()
+	static find_leftest = function() {
+		var Result = self, Next = left
+		while !is_undefined(Next) {
+			Result = Next
+			Next = Next.left
+		}
+		return Result
+	}
+
+	///@function find_rightest()
+	static find_rightest = function() {
+		var Result = self, Next = right
+		while !is_undefined(Next) {
+			Result = Next
+			Next = Next.right
+		}
+		return Result
+	}
+
 	///@function 
 	static underlying_set_parent = function(Node) { parent = Node }
 
@@ -88,35 +108,10 @@ function Tree_node(): Tree_node_tratit() constructor {
 
 		return node_previous
 	}
-
-	///@function find_leftest()
-	static find_leftest = function() {
-		var Result = self, Next = left
-		while !is_undefined(Next) {
-			Result = Next
-			Next = Next.left
-		}
-		return Result
-	}
-
-	///@function find_rightest()
-	static find_rightest = function() {
-		var Result = self, Next = right
-		while !is_undefined(Next) {
-			Result = Next
-			Next = Next.right
-		}
-		return Result
-	}
 }
 
 ///@function 
-function Binary_tree_trait() constructor {
-	node_head = undefined
-	node_tail = undefined
-	cash_size = 64
-	cash = array_create(cash_size, undefined)
-
+function Binary_tree_trait(): Container() constructor {
 	///@function 
 	static underlying_cash_allocate = function() {
 		cash = 0
@@ -124,7 +119,7 @@ function Binary_tree_trait() constructor {
 	}
 
 	///@function 
-	static underlying_make_node = function() { return new Tree_node() }
+	static underlying_make_node = function() { return new value_type() }
 
 	///@function 
 	static underlying_sequence_by_index_recursive = function(Index) {
@@ -170,6 +165,12 @@ function Binary_tree_trait() constructor {
 		gc_collect()
 		return Result
 	}
+
+	node_head = undefined
+	node_tail = undefined
+	cash_size = 64
+	cash = array_create(cash_size, undefined)
+	static value_type = Tree_node
 
 }
 
@@ -279,6 +280,14 @@ function Binary_tree(): Binary_tree_trait() constructor {
 					Result = node_tail.value
 				}
 
+				var Butt = node_tail.parent
+				if node_tail == node_leftest {
+					node_leftest = Butt
+					node_inserter_parent = Butt
+				} else if node_tail == Butt.node_left { // back
+					node_inserter_parent = node_inserter_parent.node_previous
+				}
+
 				var Prev = node_tail.node_previous
 				Prev.set_next(undefined)
 				node_tail.destroy()
@@ -291,16 +300,13 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	}
 
 	///@function location(value)
-	static location = function(Value) { return find(first(), last(), Value, value_comparator) }
+	static location = function(Value) { return find(first(), last(), Value) }
 
 	///@function contains(value)
 	static contains = function(Value) { return !is_undefined(location(Value)) }
 
-	type = Binary_tree
-	iterator_type = Bidirectional_iterator
-	value_comparator = function(Node, Value) {
-		return bool(Node.value == Value)
-	}
+	static type = Binary_tree
+	static iterator_type = Bidirectional_iterator
 #endregion
 
 #region private

@@ -31,7 +31,7 @@ function Priority_queue(): Heap_tree() constructor {
 	///@function push_back(value)
 	static push_back = function(Value) { return insert(Value) }
 
-	type = Priority_queue
+	static type = Priority_queue
 #endregion
 
 #region private

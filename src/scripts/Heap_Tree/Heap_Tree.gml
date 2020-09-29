@@ -78,7 +78,7 @@ function Heap_tree(): List() constructor {
 	///@function set_key_compare(compare_function)
 	static set_key_compare = function(Func) { key_comparator = method(other, Func) }
 
-	type = Heap_tree
+	static type = Heap_tree
 #endregion
 
 #region private
