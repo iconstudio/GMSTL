@@ -8,10 +8,6 @@ function tag_bidirectional_iterator() {}
 
 function tag_random_access_iterator() {}
 
-function Wrapper(Value) constructor {
-	value = Value
-}
-
 ///@function Iterator_trait(storage)
 function Iterator_trait(Index) constructor {
 	///@function 

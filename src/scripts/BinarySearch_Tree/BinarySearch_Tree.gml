@@ -56,59 +56,101 @@ function BSTree_location() {
 
 function BinarySearch_tree(): Binary_tree() constructor {
 #region public
-	///@function 
-	static underlying_insert = function(Hint, Value) {
-		if is_undefined(Hint) {
-			
-		} else {
-			
-		}
+	///@function front()
+	static front = function() { return node_leftest }
 
-		var Position = Hint.node, Node_direction = Hint.dir
-		switch Node_direction {
-			case BSTree_child.none:
-			
-				break
+	///@function back()
+	static back = function() { return node_rightest }
 
-			case BSTree_child.left:
-			
-				break
+	///@function first()
+	static first = function() { return Iterator(node_leftest) }
 
-			case BSTree_child.right:
-			
-				break
-		}
-	}
-
-	///@function insert_at(hint, value)
-	static insert_at = function(Hint, Value) {
-		if !valid(Hint) {
-			//Hint.value = Value
-			return Hint
-		} else {
-			var CompVal = at(Hint)
-			if key_comparator(Value, CompVal)
-				return insert_at(Hint.node_left, Value, )
-			else
-				return insert_at(right(Hint),Value, )
-		}
-	}
+	///@function last()
+	static last = function() { return undefined }
 
 	///@function 
 	static extract = function(Node) { return Node.value }
 
+	///@function 
+	static underlying_insert_by_node = function(Hint, Value) {
+		if key_comparator(Value, extract(Hint)) {
+			if is_undefined(Hint.node_left) {
+				var NewNode = make_node(Value)
+				Hint.set_left(NewNode)
+				var Prev = Hint.node_previous
+				if !is_undefined(Prev)
+					Prev.set_next(NewNode)
+				NewNode.set_next(Hint)
+				return NewNode
+			} else {
+				return underlying_insert_by_node(Hint.node_left, Value)
+			}
+		} else {
+			if is_undefined(Hint.node_right) {
+				var NewNode = make_node(Value)
+				Hint.set_right(NewNode)
+				var Promote = Hint.parent, ProValue, Upheal
+				while !is_undefined(Promote) {
+					ProValue = extract(Promote)
+					if key_comparator(Value, ProValue) {
+						break
+					} else {
+						Upheal = Promote.parent
+						if is_undefined(Upheal)
+							break
+
+						Promote = Upheal
+					}
+				}
+				NewNode.set_next(Promote)
+				Hint.set_next(NewNode)
+				return NewNode
+			} else {
+				return underlying_insert_by_node(Hint.node_right, Value)
+			}
+		}
+	}
+
 	///@function insert(value)
 	static insert = function(Value) {
-		var NewNode = make_node(Value)
-		if 0 == size() {
+		var NewNode
+		if 0 == inner_size++ {
+			NewNode = make_node(Value)
 			node_head = NewNode
-			return node_head
+			node_leftest = NewNode
+			node_rightest = NewNode
+			return NewNode
 		}
 
-		if key_comparator(Value, extract(node_head))
-			return insert_at(Value, left(0))
-		else
-			return insert_at(Value, right(0))
+		if key_comparator(Value, extract(node_head)) {
+			if is_undefined(node_head.node_left) { // 1 == size
+				NewNode = make_node(Value)
+				node_leftest = NewNode
+				node_head.set_left(NewNode)
+				NewNode.set_next(node_head)
+				return Iterator(NewNode)
+			} else {
+				var Result = underlying_insert_by_node(node_head.node_left, Value)
+				if key_comparator(Value, extract(node_leftest))
+					node_leftest = Result
+
+				return Iterator(Result)
+			}
+		} else {
+			if is_undefined(node_head.node_right) { // 2 == size
+				NewNode = make_node(Value)
+				node_rightest = NewNode
+				node_head.set_right(NewNode)
+				node_head.set_next(NewNode)
+				return Iterator(NewNode)
+			} else {
+				var Result = underlying_insert_by_node(node_head.node_right, Value)
+				if !key_comparator(Value, extract(node_rightest))
+					node_rightest = Result
+
+				return Iterator(Result)
+			}
+		}
 	}
 
 	///@function erase_at(index)
@@ -152,8 +194,8 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		}
 	}
 
-	///@function find_of(value)
-	static find_of = function(Value) {
+	///@function location(value)
+	static location = function(Value) {
 		if 0 == size()
 			return undefined
 
@@ -228,6 +270,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		set(Target, Value)
 	}
 
+	node_rightest = undefined
 	key_comparator = compare_less
 	check_comparator = compare_equal
 #endregion
