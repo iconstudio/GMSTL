@@ -93,6 +93,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 				while !is_undefined(Promote) {
 					ProValue = extract(Promote)
 					if key_comparator(Value, ProValue) {
+						NewNode.set_next(Promote)
 						break
 					} else {
 						Upheal = Promote.parent
@@ -102,7 +103,6 @@ function BinarySearch_tree(): Binary_tree() constructor {
 						Promote = Upheal
 					}
 				}
-				NewNode.set_next(Promote)
 				Hint.set_next(NewNode)
 				return NewNode
 			} else {
