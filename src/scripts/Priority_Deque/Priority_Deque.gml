@@ -97,7 +97,7 @@ function Priority_deque(): Container() constructor {
 	static set_key_extract = function(Func) { key_extractor = Func }
 
 	///@function set_key_compare(compare_function)
-	static set_key_compare = function(Func) { key_inquire_compare = method(other, Func) }
+	static set_key_compare = function(Func) { key_inquire_comparator = method(other, Func) }
 
 	///@function read(data_string)
 	static read = function(Str) { raw.read(Str) }
@@ -111,13 +111,13 @@ function Priority_deque(): Container() constructor {
 #region private
 	raw = new List()
 	key_extractor = function(Value) { return Value }
-	key_inquire_compare = compare_less
+	key_inquire_comparator = compare_less
 	key_comparator = function(a, b) {
 		var A = key_extractor(a), B = key_extractor(b)
 		if A == B
 			return b < a
 		else
-			return key_inquire_compare(A, B)
+			return key_inquire_comparator(A, B)
 	}
 #endregion
 

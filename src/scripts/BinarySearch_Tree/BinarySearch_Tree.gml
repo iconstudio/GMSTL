@@ -49,11 +49,6 @@ enum BSTree_child {
 	right
 }
 
-function BSTree_location() {
-	node = undefined
-	dir = BSTree_child.none // 0: self, 1: left, 2: right
-}
-
 function BinarySearch_tree(): Binary_tree() constructor {
 #region public
 	///@function front()
@@ -68,49 +63,6 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	///@function last()
 	static last = function() { return undefined }
 
-	///@function 
-	static extract = function(Node) { return Node.value }
-
-	///@function 
-	static underlying_insert_by_node = function(Hint, Value) {
-		if key_comparator(Value, extract(Hint)) {
-			if is_undefined(Hint.node_left) {
-				var NewNode = make_node(Value)
-				Hint.set_left(NewNode)
-				var Prev = Hint.node_previous
-				if !is_undefined(Prev)
-					Prev.set_next(NewNode)
-				NewNode.set_next(Hint)
-				return NewNode
-			} else {
-				return underlying_insert_by_node(Hint.node_left, Value)
-			}
-		} else {
-			if is_undefined(Hint.node_right) {
-				var NewNode = make_node(Value)
-				Hint.set_right(NewNode)
-				var Promote = Hint.parent, ProValue, Upheal
-				while !is_undefined(Promote) {
-					ProValue = extract(Promote)
-					if key_comparator(Value, ProValue) {
-						NewNode.set_next(Promote)
-						break
-					} else {
-						Upheal = Promote.parent
-						if is_undefined(Upheal)
-							break
-
-						Promote = Upheal
-					}
-				}
-				Hint.set_next(NewNode)
-				return NewNode
-			} else {
-				return underlying_insert_by_node(Hint.node_right, Value)
-			}
-		}
-	}
-
 	///@function insert(value)
 	static insert = function(Value) {
 		var NewNode
@@ -122,7 +74,11 @@ function BinarySearch_tree(): Binary_tree() constructor {
 			return NewNode
 		}
 
-		if key_comparator(Value, extract(node_head)) {
+		// hardcoded
+		var HeadKey = extract_key(node_head)
+		if Value == HeadKey {
+			return Iterator(node_head)
+		} else if key_comparator(Value, HeadKey) {
 			if is_undefined(node_head.node_left) { // 1 == size
 				NewNode = make_node(Value)
 				node_leftest = NewNode
@@ -131,7 +87,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 				return Iterator(NewNode)
 			} else {
 				var Result = underlying_insert_by_node(node_head.node_left, Value)
-				if key_comparator(Value, extract(node_leftest))
+				if key_comparator(Value, extract_key(node_leftest))
 					node_leftest = Result
 
 				return Iterator(Result)
@@ -145,7 +101,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 				return Iterator(NewNode)
 			} else {
 				var Result = underlying_insert_by_node(node_head.node_right, Value)
-				if !key_comparator(Value, extract(node_rightest))
+				if !key_comparator(Value, extract_key(node_rightest))
 					node_rightest = Result
 
 				return Iterator(Result)
@@ -153,46 +109,20 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		}
 	}
 
-	///@function erase_at(index)
-	/*
-			Splice the case of erasing a key from the Tree.
-			
-			case 1: a leaf node
-				Just remove it.
-			
-			case 2: the node has one child
-				Remove it and pull up its children.
-			
-			case 3: the node has two children
-				Replace it with smallest one and remove the original smallest one.
-	*/
-	static erase_at = function(Index) {
-		if valid(Index) {
-			var Left = left(Index), Right = right(Index)
-			var LeftChk = valid(Left), RightChk = valid(Right)
-			deallocate(Index)
-
-			if !LeftChk and !RightChk { // has no child
-			} else if LeftChk and !RightChk { // on left
-				move_children(Left, Index)
-			} else if !LeftChk and RightChk { // on right
-				move_children(Right, Index)
-			} else { // two children
-				var Result = Left, LeftofLeft = left(Left)
-				while true {
-					if !valid(LeftofLeft) {
-						break
-					}
-					Result = LeftofLeft // the smallest
-					LeftofLeft = left(Result) 
-				}
-				set(Index, at(Result))
-				erase_at(Result)
-			}
-
-			gc_collect()
-		}
+	///@function insert_at(key, value)
+	static insert_at = function(Key, Value) {
+		var InsLoc = location(Key)
+		if !is_undefined(InsLoc)
+			return underlying_insert_by_node(InsLoc.index, Value)
+		else
+			return undefined
 	}
+
+	///@function insert_iter(iterator, value)
+	static iter_insert = function(It, Value) {
+		return underlying_insert_by_node(It.index, Value)
+	}
+
 
 	///@function location(value)
 	static location = function(Value) {
@@ -219,10 +149,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	}
 
 	///@function set_key_compare(compare_function)
-	static set_key_compare = function(Func) { key_comparator = method(other, Func) }
-
-	///@function set_check_compare(compare_function)
-	static set_check_compare = function(Func) { check_comparator = method(other, Func) }
+	static set_key_compare = function(Func) { key_inquire_comparator = method(other, Func) }
 
 	static type = BinarySearch_tree
 	static value_type = BSTree_node
@@ -231,9 +158,67 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 #region private
 	///@function 
-	static move_children = function(Index, Target) {
-		var Left = left(Index), Right = right(Index)
-		var LeftChk = valid(Left), RightChk = valid(Right)
+	static extract_key = function(Node) { return Node.value }
+
+	///@function 
+	static underlying_insert_by_node = function(Hint, Value) {
+		var OrgKey = extract_key(Hint)
+		if Value == OrgKey {
+			return Hint
+		} else if key_comparator(Value, OrgKey) {
+			if is_undefined(Hint.node_left) {
+				var NewNode = make_node(Value)
+				Hint.set_left(NewNode)
+				var Prev = Hint.node_previous
+				if !is_undefined(Prev)
+					Prev.set_next(NewNode)
+				NewNode.set_next(Hint)
+				return NewNode
+			} else {
+				return underlying_insert_by_node(Hint.node_left, Value)
+			}
+		} else {
+			if is_undefined(Hint.node_right) {
+				var NewNode = make_node(Value)
+				Hint.set_right(NewNode)
+				var Promote = Hint.parent, ProValue, Upheal
+				while !is_undefined(Promote) {
+					ProValue = extract_key(Promote)
+					if key_comparator(Value, ProValue) {
+						NewNode.set_next(Promote)
+						break
+					} else {
+						Upheal = Promote.parent
+						if is_undefined(Upheal)
+							break
+
+						Promote = Upheal
+					}
+				}
+				Hint.set_next(NewNode)
+				return NewNode
+			} else {
+				return underlying_insert_by_node(Hint.node_right, Value)
+			}
+		}
+	}
+
+	///@function 
+	static underlying_move_children = function(Node, Target, Flag) {
+		var Left = Node.node_left, Right = Node.node_right
+		switch Flag {
+			case BSTree_child.none:
+				
+			break
+
+			case BSTree_child.left:
+				
+			break
+
+			case BSTree_child.none:
+				
+			break
+		}
 		var Value = at(Index)
 		set(Index, undefined)
 
@@ -247,32 +232,56 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	}
 
 	///@function 
-	static move_children_of_left = function(Index, Target) {
-		var Left = left(Index), LeftChk = valid(Left)
-		var Value = at(Index)
-		set(Index, undefined)
+	/*
+			Splice the case of erasing a key from the Tree.
+			
+			case 1: a leaf node
+				Just remove it.
+			
+			case 2: the node has one child
+				Remove it and pull up its children.
+			
+			case 3: the node has two children
+				Replace it with smallest one and remove the original smallest one.
+	*/
+	static underlying_erase_node = function(Node) {
+		if !is_undefined(Node) {
+			var Left = Node.node_left, Right = Node.node_right
+			var LeftChk = valid(Left), RightChk = valid(Right)
 
-		if LeftChk
-			move_children(Left, left(Target))
+			if !LeftChk and !RightChk { // has no child
+			} else if LeftChk and !RightChk { // on left
+				underlying_move_children(Left, Index)
+			} else if !LeftChk and RightChk { // on right
+				underlying_move_children(Right, Index)
+			} else { // two children
+				var Result = Left, LeftofLeft = left(Left)
+				while true {
+					if !valid(LeftofLeft) {
+						break
+					}
+					Result = LeftofLeft // the smallest
+					LeftofLeft = left(Result) 
+				}
+				set(Index, at(Result))
+				erase_at(Result)
+			}
 
-		set(Target, Value)
-	}
-
-	///@function 
-	static move_children_of_right = function(Index, Target) {
-		var Right = right(Index), RightChk = valid(Right)
-		var Value = at(Index)
-		set(Index, undefined)
-
-		if RightChk
-			move_children(Right, right(Target))
-
-		set(Target, Value)
+			gc_collect()
+		} else {
+			return undefined
+		}
 	}
 
 	node_rightest = undefined
-	key_comparator = compare_less
-	check_comparator = compare_equal
+	key_inquire_comparator = compare_less
+	key_comparator = function(a, b) {
+		var A = extract_key(a), B = extract_key(b)
+		if A == B
+			return b < a
+		else
+			return key_inquire_comparator(A, B)
+	}
 #endregion
 
 	// ** Contructor **

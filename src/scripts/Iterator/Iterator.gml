@@ -153,6 +153,7 @@ function Forward_iterator(Index): Const_iterator(Index) constructor {
 		It.set(Temp)
 	}
 
+	static type = Forward_iterator
 	static category = tag_forward_iterator
 }
 
