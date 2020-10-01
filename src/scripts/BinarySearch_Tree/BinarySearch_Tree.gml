@@ -22,6 +22,19 @@ function BSTree_node(): Tree_node_tratit() constructor {
 		return false
 	}
 
+	///@function set_previous(node)
+	static set_previous = function(Node) {
+		if !is_undefined(node_previous) {
+			node_previous.node_next = undefined
+		}
+		node_previous = Node
+		if !is_undefined(Node) {
+			Node.node_next = self
+			return true
+		}
+		return false
+	}
+
 	///@function set(value)
 	static set = function(Value) { value = Value; return self }
 
@@ -65,9 +78,8 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 	///@function insert(value)
 	static insert = function(Value) {
-		var NewNode
+		var NewNode = make_node(Value)
 		if 0 == inner_size++ {
-			NewNode = make_node(Value)
 			node_head = NewNode
 			node_leftest = NewNode
 			node_rightest = NewNode
@@ -77,31 +89,30 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		// hardcoded
 		var HeadKey = extract_key(node_head)
 		if Value == HeadKey {
+			delete NewNode
 			return Iterator(node_head)
-		} else if key_comparator(Value, HeadKey) {
+		} else if key_inquire_comparator(NewNode, HeadKey) {
 			if is_undefined(node_head.node_left) { // 1 == size
-				NewNode = make_node(Value)
 				node_leftest = NewNode
 				node_head.set_left(NewNode)
 				NewNode.set_next(node_head)
 				return Iterator(NewNode)
 			} else {
-				var Result = underlying_insert_by_node(node_head.node_left, Value)
-				if key_comparator(Value, extract_key(node_leftest))
+				var Result = underlying_insert_by_node(node_head.node_left, NewNode)
+				if key_inquire_comparator(Value, extract_key(node_leftest))
 					node_leftest = Result
 
 				return Iterator(Result)
 			}
 		} else {
 			if is_undefined(node_head.node_right) { // 2 == size
-				NewNode = make_node(Value)
 				node_rightest = NewNode
 				node_head.set_right(NewNode)
 				node_head.set_next(NewNode)
 				return Iterator(NewNode)
 			} else {
-				var Result = underlying_insert_by_node(node_head.node_right, Value)
-				if !key_comparator(Value, extract_key(node_rightest))
+				var Result = underlying_insert_by_node(node_head.node_right, NewNode)
+				if !key_inquire_comparator(Value, extract_key(node_rightest))
 					node_rightest = Result
 
 				return Iterator(Result)
@@ -113,39 +124,37 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static insert_at = function(Key, Value) {
 		var InsLoc = location(Key)
 		if !is_undefined(InsLoc)
-			return underlying_insert_by_node(InsLoc.index, Value)
+			return Iterator(underlying_insert_by_node(InsLoc.index, Value))
 		else
-			return undefined
+			return insert(Value)
 	}
 
 	///@function insert_iter(iterator, value)
-	static iter_insert = function(It, Value) {
-		return underlying_insert_by_node(It.index, Value)
+	static insert_iter = function(It, Value) {
+		if It.storage != self
+			return undefined
+		else
+			return Iterator(underlying_insert_by_node(It.index, Value))
 	}
-
 
 	///@function location(value)
 	static location = function(Value) {
-		if 0 == size()
+		if 0 == inner_size
 			return undefined
 
-		var CompVal, Index = 0, Size = size()
-		while Index < Size {
-			CompVal = at(Index)
-			if check_comparator(Value, CompVal) {
-				return Index
+		var Node = node_head, CompVal
+		while !is_undefined(Node) {
+			CompVal = extract_key(Node)
+			if Value == CompVal {
+				return Iterator(Node)
 			} else {
-				if key_comparator(Value, CompVal)
-					Index = left(Index)
+				if key_inquire_comparator(Value, CompVal)
+					Node = Node.node_left
 				else
-					Index = right(Index)
+					Node = Node.node_right
 			}
 		}
 		return undefined
-	}
-
-	///@function count_of(value)
-	static count_of = function(Value) {
 	}
 
 	///@function set_key_compare(compare_function)
@@ -161,31 +170,29 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static extract_key = function(Node) { return Node.value }
 
 	///@function 
-	static underlying_insert_by_node = function(Hint, Value) {
-		var OrgKey = extract_key(Hint)
+	static underlying_insert_by_node = function(Hint, ValueNode) {
+		var Value = extract_key(ValueNode), OrgKey = extract_key(Hint)
 		if Value == OrgKey {
 			return Hint
-		} else if key_comparator(Value, OrgKey) {
+		} else if key_inquire_comparator(Value, OrgKey) {
 			if is_undefined(Hint.node_left) {
-				var NewNode = make_node(Value)
-				Hint.set_left(NewNode)
+				Hint.set_left(ValueNode)
 				var Prev = Hint.node_previous
 				if !is_undefined(Prev)
-					Prev.set_next(NewNode)
-				NewNode.set_next(Hint)
-				return NewNode
+					Prev.set_next(ValueNode)
+				ValueNode.set_next(Hint)
+				return ValueNode
 			} else {
-				return underlying_insert_by_node(Hint.node_left, Value)
+				return underlying_insert_by_node(Hint.node_left, ValueNode)
 			}
 		} else {
 			if is_undefined(Hint.node_right) {
-				var NewNode = make_node(Value)
-				Hint.set_right(NewNode)
+				Hint.set_right(ValueNode)
 				var Promote = Hint.parent, ProValue, Upheal
 				while !is_undefined(Promote) {
 					ProValue = extract_key(Promote)
-					if key_comparator(Value, ProValue) {
-						NewNode.set_next(Promote)
+					if key_inquire_comparator(Value, ProValue) {
+						ValueNode.set_next(Promote)
 						break
 					} else {
 						Upheal = Promote.parent
@@ -195,40 +202,12 @@ function BinarySearch_tree(): Binary_tree() constructor {
 						Promote = Upheal
 					}
 				}
-				Hint.set_next(NewNode)
-				return NewNode
+				Hint.set_next(ValueNode)
+				return ValueNode
 			} else {
-				return underlying_insert_by_node(Hint.node_right, Value)
+				return underlying_insert_by_node(Hint.node_right, ValueNode)
 			}
 		}
-	}
-
-	///@function 
-	static underlying_move_children = function(Node, Target, Flag) {
-		var Left = Node.node_left, Right = Node.node_right
-		switch Flag {
-			case BSTree_child.none:
-				
-			break
-
-			case BSTree_child.left:
-				
-			break
-
-			case BSTree_child.none:
-				
-			break
-		}
-		var Value = at(Index)
-		set(Index, undefined)
-
-		if LeftChk {
-			move_children(Left, left(Target))
-		}
-		if RightChk {
-			move_children(Right, right(Target))
-		}
-		set(Target, Value)
 	}
 
 	///@function 
@@ -246,33 +225,49 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	*/
 	static underlying_erase_node = function(Node) {
 		if !is_undefined(Node) {
+			var Parent = Node.parent
 			var Left = Node.node_left, Right = Node.node_right
-			var LeftChk = valid(Left), RightChk = valid(Right)
+			var LeftChk = !is_undefined(Left), RightChk = !is_undefined(Right)
 
 			if !LeftChk and !RightChk { // has no child
+				Node.destroy()
+				delete Node
 			} else if LeftChk and !RightChk { // on left
-				underlying_move_children(Left, Index)
-			} else if !LeftChk and RightChk { // on right
-				underlying_move_children(Right, Index)
-			} else { // two children
-				var Result = Left, LeftofLeft = left(Left)
-				while true {
-					if !valid(LeftofLeft) {
-						break
+				if Node == node_head {
+					node_head = Left
+				} else {
+					if Node == Parent.node_left {
+						Parent.set_left(Left)
+					} else if Node == Parent.node_right {
+						Parent.set_right(Left)
 					}
-					Result = LeftofLeft // the smallest
-					LeftofLeft = left(Result) 
 				}
-				set(Index, at(Result))
-				erase_at(Result)
+				Node.destroy()
+				delete Node
+			} else if !LeftChk and RightChk { // on right
+				if Node == node_head {
+					node_head = Right
+				} else {
+					if Node == Parent.node_left {
+						Parent.set_left(Right)
+					} else if Node == Parent.node_right {
+						Parent.set_right(Right)
+					}
+				}
+				Node.destroy()
+				delete Node
+			} else { // two children
+				var Leftest = Node.find_leftest()
+				var Temp = Leftest.get()
+				Node.set(Temp)
+				underlying_erase_node(Leftest)
 			}
 
 			gc_collect()
-		} else {
-			return undefined
 		}
 	}
 
+	node_cashs_count = 0
 	node_rightest = undefined
 	key_inquire_comparator = compare_less
 	key_comparator = function(a, b) {

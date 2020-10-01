@@ -28,6 +28,15 @@ function Tree_node_tratit() constructor {
 	}
 
 	///@function 
+	static underlying_parent_clear = function() {
+		if self == parent.node_left {
+			parent.node_left = undefined
+		} else if self == parent.node_right {
+			parent.node_right = undefined
+		}
+	}
+
+	///@function 
 	static underlying_set_parent = function(Node) { parent = Node }
 
 	///@function 
@@ -53,11 +62,7 @@ function Tree_node_tratit() constructor {
 	///@function 
 	static underlying_destroy = function() {
 		if !is_undefined(parent) {
-			if self == parent.node_left {
-				parent.node_left = undefined
-			} else if self == parent.node_right {
-				parent.node_right = undefined
-			}
+			underlying_parent_clear()
 		}
 
 		if !is_undefined(node_left) {
