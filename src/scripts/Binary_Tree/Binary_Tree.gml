@@ -28,6 +28,15 @@ function Tree_node_tratit() constructor {
 	}
 
 	///@function 
+	static underlying_parent_clear = function() {
+		if self == parent.node_left {
+			parent.node_left = undefined
+		} else if self == parent.node_right {
+			parent.node_right = undefined
+		}
+	}
+
+	///@function 
 	static underlying_set_parent = function(Node) { parent = Node }
 
 	///@function 
@@ -53,11 +62,7 @@ function Tree_node_tratit() constructor {
 	///@function 
 	static underlying_destroy = function() {
 		if !is_undefined(parent) {
-			if self == parent.node_left {
-				parent.node_left = undefined
-			} else if self == parent.node_right {
-				parent.node_right = undefined
-			}
+			underlying_parent_clear()
 		}
 
 		if !is_undefined(node_left) {
@@ -121,57 +126,11 @@ function Binary_tree_trait(): Container() constructor {
 	///@function 
 	static underlying_make_node = function() { return new value_type() }
 
-	///@function 
-	static underlying_sequence_by_index_recursive = function(Index) {
-		if Index < 64 and cash[Index] != undefined
-			return cash[Index]
-
-		var Result = undefined
-		if 0 == Index {
-			Result = node_head
-		} else if 1 == Index {
-			Result = node_head.left
-		} else if 2 == Index {
-			Result = node_head.right
-		} else {		
-			
-			var ParentIndex = floor((Index - 1) * 0.5)
-			if Index < 0
-				return undefined
-
-			var Parent = underlying_sequence_by_index_recursive(ParentIndex)
-			if is_undefined(Parent)
-				return undefined
-
-			var ParentLeftIndex = ParentIndex * 2 + 1
-			var ResultIndex = Index - ParentLeftIndex
-			switch ResultIndex {
-			    case 0:
-					Result = Parent.left
-			        break
-			    case 1:
-					Result = Parent.right
-			        break
-			}
-		}
-		if Index < 64 and cash[Index] == undefined // memoization
-			cash[Index] = Result
-		return Result
-	}
-
-	///@function 
-	static underlying_sequence_by_index = function(Index) { // from node_head to left to right
-		var Result = underlying_sequence_by_index_recursive(Index)
-		gc_collect()
-		return Result
-	}
-
 	node_head = undefined
 	node_tail = undefined
 	cash_size = 64
 	cash = array_create(cash_size, undefined)
 	static value_type = Tree_node
-
 }
 
 function Binary_tree(): Binary_tree_trait() constructor {
@@ -186,7 +145,14 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	static valid = function(Index) { return bool(0 <= Index and Index < inner_size) }
 
 	///@function clear()
-	static clear = function() { node_head = undefined; inner_size = 0; gc_collect() }
+	static clear = function() {
+		if !is_undefined(node_head) {
+			underlying_clear(node_head)
+		}
+		node_head = undefined
+		inner_size = 0
+		gc_collect()
+	}
 
 	///@function front()
 	static front = function() { return node_head }
@@ -343,6 +309,18 @@ function Binary_tree(): Binary_tree_trait() constructor {
 		} else {
 			return undefined
 		}
+	}
+
+	///@function 
+	static underlying_clear = function(Node) {
+		var Left = Node.node_left, Right = Node.node_right
+		if !is_undefined(Left)
+			underlying_clear(Left)
+
+		if !is_undefined(Right)
+			underlying_clear(Right)
+
+		delete Node
 	}
 
 	inner_size = 0
