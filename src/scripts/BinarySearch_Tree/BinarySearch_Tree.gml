@@ -22,19 +22,6 @@ function BSTree_node(): Tree_node_tratit() constructor {
 		return false
 	}
 
-	///@function set_previous(node)
-	static set_previous = function(Node) {
-		if !is_undefined(node_previous) {
-			node_previous.node_next = undefined
-		}
-		node_previous = Node
-		if !is_undefined(Node) {
-			Node.node_next = self
-			return true
-		}
-		return false
-	}
-
 	///@function set(value)
 	static set = function(Value) { value = Value; return self }
 
@@ -42,17 +29,66 @@ function BSTree_node(): Tree_node_tratit() constructor {
 	static get = function() { return value; }
 
 	///@function destroy()
+	/*
+			Splice the case of erasing a key from the Tree.
+			
+			case 1: a leaf node
+				Just remove it.
+			
+			case 2: the node has one child
+				Remove it and pull up its children.
+			
+			case 3: the node has two children
+				Replace it with smallest one and remove the original smallest one.
+	*/
 	static destroy = function() {
-		if !is_undefined(node_previous) {
-			if !is_undefined(node_next) {
-				node_previous.set_next(node_next)
-			} else {
-				node_previous.set_next(undefined)
-			}
-		}
-		underlying_destroy()
+		var Left = node_left, Right = node_right
+		var LeftChk = !is_undefined(Left), RightChk = !is_undefined(Right)
+		var Is_head = is_undefined(parent)
+		var Result = Left
 
-		return node_previous
+		if !LeftChk and !RightChk { // has no child
+			if !is_undefined(node_previous) {
+				if !is_undefined(node_next) {
+					node_previous.set_next(node_next)
+				} else {
+					node_previous.set_next(undefined)
+				}
+			}
+		} else if LeftChk and !RightChk { // on left, this is the last element in a sequence.
+			if Is_head {
+				//Result = Left
+				//node_head = Left
+			} else {
+				if self == parent.node_left
+					parent.set_left(Left)
+				else if self == parent.node_right
+					parent.set_right(Left)
+			}
+			Left.set_next(undefined)
+		} else if !LeftChk and RightChk { // on right
+			if Is_head {
+				Result = Right
+				//node_head = Right
+			} else {
+				if self == parent.node_left
+					parent.set_left(Right)
+				else if self == parent.node_right
+					parent.set_right(Right)
+				node_previous.set_next(node_next)
+			}
+		} else { // two children
+			var Leftest = node_next//node_right.find_leftest()
+			var Temp = Leftest.get()
+			set(Temp)
+			Leftest.destroy()
+			delete Leftest
+			Result = self
+		}
+
+		gc_collect()
+		underlying_destroy()
+		return Result
 	}
 }
 
@@ -91,7 +127,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		if Value == HeadKey {
 			delete NewNode
 			return Iterator(node_head)
-		} else if key_inquire_comparator(NewNode, HeadKey) {
+		} else if key_inquire_comparator(Value, HeadKey) {
 			if is_undefined(node_head.node_left) { // 1 == size
 				node_leftest = NewNode
 				node_head.set_left(NewNode)
@@ -120,7 +156,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		}
 	}
 
-	///@function insert_at(key, value)
+	///@function insert_at(index, value)
 	static insert_at = function(Key, Value) {
 		var InsLoc = location(Key)
 		if !is_undefined(InsLoc)
@@ -135,6 +171,19 @@ function BinarySearch_tree(): Binary_tree() constructor {
 			return undefined
 		else
 			return Iterator(underlying_insert_by_node(It.index, Value))
+	}
+
+	///@function erase_at(key)
+	static erase_at = function(Key) {
+		var InsLoc = location(Key)
+		if !is_undefined(InsLoc)
+			underlying_erase_node(InsLoc.index)
+	}
+
+	///@function erase_iter(iterator)
+	static erase_iter = function(It) {
+		if It.storage == self
+			underlying_insert_by_node(It.index)
 	}
 
 	///@function location(value)
@@ -211,63 +260,13 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	}
 
 	///@function 
-	/*
-			Splice the case of erasing a key from the Tree.
-			
-			case 1: a leaf node
-				Just remove it.
-			
-			case 2: the node has one child
-				Remove it and pull up its children.
-			
-			case 3: the node has two children
-				Replace it with smallest one and remove the original smallest one.
-	*/
 	static underlying_erase_node = function(Node) {
-		if !is_undefined(Node) {
-			var Parent = Node.parent
-			var Left = Node.node_left, Right = Node.node_right
-			var LeftChk = !is_undefined(Left), RightChk = !is_undefined(Right)
-
-			if !LeftChk and !RightChk { // has no child
-				Node.destroy()
-				delete Node
-			} else if LeftChk and !RightChk { // on left
-				if Node == node_head {
-					node_head = Left
-				} else {
-					if Node == Parent.node_left {
-						Parent.set_left(Left)
-					} else if Node == Parent.node_right {
-						Parent.set_right(Left)
-					}
-				}
-				Node.destroy()
-				delete Node
-			} else if !LeftChk and RightChk { // on right
-				if Node == node_head {
-					node_head = Right
-				} else {
-					if Node == Parent.node_left {
-						Parent.set_left(Right)
-					} else if Node == Parent.node_right {
-						Parent.set_right(Right)
-					}
-				}
-				Node.destroy()
-				delete Node
-			} else { // two children
-				var Leftest = Node.find_leftest()
-				var Temp = Leftest.get()
-				Node.set(Temp)
-				underlying_erase_node(Leftest)
-			}
-
-			gc_collect()
-		}
+		var Successor = Node.destroy()
+		if Node == node_head
+			node_head = Successor
+		delete Node
 	}
 
-	node_cashs_count = 0
 	node_rightest = undefined
 	key_inquire_comparator = compare_less
 	key_comparator = function(a, b) {

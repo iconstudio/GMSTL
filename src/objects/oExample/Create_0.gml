@@ -61,9 +61,19 @@ function node_tree_print(Cont, NodeStart, Msg) {
 	}
 }
 show_debug_message("\nTree")
-//random_shuffle(test_sum.first(), test_sum.last())
+random_shuffle(test_sum.first(), test_sum.last())
 test_tree = new BinarySearch_tree(test_sum)
+test_tree.insert(5)
+test_tree.insert(12)
+test_tree.insert(7)
+test_tree.insert(16)
+
+//test_tree.erase_at(3)
+//test_tree.erase_at(2)
 print(test_tree)
+
+var Loc = test_tree.location(10)
+show_debug_message("Loc: " + string(Loc.get()))
 
 /*
 do {
