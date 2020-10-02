@@ -1,6 +1,6 @@
 function Container() {
 #region public
-	function data() { return raw }
+	static data = function() { return raw }
 
 	static duplicate = function() { return new type(self) }
 

@@ -46,14 +46,10 @@ test_tree.insert(16)
 node_tree_print(test_tree, test_tree.node_head)
 show_debug_message("")
 
-//test_tree.erase_at(2)
-//test_tree.erase_at(11)
-//test_tree.erase_at(8)
-
+test_tree.erase_at(2)
+test_tree.erase_at(11)
+test_tree.erase_at(8)
 node_tree_print(test_tree, test_tree.node_head)
-
-show_debug_message("Nexts")
-print(test_tree)
 
 //var Loc = test_tree.location(26)
 //show_debug_message("Loc: " + string(Loc.get()))
