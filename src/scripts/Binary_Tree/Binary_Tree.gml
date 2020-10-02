@@ -289,7 +289,7 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	static underlying_iterator_prev = function(Index) { return Index.node_previous }
 
 	///@function 
-	static underlying_iterator_insert = undefined
+	static underlying_inserter_init = undefined
 
 	///@function 
 	static underlying_at = function(Index) {

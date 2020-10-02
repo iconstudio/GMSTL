@@ -55,39 +55,53 @@ function BSTree_node(): Tree_node_tratit() constructor {
 					node_previous.set_next(undefined)
 				}
 			}
+			underlying_destroy()
+			show_debug_message("Leaf: " + string(self))
 		} else if LeftChk and !RightChk { // on left, this is the last element in a sequence.
 			if Is_head {
 				//Result = Left
 				//node_head = Left
+				Left.parent = undefined
 			} else {
 				if self == parent.node_left
 					parent.set_left(Left)
 				else if self == parent.node_right
 					parent.set_right(Left)
 			}
-			Left.set_next(undefined)
+			node_previous.set_next(undefined)
+			underlying_destroy()
+			show_debug_message("Righty: " + string(self))
 		} else if !LeftChk and RightChk { // on right
 			if Is_head {
 				Result = Right
+				Right.parent = undefined
 				//node_head = Right
 			} else {
 				if self == parent.node_left
 					parent.set_left(Right)
 				else if self == parent.node_right
 					parent.set_right(Right)
-				node_previous.set_next(node_next)
 			}
+			if !is_undefined(node_previous) {
+				if !is_undefined(node_next) {
+					node_previous.set_next(node_next)
+				} else {
+					node_previous.set_next(undefined)
+				}
+			}
+			underlying_destroy()
+			show_debug_message("Lefty: " + string(self))
 		} else { // two children
 			var Leftest = node_next//node_right.find_leftest()
-			var Temp = Leftest.get()
-			set(Temp)
+			var Temp = string(self)
+			show_debug_message("Both: " + Temp + " -> " + string(self))
+			set(Leftest.value)
 			Leftest.destroy()
 			delete Leftest
 			Result = self
 		}
 
 		gc_collect()
-		underlying_destroy()
 		return Result
 	}
 }
@@ -128,26 +142,28 @@ function BinarySearch_tree(): Binary_tree() constructor {
 			delete NewNode
 			return Iterator(node_head)
 		} else if key_inquire_comparator(Value, HeadKey) {
-			if is_undefined(node_head.node_left) { // 1 == size
+			var Left = node_head.node_left
+			if is_undefined(Left) { // the first left
 				node_leftest = NewNode
 				node_head.set_left(NewNode)
 				NewNode.set_next(node_head)
 				return Iterator(NewNode)
-			} else {
-				var Result = underlying_insert_by_node(node_head.node_left, NewNode)
+			} else { // 
+				var Result = underlying_insert_by_node(Left, NewNode)
 				if key_inquire_comparator(Value, extract_key(node_leftest))
 					node_leftest = Result
 
 				return Iterator(Result)
 			}
 		} else {
-			if is_undefined(node_head.node_right) { // 2 == size
+			var Right = node_head.node_right
+			if is_undefined(Right) { // the first right
 				node_rightest = NewNode
 				node_head.set_right(NewNode)
 				node_head.set_next(NewNode)
 				return Iterator(NewNode)
-			} else {
-				var Result = underlying_insert_by_node(node_head.node_right, NewNode)
+			} else { // 
+				var Result = underlying_insert_by_node(Right, NewNode)
 				if !key_inquire_comparator(Value, extract_key(node_rightest))
 					node_rightest = Result
 
@@ -222,9 +238,11 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static underlying_insert_by_node = function(Hint, ValueNode) {
 		var Value = extract_key(ValueNode), OrgKey = extract_key(Hint)
 		if Value == OrgKey {
+			delete ValueNode
 			return Hint
 		} else if key_inquire_comparator(Value, OrgKey) {
-			if is_undefined(Hint.node_left) {
+			var Left = Hint.node_left
+			if is_undefined(Left) {
 				Hint.set_left(ValueNode)
 				var Prev = Hint.node_previous
 				if !is_undefined(Prev)
@@ -232,10 +250,11 @@ function BinarySearch_tree(): Binary_tree() constructor {
 				ValueNode.set_next(Hint)
 				return ValueNode
 			} else {
-				return underlying_insert_by_node(Hint.node_left, ValueNode)
+				return underlying_insert_by_node(Left, ValueNode)
 			}
 		} else {
-			if is_undefined(Hint.node_right) {
+			var Right = Hint.node_right
+			if is_undefined(Right) {
 				Hint.set_right(ValueNode)
 				var Promote = Hint.parent, ProValue, Upheal
 				while !is_undefined(Promote) {
@@ -254,7 +273,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 				Hint.set_next(ValueNode)
 				return ValueNode
 			} else {
-				return underlying_insert_by_node(Hint.node_right, ValueNode)
+				return underlying_insert_by_node(Right, ValueNode)
 			}
 		}
 	}
@@ -262,8 +281,13 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	///@function 
 	static underlying_erase_node = function(Node) {
 		var Successor = Node.destroy()
-		if Node == node_head
+		if inner_size == 1
+			node_head = undefined
+		else if Node == node_head
 			node_head = Successor
+		else if Node == node_leftest
+			node_leftest = node_head.find_leftest()
+		inner_size--
 		delete Node
 	}
 
