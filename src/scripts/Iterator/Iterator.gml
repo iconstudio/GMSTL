@@ -226,7 +226,7 @@ function Random_iterator(Index): Bidirectional_iterator(Index) constructor {
 			if It.category != category
 				throw "Cannot compare different type of iterators."
 			else
-				return bool(It.storage == storage and index < It.index)
+				return bool(It.storage == storage and It.index < index)
 		}
 		return false
 	}
@@ -239,7 +239,7 @@ function Random_iterator(Index): Bidirectional_iterator(Index) constructor {
 			if It.category != category
 				throw "Cannot compare different type of iterators."
 			else
-				return bool(It.storage == storage and It.index < index)
+				return bool(It.storage == storage and index < It.index)
 		}
 		return false
 	}
@@ -276,8 +276,6 @@ function iterator_advance(It, Distance) {
 	}
 	return undefined
 }
-
-
 
 ///@function check_iterator(parameter)
 function check_iterator(Param) {
