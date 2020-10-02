@@ -121,6 +121,22 @@ function count_if(First, Last, Pred) {
 	return Result
 }
 
+///@function accumulate(begin, end, init, predicate)
+function accumulate(First, Last, Init) {
+	First = check_iterator(First)
+	var Pred
+	if 2 < argument_count
+		Pred = argument[3]
+	else
+		Pred = function(a, b) { return a + b }
+
+	while First.not_equals(Last) {
+        Init = Pred(Init, First.get())
+		First.go_next()
+	}
+	return Init
+}
+
 ///@function swap(iterator_1, iterator_2)
 function swap(ItA, ItB) {
 	var Temp = ItA.get()
@@ -356,6 +372,37 @@ function transform_binary(First, Last, PairFirst, Output, Pred) {
 	}
 	return Output
 }
+
+///@function unique(begin, end, [predicate=compare_equal])
+/*
+function unique(First, Last) {
+	First = check_iterator(First)
+	if First.equals(Last)
+		return Last
+
+	var Compare
+	if 2 < argument_count
+		Compare = argument[2]
+	else
+		Compare = compare_equal
+
+	var It, Result = First.duplicate(), ResultValue = First.get()
+	First.go_next()
+	while First.not_equals(Last) {
+		Result.go_next()
+		if !Compare(ResultValue, First.get()) and Result.not_equals(First) {
+			Result.set(First.get())
+			It = First.duplicate()
+			First.go_next()
+			erase_iter(It)
+		} else {
+			First.go_next()
+		}
+		ResultValue = Result.get()
+	}
+    return Result.go_next()
+}
+*/
 
 ///@function min_element(begin, end, [comparator=compare_less])
 function min_element(First, Last) {
@@ -864,8 +911,11 @@ function shuffle(First, Last) {
 		Urng = argument[2]
 	else
 		Urng = irandom_range
-	for (var i = iterator_distance(First, Last) - 1; 0 < i; --i) {
-	  swap(iterator_advance(First, i), iterator_advance(First, Urng(0, i)))
+	var Dist = iterator_distance(First, Last) - 1
+	if 0 < Dist {
+		for (var i = Dist; 0 < i; --i) {
+		  swap(iterator_advance(First, i), iterator_advance(First, Urng(0, i)))
+		}
 	}
 }
 
@@ -878,7 +928,10 @@ function random_shuffle(First, Last) {
 		Gen = argument[2]
 	else
 		Gen = irandom
-	for (var i = iterator_distance(First, Last) - 1; 0 < i; --i) {
-	  swap(iterator_advance(First, i), iterator_advance(First, Gen(i + 1)))
+	var Dist = iterator_distance(First, Last) - 1
+	if 0 < Dist {
+		for (var i = Dist; 0 < i; --i) {
+		  swap(iterator_advance(First, i), iterator_advance(First, Gen(i)))
+		}
 	}
 }

@@ -9,20 +9,20 @@ function Tree_node_tratit() constructor {
 
 	///@function find_leftest()
 	static find_leftest = function() {
-		var Result = self, Next = left
+		var Result = self, Next = node_left
 		while !is_undefined(Next) {
 			Result = Next
-			Next = Next.left
+			Next = Next.node_left
 		}
 		return Result
 	}
 
 	///@function find_rightest()
 	static find_rightest = function() {
-		var Result = self, Next = right
+		var Result = self, Next = node_right
 		while !is_undefined(Next) {
 			Result = Next
-			Next = Next.right
+			Next = Next.node_right
 		}
 		return Result
 	}
