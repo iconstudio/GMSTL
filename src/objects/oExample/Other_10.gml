@@ -17,10 +17,10 @@ caption += "\nbsearch(2): " + string(binary_search(test2.first(), test2.last(), 
 
 parsed = accumulate(test_sum.first(), test_sum.last(), "", parser)
 caption += "\n\nSeed: " + string(random_get_seed())
-caption += "\ntest_sum (shuffled): " + parsed
+caption += "\ntest_sum (shuffled):" + parsed
 
 parsed = accumulate(test_tree.first(), test_tree.last(), "", parser)
-caption += "\n\nTree: " + parsed
+caption += "\n\nTree:" + parsed
 
 draw_text(8, 8, caption)
 
