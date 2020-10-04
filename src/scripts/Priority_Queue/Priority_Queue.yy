@@ -6,7 +6,7 @@
     "path": "folders/Scripts/Adapter.yy",
   },
   "resourceVersion": "1.0",
-  "name": "Priority_Queue",
+  "name": "Priority_queue",
   "tags": [],
   "resourceType": "GMScript",
 }

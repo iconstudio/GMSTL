@@ -1,18 +1,18 @@
 /*
 	Constructors:
-		Priority_Queue()
-		Priority_Queue(Arg)
-		Priority_Queue(Arg0, Arg1, ...)
-		Priority_Queue(Builtin-Array)
-		Priority_Queue(Builtin-List)
-		Priority_Queue(Container)
-		Priority_Queue(Iterator-Begin, Iterator-End)
+		Priority_queue()
+		Priority_queue(Arg)
+		Priority_queue(Arg0, Arg1, ...)
+		Priority_queue(Builtin-Array)
+		Priority_queue(Builtin-List)
+		Priority_queue(Container)
+		Priority_queue(Iterator-Begin, Iterator-End)
 
 	Initialize:
-		new Priority_Queue()
+		new Priority_queue()
 
 	Usage:
-		AI_Target_Filter = new Priority_Queue()
+		AI_Target_Filter = new Priority_queue()
 		AI_Target_Filter.set_key_compare(function(Target, Other) {
 			return (Target.hp < Other.hp)
 		})
@@ -20,7 +20,7 @@
 		var weakest = AI_Target_Filter.top()
 
 */
-function Priority_Queue(): Heap_Tree() constructor {
+function Priority_queue(): Heap_tree() constructor {
 #region public
 	///@function top()
 	static top = function() { return front() }
@@ -31,7 +31,7 @@ function Priority_Queue(): Heap_Tree() constructor {
 	///@function push_back(value)
 	static push_back = function(Value) { return insert(Value) }
 
-	type = Priority_Queue
+	static type = Priority_queue
 #endregion
 
 #region private

@@ -1,8 +1,7 @@
 enum RBColor { Black, Red }
 
 ///@function 
-function RBNode_Trait() constructor {
-	Tree_Node_Tratit()
+function RBNode_Trait(): Tree_Node_Tratit() constructor {
 	color = RBColor.Red
 }
 
@@ -14,12 +13,12 @@ function RBNode(Value, Color) constructor {
 	color = Color
 	parent = 2 < argument_count ? argument[2] : undefined
 	node_next = undefined
-	node_before = undefined
+	node_previous = undefined
 
 	///@function set_left(node)
 	static set_left = function(Node) {
 		node_left = Node
-		node_before = Node
+		node_previous = Node
 		if !is_undefined(Node) {
 			Node.node_next = self
 			Node.parent = self
@@ -31,7 +30,7 @@ function RBNode(Value, Color) constructor {
 		node_right = Node
 		node_next = Node
 		if !is_undefined(Node) {
-			Node.node_before = self
+			Node.node_previous = self
 			Node.parent = self
 		}
 	}
@@ -41,20 +40,13 @@ function RBNode(Value, Color) constructor {
 	}
 }
 
-///@function make_rb_node(value, color, [parent=undefined])
-function make_rb_node(Value, Color, Parent) {
-	return (new RBNode(Value, Color, Parent))
-}
-
 function RedBlack_Tree(): Container() constructor {
+#region public
 	///@function size()
 	static size = function() { return inner_size }
 
 	///@function empty()
 	static empty = function() { return bool(inner_size == 0) }
-
-	///@function valid(node)
-	static valid = function(Node) { return !is_undefined(Node) }
 
 	///@function first()
 	static first = function() { return (new iterator_type(self, 0)).pure() }
@@ -67,67 +59,6 @@ function RedBlack_Tree(): Container() constructor {
 
 	///@function back()
 	static back = function() { return last().get() }
-
-	///@function minimum([start_node=head])
-	static minimum = function() {
-		var Result, StartNode = 0 < argument_count ? argument[0] : node_head
-		while valid(StartNode) {
-			Result = StartNode
-			StartNode = StartNode.node_left
-		}
-		return Result
-	}
-
-	///@function maximum([start_node=head])
-	static maximum = function() {
-		var Result, StartNode = 0 < argument_count ? argument[0] : node_head
-		while valid(StartNode) {
-			Result = StartNode
-			StartNode = StartNode.node_right
-		}
-		return Result
-	}
-
-	///@function find_of(value)
-	static find_of = function(Value) {
-		if 0 == size()
-			return undefined
-
-		var Result, NodeIt = node_head
-		while valid(NodeIt) {
-			Result = NodeIt
-			if check_comparator(Value, NodeIt.value) {
-				return Result
-			} else {
-				if key_comparator(Value, NodeIt.value)
-					NodeIt = NodeIt.node_left
-				else
-					NodeIt = NodeIt.node_right
-			}
-
-		}
-		return undefined
-	}
-
-	///@function count_of(value)
-	static count_of = function(Value) {
-		if 0 == size()
-			return 0
-
-		var Result = 0, NodeIt = node_head
-		while valid(NodeIt) {
-			if check_comparator(Value, NodeIt.value) {
-				Result++
-			}
-
-			if key_comparator(Value, NodeIt.value)
-				NodeIt = NodeIt.node_left
-			else
-				NodeIt = NodeIt.node_right
-
-		}
-		return Result
-	}
 
 	///@function rotate_left(axis_node)
 	static rotate_left = function(Node) {
@@ -257,12 +188,17 @@ function RedBlack_Tree(): Container() constructor {
 	///@function set_check_compare(compare_function)
 	static set_check_compare = function(Func) { check_inquire_compare = method(other, Func) }
 
-	type = RedBlack_Tree
+	static type = RedBlack_Tree
+	static iterator_type = Bidirectional_iterator
+	node_head = undefined
+#endregion
+
+#region private
 	key_inquire_compare = compare_complex_less
 	check_inquire_compare = compare_equal
 	key_comparator = function(a, b) { return key_inquire_compare(a.value, b.value) }
 	check_comparator = function(a, b) { return check_inquire_compare(a.value, b.value) }
-	node_head = undefined
+	
 	inner_size = 0
 
 	// ** Contructor **

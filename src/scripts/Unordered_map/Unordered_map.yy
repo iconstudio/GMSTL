@@ -6,7 +6,7 @@
     "path": "folders/Scripts/Assosiative.yy",
   },
   "resourceVersion": "1.0",
-  "name": "GM_Map",
+  "name": "Unordered_map",
   "tags": [],
   "resourceType": "GMScript",
 }

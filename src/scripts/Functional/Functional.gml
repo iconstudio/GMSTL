@@ -95,3 +95,7 @@ function string_weak_hash(Str) {
 	}
 	return sum
 }
+
+function Wrapper(Value) constructor {
+	value = Value
+}

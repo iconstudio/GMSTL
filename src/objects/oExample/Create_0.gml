@@ -1,56 +1,33 @@
-draw_set_color($ffffff)
-draw_set_halign(1)
-draw_set_valign(1)
 randomize()
+//random_set_seed(551755907)
 
-///@function print(container)
-function print(Cont) { foreach(Cont.first(), Cont.last(), show_debug_message) }
+draw_set_color($ffffff)
+draw_set_font(fontExample)
+
+function print(container) { foreach(container.first(), container.last(), show_debug_message) }
+function parser(init, value) {
+	if "" == init
+		return string(value)
+	else
+		return init + ", " + string(value)
+}
 
 test1 = new List(4, 2, 8, 13, 11, 9) // 6
 test2 = new Array(3, 3.5, 26, 7, 10, 15, 5, 4.5) // 8
 test_sum = new List()
-show_debug_message("\nThe First List")
+
 sort(test1.first(), test1.last())
-print(test1)
-show_debug_message("Is sorted: " + string(is_sorted(test1.first(), test1.last())))
-show_debug_message("bsearch(11): " + string(binary_search(test1.first(), test1.last(), 11)))
-
-show_debug_message("\nThe Second Array")
 stable_sort(test2.first(), test2.last())
-print(test2)
-show_debug_message("Is sorted: " + string(is_sorted(test2.first(), test2.last())))
-show_debug_message("bsearch(2): " + string(binary_search(test2.first(), test2.last(), 2)))
-
-show_debug_message("\nThe Summary List")
 merge(test1.first(), test1.last(), test2.first(), test2.last(), test_sum.first())
-print(test_sum)
 
-function index_tree_print(Cont, Index, Msg) {
-	Msg = select_argument(Msg, "[" + string(Index) + "]\t")
-	show_debug_message(Msg + string(Cont.at(Index)))
-
-	var Size = Cont.size()
-	var Left = Cont.left(Index), Right = Cont.right(Index)
-	var LeftVal = Cont.at(Left), RightVal = Cont.at(Right)
-	var LeftChk = Left < Size and LeftVal != NODE_NULL
-	var RightChk = Right < Size and RightVal != NODE_NULL
-
-	if LeftChk {
-		index_tree_print(Cont, Left, "L(" + string(Index) + ") -> [" + string(Left) + "]\t\t")
-	}
-
-	if RightChk {
-		index_tree_print(Cont, Right, "R(" + string(Index) + ") -> [" + string(Right) + "]\t\t")
-		show_debug_message("--------")
-	}
-}
+random_shuffle(test_sum.first(), test_sum.last())
 
 function node_tree_print(Cont, NodeStart, Msg) {
 	Msg = select_argument(Msg, "[" + string(NodeStart) + "]\t")
 	show_debug_message(Msg)
 
 	var LeftNode = NodeStart.node_left, RightNode = NodeStart.node_right
-	var LeftChk = Cont.valid(LeftNode), RightChk = Cont.valid(RightNode)
+	var LeftChk = !is_undefined(LeftNode), RightChk = !is_undefined(RightNode)
 
 	if LeftChk {
 		node_tree_print(Cont, LeftNode, "LEFT(" + string(NodeStart) + ") -> [" + string(LeftNode) + "]\t")
@@ -60,33 +37,29 @@ function node_tree_print(Cont, NodeStart, Msg) {
 		node_tree_print(Cont, RightNode, "RIGHT(" + string(NodeStart) + ") -> [" + string(RightNode) + "]\t")
 	}
 }
-show_debug_message("\nTree")
-random_shuffle(test_sum.first(), test_sum.last())
-test_tree = new Heap_Tree(test_sum)
 
-do {
-	show_debug_message("tree[" + string(test_tree.size()) + "] = " + string(test_tree.pop_front()))
-} until test_tree.empty()
+test_tree = new BinarySearch_tree(test_sum)
+test_tree.insert(5)
+test_tree.insert(12)
+test_tree.insert(7)
+test_tree.insert(16)
+node_tree_print(test_tree, test_tree.node_head)
+show_debug_message("")
 
+test_tree.erase_at(2)
+test_tree.erase_at(11)
+test_tree.erase_at(8)
+test_tree.erase_at(26)
+node_tree_print(test_tree, test_tree.node_head)
+show_debug_message(test_tree.front())
+show_debug_message(test_tree.back())
+
+//var Loc = test_tree.location(26)
+//show_debug_message("Loc: " + string(Loc.get()))
+
+event_user(0)
 
 /*
-tree_print(test_tree, 0, "Head(0)\t")
-show_debug_message("Seaching (3): " + string(test_tree.find_of(3)))
-show_debug_message("Seaching (4): " + string(test_tree.find_of(4)))
-show_debug_message("Seaching (6): " + string(test_tree.find_of(6)))
-show_debug_message("Seaching (11): " + string(test_tree.find_of(11)))
-show_debug_message("Seaching (12): " + string(test_tree.find_of(12)))
-show_debug_message("\n")
-
-test_tree.insert(30)
-tree_print(test_tree, 0, "Head(0)\t")
-show_debug_message("\n")
-
-test_tree.erase_at(4) // 3
-test_tree.erase_at(6) // 8
-test_tree.erase_at(30) // 10 -> 11
-test_tree.erase_at(22) // 4.5
-tree_print(test_tree, 0, "Head(0)\t")
 show_debug_message("\n")
 /*
 var count_dem = count_if(test_sum.first(), test_sum.last(), function(Value) {
@@ -103,7 +76,7 @@ var part_point = partition(test_sum.first(), test_sum.last(), test_predicate)
 var is_parted = is_partitioned(test_sum.first(), test_sum.last(), test_predicate)
 print(test_sum)
 show_debug_message("Is parted: " + string(is_parted))
-show_debug_message("Parted on: " + string(part_point.get_index()))
+show_debug_message("Parted on: " + string(part_point.index))
 
 var nth = 8
 show_debug_message("\nNth Sorting (" + string(nth) + ")")
@@ -111,12 +84,12 @@ random_shuffle(test_sum.first(), test_sum.last())
 var nth_interator = iterator_advance(test_sum.first(), nth)
 var nth_value = nth_interator.get()
 nth_element(test_sum.first(), nth_interator, test_sum.last())
-show_debug_message("Rearranged On: " + string(nth_interator.get_index()))
+show_debug_message("Rearranged On: " + string(nth_interator.index))
 show_debug_message("The Stand Value: " + string(nth_value))
 
 var nth_result_iterator = iterator_advance(test_sum.first(), nth)
 var nth_result_value = nth_result_iterator.get()
-show_debug_message("The " + string(nth) + "th Iterator: " + string(nth_result_iterator.get_index()))
+show_debug_message("The " + string(nth) + "th Iterator: " + string(nth_result_iterator.index))
 show_debug_message("The " + string(nth) + "th Value: " + string(nth_result_value))
 print(test_sum)
 
@@ -146,7 +119,7 @@ test_map = new Map(test_mapped_list)
 print(test_map)
 
 show_debug_message("\nUnordered_Map")
-test_unomap = new GM_Map(test_mapped_list)
+test_unomap = new Unordered_map(test_mapped_list)
 print(test_unomap)
 
 show_debug_message("\nMultimap")

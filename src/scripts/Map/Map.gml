@@ -14,13 +14,14 @@
 
 	Usage:
 		To Iterate values:
-			for (var It = Container.first(); It.not_equals(Container.last()); It.go()) {
+			for (var It = Container.first(); It.not_equals(Container.last()); It.go_next()) {
 				myfunc(It.get())
 			}
 		
 */
 #macro Dictionary Map
 function Map(): Container() constructor {
+#region public
 	///@function empty()
 	static empty = function() { return ds_map_empty(raw) }
 
@@ -51,8 +52,8 @@ function Map(): Container() constructor {
 	///@function last()
 	static last = function() { return (new iterator_type(self, size())).pure() }
 
-	//////@function set(index, value)
-	static set = function(Index, Value) { 
+	//////@function set_at(index, value)
+	static set_at = function(Index, Value) { 
 		var Key = cash.at(Index)
 		if !is_undefined(Key)
 			ds_map_set(raw, Key, Value)
@@ -142,11 +143,15 @@ function Map(): Container() constructor {
 	///@function destroy()
 	static destroy = function() { ds_map_destroy(raw); cash.destroy(); delete cash; gc_collect() }
 
-	type = Map
+	static type = Map
+	static iterator_type = Forward_iterator
+#endregion
+
+#region private
 	raw = ds_map_create()
-	iterator_type = ForwardIterator
 	cash = new List()
-	
+#endregion
+
 	if 0 < argument_count {
 		if argument_count == 1 {
 			var Item = argument[0]

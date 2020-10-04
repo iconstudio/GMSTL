@@ -114,16 +114,6 @@ function Grid(Width, Height): Container() constructor {
 	///@function at(x, y)
 	static at = function(X, Y) { return raw[# X, Y] }
 
-	///@function find(x1, y1, x2, y2, value)
-	function find(X1, Y1, X2, Y2, Value) {
-		var XR = ds_grid_value_x(raw, X1, Y1, X2, Y2, Value)
-		var YR = ds_grid_value_y(raw, X1, Y1, X2, Y2, Value)
-		if XR == -1 or YR == -1
-			return undefined
-		else
-			return new GridIterator(XR, YR, self)
-	}
-
 	///@function find_disk(x, y, radius, value)
 	function find_disk(X, Y, Rads, Value) {
 		var XR = ds_grid_value_disk_x(raw, X, Y, Rads, Value)
@@ -236,7 +226,7 @@ function GridIterator(Cont, Index): Iterator(Cont, Index) constructor {
 		return index
 	}
 
-	static go = function() {
+	static go_next = function() {
 		++index
 		update_coordinates()
 		return index
