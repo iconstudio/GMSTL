@@ -1,5 +1,5 @@
-//randomize()
-random_set_seed(551755907)
+randomize()
+//random_set_seed(551755907)
 
 draw_set_color($ffffff)
 draw_set_font(fontExample)
@@ -60,23 +60,6 @@ show_debug_message(test_tree.back())
 event_user(0)
 
 /*
-tree_print(test_tree, 0, "Head(0)\t")
-show_debug_message("Seaching (3): " + string(test_tree.find_of(3)))
-show_debug_message("Seaching (4): " + string(test_tree.find_of(4)))
-show_debug_message("Seaching (6): " + string(test_tree.find_of(6)))
-show_debug_message("Seaching (11): " + string(test_tree.find_of(11)))
-show_debug_message("Seaching (12): " + string(test_tree.find_of(12)))
-show_debug_message("\n")
-
-test_tree.insert(30)
-tree_print(test_tree, 0, "Head(0)\t")
-show_debug_message("\n")
-
-test_tree.erase_at(4) // 3
-test_tree.erase_at(6) // 8
-test_tree.erase_at(30) // 10 -> 11
-test_tree.erase_at(22) // 4.5
-tree_print(test_tree, 0, "Head(0)\t")
 show_debug_message("\n")
 /*
 var count_dem = count_if(test_sum.first(), test_sum.last(), function(Value) {

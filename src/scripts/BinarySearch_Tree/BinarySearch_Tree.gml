@@ -5,7 +5,7 @@ enum BSTree_type {
 	right
 }
 
-///@function 
+///@function BSTree_node(storage)
 function BSTree_node(Storage): Tree_node_tratit() constructor {
 	///@function set_parent(node)
 	static set_parent = function(Node) { underlying_set_parent(Node) }
@@ -168,17 +168,11 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	///@function last()
 	static last = function() { return undefined }
 
-	///@function make_node(value)
-	static make_node = function(Value) {
-		var Node = new BSTree_node(self).set(Value)
-		return Node
-	}
-
 	///@function insert(value)
 	static insert = function(Value) {
 		if 0 == inner_size {
 			inner_size++
-			node_head = make_node(Value)
+			node_head = new BSTree_node(self).set(Value)
 			return Iterator(node_head)
 		}
 
