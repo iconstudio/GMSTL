@@ -162,6 +162,7 @@
     {"first":121,"second":46,"amount":-1,},
   ],
   "ranges": [
+    {"lower":9,"upper":9,},
     {"lower":32,"upper":127,},
     {"lower":9647,"upper":9647,},
   ],

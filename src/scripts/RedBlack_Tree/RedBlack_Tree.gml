@@ -1,8 +1,7 @@
 enum RBColor { Black, Red }
 
 ///@function 
-function RBNode_Trait() constructor {
-	Tree_Node_Tratit()
+function RBNode_Trait(): Tree_Node_Tratit() constructor {
 	color = RBColor.Red
 }
 
@@ -41,11 +40,6 @@ function RBNode(Value, Color) constructor {
 	}
 }
 
-///@function make_rb_node(value, color, [parent=undefined])
-function make_rb_node(Value, Color, Parent) {
-	return (new RBNode(Value, Color, Parent))
-}
-
 function RedBlack_Tree(): Container() constructor {
 #region public
 	///@function size()
@@ -53,9 +47,6 @@ function RedBlack_Tree(): Container() constructor {
 
 	///@function empty()
 	static empty = function() { return bool(inner_size == 0) }
-
-	///@function valid(node)
-	static valid = function(Node) { return !is_undefined(Node) }
 
 	///@function first()
 	static first = function() { return (new iterator_type(self, 0)).pure() }
@@ -68,67 +59,6 @@ function RedBlack_Tree(): Container() constructor {
 
 	///@function back()
 	static back = function() { return last().get() }
-
-	///@function minimum([start_node=head])
-	static minimum = function() {
-		var Result, StartNode = 0 < argument_count ? argument[0] : node_head
-		while valid(StartNode) {
-			Result = StartNode
-			StartNode = StartNode.node_left
-		}
-		return Result
-	}
-
-	///@function maximum([start_node=head])
-	static maximum = function() {
-		var Result, StartNode = 0 < argument_count ? argument[0] : node_head
-		while valid(StartNode) {
-			Result = StartNode
-			StartNode = StartNode.node_right
-		}
-		return Result
-	}
-
-	///@function find_of(value)
-	static find_of = function(Value) {
-		if 0 == size()
-			return undefined
-
-		var Result, NodeIt = node_head
-		while valid(NodeIt) {
-			Result = NodeIt
-			if check_comparator(Value, NodeIt.value) {
-				return Result
-			} else {
-				if key_comparator(Value, NodeIt.value)
-					NodeIt = NodeIt.node_left
-				else
-					NodeIt = NodeIt.node_right
-			}
-
-		}
-		return undefined
-	}
-
-	///@function count_of(value)
-	static count_of = function(Value) {
-		if 0 == size()
-			return 0
-
-		var Result = 0, NodeIt = node_head
-		while valid(NodeIt) {
-			if check_comparator(Value, NodeIt.value) {
-				Result++
-			}
-
-			if key_comparator(Value, NodeIt.value)
-				NodeIt = NodeIt.node_left
-			else
-				NodeIt = NodeIt.node_right
-
-		}
-		return Result
-	}
 
 	///@function rotate_left(axis_node)
 	static rotate_left = function(Node) {
