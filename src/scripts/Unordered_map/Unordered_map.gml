@@ -43,7 +43,7 @@ function Unordered_map(): Container() constructor {
 	static last = function() { return undefined }
 
 	///@function insert([key, index])
-	static insert_at = function(values) {
+	static insert = function(values) {
 		var Key = values[0]
 		var Value = values[1]
 		ds_map_set(raw, Key, Value)
@@ -104,20 +104,23 @@ function Unordered_map(): Container() constructor {
 #endregion
 
 #region private
-	///@function 
-	static underlying_iterator_set = function(Index, Value) { return set_at(Index, Value) }
+	///@function function(index, value)
+	static _Under_iterator_set = function(Index, Value) { return set_at(Index, Value) }
 
-	///@function 
-	static underlying_iterator_get = function(Index) { return [Index, at(Index)] }
+	///@function function(index)
+	static _Under_iterator_get = function(Index) { return [Index, at(Index)] }
 
-	///@function 
-	static underlying_iterator_next = function(Index) { return ds_map_find_next(raw, Index) }
+	///@function function(value)
+	static _Under_iterator_add = insert
 
-	///@function 
-	static underlying_iterator_prev = function(Index) { return ds_map_find_previous(raw, Index) }
+	///@function function(index, value)
+	static _Under_iterator_insert = set_at
 
-	///@function 
-	static underlying_iterator_insert = undefined
+	///@function function(index)
+	static _Under_iterator_next = function(Index) { return ds_map_find_next(raw, Index) }
+
+	///@function function(index)
+	static _Under_iterator_prev = function(Index) { return ds_map_find_previous(raw, Index) }
 
 	raw = ds_map_create()
 #endregion
@@ -133,23 +136,10 @@ function Unordered_map(): Container() constructor {
 				for (var i = 0; i < ds_list_size(Item); ++i) insert(Item[| i])
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_map) {
 				// (*) Built-in Map
-				var Size = ds_map_size(Item)
-				if 0 < Size {
-					var MIt = ds_map_find_first(Item)
-					while true {
-						insert(MIt, ds_map_find_value(Item, MIt))
-						MIt = ds_map_find_next(Item, MIt)
-						if is_undefined(MIt)
-							break
-					}
-				}
-			} else if is_struct(Item) {
-				if is_iterable(Item) {
-					// (*) Paired-Container
-					foreach(Item.first(), Item.last(), function(Value) {
-						insert(Value)
-					})
-				}
+				ds_map_copy(raw, Item)
+			} else if is_struct(Item) and is_iterable(Item) {
+				// (*) Paired-Container
+				assign(Item.first(), Item.last())
 			} else {
 				// (*) Arg
 				insert(Item)

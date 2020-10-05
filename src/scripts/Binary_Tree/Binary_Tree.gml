@@ -1,5 +1,5 @@
 ///@function 
-function Tree_node_tratit() constructor {
+function Tree_node_trait() constructor {
 	value = undefined
 	parent = undefined
 	node_left = undefined
@@ -28,7 +28,7 @@ function Tree_node_tratit() constructor {
 	}
 
 	///@function 
-	static underlying_parent_clear = function() {
+	static _Under_parent_clear = function() {
 		if self == parent.node_left {
 			parent.node_left = undefined
 		} else if self == parent.node_right {
@@ -37,10 +37,10 @@ function Tree_node_tratit() constructor {
 	}
 
 	///@function 
-	static underlying_set_parent = function(Node) { parent = Node }
+	static _Under_set_parent = function(Node) { parent = Node }
 
 	///@function 
-	static underlying_set_left = function(Node) {
+	static _Under_set_left = function(Node) {
 		node_left = Node
 		if !is_undefined(Node) {
 			Node.parent = self
@@ -50,7 +50,7 @@ function Tree_node_tratit() constructor {
 	}
 
 	///@function 
-	static underlying_set_right = function(Node) {
+	static _Under_set_right = function(Node) {
 		node_right = Node
 		if !is_undefined(Node) {
 			Node.parent = self
@@ -60,9 +60,9 @@ function Tree_node_tratit() constructor {
 	}
 
 	///@function 
-	static underlying_destroy = function() {
+	static _Under_destroy = function() {
 		if !is_undefined(parent) {
-			underlying_parent_clear()
+			_Under_parent_clear()
 		}
 
 		if !is_undefined(node_left) {
@@ -78,15 +78,15 @@ function Tree_node_tratit() constructor {
 }
 
 ///@function 
-function Tree_node(): Tree_node_tratit() constructor {
+function Tree_node(): Tree_node_trait() constructor {
 	///@function set_parent(node)
-	static set_parent = function(Node) { underlying_set_parent(Node) }
+	static set_parent = function(Node) { _Under_set_parent(Node) }
 
 	///@function set_left(node)
-	static set_left = function(Node) { return underlying_set_left(Node) }
+	static set_left = function(Node) { return _Under_set_left(Node) }
 
 	///@function set_right(node)
-	static set_right = function(Node) { return underlying_set_right(Node) }
+	static set_right = function(Node) { return _Under_set_right(Node) }
 
 	///@function set_next(node)
 	static set_next = function(Node) {
@@ -109,7 +109,7 @@ function Tree_node(): Tree_node_tratit() constructor {
 			}
 			node_previous.set_next(undefined)
 		}
-		underlying_destroy()
+		_Under_destroy()
 
 		return node_previous
 	}
@@ -118,13 +118,13 @@ function Tree_node(): Tree_node_tratit() constructor {
 ///@function 
 function Binary_tree_trait(): Container() constructor {
 	///@function 
-	static underlying_cash_allocate = function() {
+	static _Under_cash_allocate = function() {
 		cash = 0
 		cash = array_create(cash_size, undefined)
 	}
 
 	///@function 
-	static underlying_make_node = function() { return new value_type() }
+	static _Under_make_node = function() { return new value_type() }
 
 	node_head = undefined
 	node_tail = undefined
@@ -147,7 +147,7 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	///@function clear()
 	static clear = function() {
 		if !is_undefined(node_head) {
-			underlying_clear(node_head)
+			_Under_clear(node_head)
 		}
 		node_head = undefined
 		inner_size = 0
@@ -168,7 +168,7 @@ function Binary_tree(): Binary_tree_trait() constructor {
 
 	///@function make_node(value)
 	static make_node = function(Value) {
-		var Node = underlying_make_node()
+		var Node = _Under_make_node()
 		Node.value = Value
 		return Node
 	}
@@ -222,9 +222,6 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	///@function push_back(value)
 	static push_back = function(Value) { insert(Value) }
 
-	///@function assign(begin, end)
-	static assign = function(First, Last) { clear(); foreach(First, Last, insert) }
-
 	///@function pop_back()
 	static pop_back = function() {
 		if 0 == inner_size {
@@ -276,23 +273,26 @@ function Binary_tree(): Binary_tree_trait() constructor {
 #endregion
 
 #region private
-	///@function 
-	static underlying_iterator_set = function(Index, Value) { return Index.value = Value; return self }
+	///@function function(index, value)
+	static _Under_iterator_set = function(Index, Value) { return Index.value = Value; return self }
+
+	///@function function(index)
+	static _Under_iterator_get = function(Index) { return Index.value }
+
+	///@function function(value)
+	static _Under_iterator_add = insert
+
+	///@function function(index, value)
+	static _Under_iterator_insert = undefined
+
+	///@function function(index)
+	static _Under_iterator_next = function(Index) { return Index.node_next }
+
+	///@function function(index)
+	static _Under_iterator_prev = function(Index) { return Index.node_previous }
 
 	///@function 
-	static underlying_iterator_get = function(Index) { return Index.value }
-
-	///@function 
-	static underlying_iterator_next = function(Index) { return Index.node_next }
-
-	///@function 
-	static underlying_iterator_prev = function(Index) { return Index.node_previous }
-
-	///@function 
-	static underlying_inserter_init = undefined
-
-	///@function 
-	static underlying_at = function(Index) {
+	static _Under_at = function(Index) {
 		if valid(Index) {
 			if Index < cash_size {
 				return cash[Index]
@@ -312,13 +312,13 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	}
 
 	///@function 
-	static underlying_clear = function(Node) {
+	static _Under_clear = function(Node) {
 		var Left = Node.node_left, Right = Node.node_right
 		if !is_undefined(Left)
-			underlying_clear(Left)
+			_Under_clear(Left)
 
 		if !is_undefined(Right)
-			underlying_clear(Right)
+			_Under_clear(Right)
 
 		delete Node
 	}

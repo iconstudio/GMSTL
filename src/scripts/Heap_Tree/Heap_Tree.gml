@@ -14,6 +14,12 @@
 */
 function Heap_tree(): List() constructor {
 #region public
+	///@function top()
+	static top = function() { return front() }
+
+	///@function tail()
+	static tail = function() { return back() }
+
 	///@function insert(value)
 	static insert = function(Value) {
 		if 0 == size() {
@@ -30,9 +36,6 @@ function Heap_tree(): List() constructor {
 		set_at(Index, Value)
 		return Parent
 	}
-
-	///@function assign(begin, end)
-	static assign = function(First, Last) { foreach(First, Last, insert) }
 
 	///@function pop_front()
 	static pop_front = function() { // overwrite
@@ -83,9 +86,6 @@ function Heap_tree(): List() constructor {
 
 #region private
 	///@function 
-	static valid = function(Index) { return bool(0 <= Index and Index < size()) }
-
-	///@function 
 	static left = function(Index) { return Index * 2 + 1 }
 
 	///@function 
@@ -93,6 +93,24 @@ function Heap_tree(): List() constructor {
 
 	///@function 
 	static find_parent = function(Index) { return floor((Index - 1) * 0.5) }
+
+	///@function function(index, value)
+	static _Under_iterator_set = undefined
+
+	///@function function(index)
+	static _Under_iterator_get = undefined
+
+	///@function function(value)
+	static _Under_iterator_add = insert
+
+	///@function function(index, value)
+	static _Under_iterator_insert = undefined
+
+	///@function function(index)
+	static _Under_iterator_next = undefined
+
+	///@function function(index)
+	static _Under_iterator_prev = undefined
 
 	key_comparator = compare_less
 #endregion

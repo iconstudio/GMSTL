@@ -22,9 +22,6 @@
 */
 function Priority_queue(): Heap_tree() constructor {
 #region public
-	///@function top()
-	static top = function() { return front() }
-
 	///@function push(value)
 	static push = function(Value) { return insert(Value) }
 
@@ -35,6 +32,23 @@ function Priority_queue(): Heap_tree() constructor {
 #endregion
 
 #region private
+	///@function function(index, value)
+	static _Under_iterator_set = undefined
+
+	///@function function(index)
+	static _Under_iterator_get = undefined
+
+	///@function function(value)
+	static _Under_iterator_add = push
+
+	///@function function(index, value)
+	static _Under_iterator_insert = undefined
+
+	///@function function(index)
+	static _Under_iterator_next = undefined
+
+	///@function function(index)
+	static _Under_iterator_prev = undefined
 #endregion
 
 	// ** Contructor **

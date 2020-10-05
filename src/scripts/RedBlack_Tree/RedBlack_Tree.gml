@@ -1,13 +1,13 @@
 enum RBColor { Black, Red }
 
 ///@function 
-function RBNode_Trait(): Tree_Node_Tratit() constructor {
+function RBNode_Trait(): Tree_node_trait() constructor {
 	color = RBColor.Red
 }
 
 ///@function RBNode(value, color, [parent=undefined])
 function RBNode(Value, Color) constructor {
-	Tree_Node_Tratit()
+	Tree_node_trait()
 
 	value = Value
 	color = Color
