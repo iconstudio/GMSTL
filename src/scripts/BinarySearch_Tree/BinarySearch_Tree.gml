@@ -231,7 +231,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 #region private
 	///@function 
-	static extract_key = function(Node) { return Node.value }
+	static _Under__Under_extract_key = function(Node) { return Node.value }
 
 	///@function 
 	static _Under_insert_at_node = function(Node, Value) {
@@ -281,7 +281,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 		var Node = node_head, CompVal
 		while !is_undefined(Node) {
-			CompVal = extract_key(Node)
+			CompVal = _Under_extract_key(Node)
 			if Value == CompVal {
 				return Node
 			} else {
@@ -297,7 +297,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	node_rightest = undefined
 	key_inquire_comparator = compare_less
 	key_comparator = function(a, b) {
-		var A = extract_key(a), B = extract_key(b)
+		var A = _Under_extract_key(a), B = _Under_extract_key(b)
 		if A == B
 			return b < a
 		else
