@@ -6,7 +6,7 @@
 #pragma once
 #ifndef _TUPLE_
 #define _TUPLE_
-#include <yvals_core.h>
+#include "yvals_core.h"
 #if _STL_COMPILER_PREPROCESSOR
 #include <new>
 #include <type_traits>
