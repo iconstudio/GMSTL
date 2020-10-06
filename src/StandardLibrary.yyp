@@ -40,8 +40,8 @@
     "name": "Default",
     "children": [],
   },
-  "RoomOrder": [
-    {"name":"roomExample","path":"rooms/roomExample/roomExample.yy",},
+  "RoomOrderNodes": [
+    {"roomId":{"name":"roomExample","path":"rooms/roomExample/roomExample.yy",},},
   ],
   "Folders": [
     {"folderPath":"folders/Sprites.yy","order":3,"resourceVersion":"1.0","name":"Sprites","tags":[],"resourceType":"GMFolder",},
@@ -62,9 +62,9 @@
   ],
   "IncludedFiles": [],
   "MetaData": {
-    "IDEVersion": "23.1.1.175",
+    "IDEVersion": "23.1.1.193",
   },
-  "resourceVersion": "1.3",
+  "resourceVersion": "1.4",
   "name": "StandardLibrary",
   "tags": [],
   "resourceType": "GMProject",

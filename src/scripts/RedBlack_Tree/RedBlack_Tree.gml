@@ -2,6 +2,7 @@ enum RBColor { Black, Red }
 
 ///@function RBNode(storage)
 function RBNode(Storage): BSTree_node(Storage) constructor {
+	is_nil = false
 	color = RBColor.Red
 
 	static toString = function() {
