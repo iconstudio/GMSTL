@@ -20,7 +20,7 @@ function List(): Container() constructor {
 	///@function empty()
 	static empty = function() { return ds_list_empty(raw) }
 
-	///@function valid(Index)
+	///@function valid(index)
 	static valid = function(Index) { return bool(0 <= Index and Index < size()) }
 
 	///@function clear()

@@ -20,7 +20,7 @@ function Array(): Container() constructor {
 	///@function empty()
 	static empty = function() { return bool(inner_size == 0) }
 
-	///@function valid(Index)
+	///@function valid(index)
 	static valid = function(Index) { return bool(0 <= Index and Index < inner_size) }
 
 	///@function clear()
