@@ -67,7 +67,7 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 	///@function insert(value)
 	///@description Imported from Visual Studio.
 	static insert = function(Value) { // This is a pure value.
-		var NewNode = _Under_insert(node_head, Value) // increasing size
+		var NewNode = _Under_insert(Value) // increasing size
 		show_debug_message("Value: " + string(Value))
 		if 2 < inner_size {
 			var Node = NewNode, Aunt = undefined, Aunt_is_alive, Aunt_is_red, Aunt_is_black

@@ -37,7 +37,7 @@ function BSTree_node(Storage): Tree_node_trait() constructor {
 	static get = function() { return value }
 	
 	///@function insert(value)
-	static insert = _Under_insert
+	static insert = function(Value) { return _Under_insert(Value) }
 
 	///@function destroy()
 	/*
@@ -177,13 +177,13 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static last = function() { return undefined }
 
 	///@function insert(value)
-	static insert = function(Value) { return Iterator(_Under_insert(node_head, Value)) }
+	static insert = function(Value) { return Iterator(_Under_insert(Value)) }
 
 	///@function insert_at(index, value)
 	static insert_at = function(Key, Value) {
 		var InsertedNode = _Under_location(Key)
 		if !is_undefined(InsertedNode) {
-			return Iterator(_Under_insert(InsertedNode, Value))
+			return Iterator(_Under_insert_at_node(InsertedNode, Value))
 		} else {
 			return insert(Value)
 		}
@@ -194,7 +194,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		if It.storage != self {
 			return undefined
 		} else {
-			return Iterator(_Under_insert(It.index, Value))
+			return Iterator(insert_at(It.index, Value))
 		}
 	}
 
@@ -260,14 +260,14 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	}
 
 	///@function 
-	static _Under_insert = function(StartNode, Value) {
-		if 0 == inner_size or is_undefined(StartNode) {
+	static _Under_insert = function(Value) {
+		if 0 == inner_size {
 			inner_size++
 			node_head = new value_type(self).set(Value)
 			return node_head
 		}
 
-		return _Under_insert_at_node(StartNode, Value)
+		return _Under_insert_at_node(node_head, Value)
 	}
 
 	///@function 
