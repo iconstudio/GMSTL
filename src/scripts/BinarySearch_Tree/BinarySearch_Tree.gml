@@ -7,6 +7,7 @@ enum BSTree_type {
 
 ///@function BSTree_node(storage)
 function BSTree_node(Storage): Tree_node_trait() constructor {
+#region public
 	///@function set_parent(node)
 	static set_parent = function(Node) { _Under_set_parent(Node) }
 
@@ -34,54 +35,9 @@ function BSTree_node(Storage): Tree_node_trait() constructor {
 
 	///@function get()
 	static get = function() { return value }
-
-	///@function insert_node(value)
-	static insert_node = function(Value) {
-		if Value == value {
-			return [self, BSTree_type.none]
-		} else {
-			var Compare = storage.key_inquire_comparator
-			if Compare(Value, value) {
-				if is_undefined(node_left) {
-					var ValueNode = new BSTree_node(storage).set(Value)
-					set_left(ValueNode)
-
-					if !is_undefined(node_previous)
-						node_previous.set_next(ValueNode)
-					ValueNode.set_next(self)
-
-					return [ValueNode, BSTree_type.left]
-				} else {
-					return node_left.insert_node(Value)
-				}
-			} else {
-				if is_undefined(node_right) {
-					var ValueNode = new BSTree_node(storage).set(Value)
-					set_right(ValueNode)
-
-					var Promote = parent, ProValue, Upheal
-					while !is_undefined(Promote) {
-						ProValue = Promote.value
-						if Compare(Value, ProValue) {
-							ValueNode.set_next(Promote)
-							break
-						} else {
-							Upheal = Promote.parent
-							if is_undefined(Upheal)
-								break
-
-							Promote = Upheal
-						}
-					}
-					set_next(ValueNode)
-
-					return [ValueNode, BSTree_type.right]
-				} else {
-					return node_right.insert_node(Value)
-				}
-			}
-		}
-	}
+	
+	///@function insert(value)
+	static insert = _Under_insert
 
 	///@function destroy()
 	/*
@@ -150,6 +106,58 @@ function BSTree_node(Storage): Tree_node_trait() constructor {
 	}
 
 	storage = Storage
+	static type = BSTree_node
+#endregion
+
+#region private
+	///@function 
+	static _Under_insert = function(Value) {
+		if Value == value {
+			return [self, BSTree_type.none]
+		} else {
+			var Compare = storage.key_inquire_comparator
+			if Compare(Value, value) {
+				if is_undefined(node_left) {
+					var ValueNode = new type(storage).set(Value)
+					set_left(ValueNode)
+
+					if !is_undefined(node_previous)
+						node_previous.set_next(ValueNode)
+					ValueNode.set_next(self)
+
+					return [ValueNode, BSTree_type.left]
+				} else {
+					return node_left.insert(Value)
+				}
+			} else {
+				if is_undefined(node_right) {
+					var ValueNode = new type(storage).set(Value)
+					set_right(ValueNode)
+
+					var Promote = parent, ProValue, Upheal
+					while !is_undefined(Promote) {
+						ProValue = Promote.value
+						if Compare(Value, ProValue) {
+							ValueNode.set_next(Promote)
+							break
+						} else {
+							Upheal = Promote.parent
+							if is_undefined(Upheal)
+								break
+
+							Promote = Upheal
+						}
+					}
+					set_next(ValueNode)
+
+					return [ValueNode, BSTree_type.right]
+				} else {
+					return node_right.insert(Value)
+				}
+			}
+		}
+	}
+#endregion
 }
 
 function BinarySearch_tree(): Binary_tree() constructor {
@@ -167,7 +175,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static last = function() { return undefined }
 
 	///@function insert(value)
-	static insert = function(Value) { return _Under_insert(node_head, Value) }
+	static insert = function(Value) { return Iterator(_Under_insert(node_head, Value)) }
 
 	///@function insert_at(index, value)
 	static insert_at = function(Key, Value) {
@@ -225,7 +233,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 	///@function 
 	static _Under_insert_at_node = function(Node, Value) {
-		var Result = Node.insert_node(Value)
+		var Result = Node.insert(Value)
 		var Where = Result[0], Branch = Result[1]
 		
 		if Branch != BSTree_type.none {
@@ -253,11 +261,11 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static _Under_insert = function(StartNode, Value) {
 		if 0 == inner_size or is_undefined(StartNode) {
 			inner_size++
-			node_head = new BSTree_node(self).set(Value)
-			return Iterator(node_head)
+			node_head = new value_type(self).set(Value)
+			return node_head
 		}
 
-		return Iterator(_Under_insert_at_node(StartNode, Value))
+		return _Under_insert_at_node(StartNode, Value)
 	}
 
 	///@function 

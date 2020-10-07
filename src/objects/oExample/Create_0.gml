@@ -38,12 +38,15 @@ function node_tree_print(Cont, NodeStart, Msg) {
 	}
 }
 
-test_tree = new BinarySearch_tree(test_sum)
+test_tree = new RedBlack_Tree(test_sum)
 test_tree.insert(5)
 test_tree.insert(12)
 test_tree.insert(7)
 test_tree.insert(16)
 node_tree_print(test_tree, test_tree.node_head)
+show_debug_message("")
+
+/*
 show_debug_message("")
 
 test_tree.erase_at(2)

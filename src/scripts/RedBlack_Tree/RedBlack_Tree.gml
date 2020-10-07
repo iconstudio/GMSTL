@@ -1,17 +1,28 @@
 enum RBColor { Black, Red }
 
-///@function RBNode(storage)
-function RBNode(Storage): BSTree_node(Storage) constructor {
-	is_nil = false
-	color = RBColor.Red
-
+///@function RBTree_node(storage)
+function RBTree_node(Storage): BSTree_node(Storage) constructor {
 	static toString = function() {
 		return (color == RBColor.Black ? "Black: " : "Red: ") + string(value)
 	}
+
+	
+	///@function insert(value)
+	static insert = {
+		_Under_insert
+	}
+
+	color = RBColor.Red
+	node_nil = Storage.node_nil
+
+	static type = RBTree_node
 }
 
 function RedBlack_Tree(): BinarySearch_tree() constructor {
 #region public
+	///@function valid(element)
+	static valid = function(Node) { return !is_undefined(Node) and Node != node_nil }
+
 	///@function rotate_left(axis_node)
 	static rotate_left = function(Node) {
 		var Right = Node.node_right
@@ -52,31 +63,28 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 		Left.set_right(Node)
 	}
 
-	///@function insert(item)
+	///@function insert(value)
 	///@description Imported from Visual Studio.
 	static insert = function(Value) { // This is a pure value.
-		var Size = inner_size++
-		if 0 == Size {
-			node_head = make_rb_node(Value, RBColor.Black)
-		} else {
-			var NewNode = make_rb_node(Value, RBColor.Red)
-			insert_recursive(NewNode, node_head)
-
-			var Node = NewNode, Aunt = undefined
-			for (; Node.parent.color == RBColor.Red;) { // both are red.
-				if !valid(Node.parent.parent)
-					break
+		var NewNode = _Under_insert(node_head, Value) // increasing size
+		show_debug_message("Value: " + string(Value))
+		if 2 < inner_size {
+			var Node = NewNode, Aunt = undefined, Aunt_is_alive, Aunt_is_red, Aunt_is_black
+			for (; valid(Node.parent) and valid(Node.parent.parent) and Node.parent.color == RBColor.Red;) { // both are red.
 
 				if Node.parent == Node.parent.parent.node_left {
 					Aunt = Node.parent.parent.node_right
+					Aunt_is_alive = valid(Aunt)
+					Aunt_is_red = (Aunt_is_alive and Aunt.color == RBColor.Red)
+					Aunt_is_black = !Aunt_is_alive or (Aunt_is_alive and Aunt.color == RBColor.Red)
 
-					if valid(Aunt) and Aunt.color == RBColor.Red { // Recoloring
+					if Aunt_is_red { // Recoloring
 						Node.parent.color = RBColor.Black
 						Aunt.color = RBColor.Black
 						Node.parent.parent.color = RBColor.Red
 
 						Node = Node.parent.parent
-					} else if Aunt.color == RBColor.Black { // parent's sibling has red and black children
+					} else if Aunt_is_black { // parent's sibling has red and black children
 						if Node == Node.parent.node_right { // rotate right child to left
 							Node = Node.parent
 							rotate_left(Node)
@@ -88,14 +96,17 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 					}
 				} else { // fixup red-red in right subtree
 					Aunt = Node.parent.parent.node_left
+					Aunt_is_alive = valid(Aunt)
+					Aunt_is_red = (Aunt_is_alive and Aunt.color == RBColor.Red)
+					Aunt_is_black = !Aunt_is_alive or (Aunt_is_alive and Aunt.color == RBColor.Red)
 
-					if valid(Aunt) and Aunt.color == RBColor.Red { // Recoloring
+					if Aunt_is_black { // Recoloring
 						Node.parent.color = RBColor.Black
 						Aunt.color = RBColor.Black
 						Node.parent.parent.color = RBColor.Red
 
 						Node = Node.parent.parent
-					} else if Aunt.color == RBColor.Black { // parent's sibling has red and black children
+					} else if Aunt_is_black { // parent's sibling has red and black children
 						if Node.parent == Node.parent.parent.node_left { // rotate left child to right
 							Node = Node.parent
 							rotate_right(Node)
@@ -106,15 +117,18 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 						rotate_left(Node.parent.parent)
 					}
 				}
+
 				if valid(Node) or !valid(Node.parent)
 					break
 			}
-			node_head.color = RBColor.Black
 		}
-		return inner_size
+
+		node_head.color = RBColor.Black
+		return Iterator(NewNode)
 	}
 
 	static type = RedBlack_Tree
+	static value_type = RBTree_node
 	static iterator_type = Bidirectional_iterator
 #endregion
 
@@ -122,6 +136,7 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 	key_inquire_compare = compare_complex_less
 	check_inquire_compare = compare_equal
 	check_comparator = function(a, b) { return check_inquire_compare(a.value, b.value) }
+	static node_nil = {}
 #endregion
 
 	// ** Contructor **
