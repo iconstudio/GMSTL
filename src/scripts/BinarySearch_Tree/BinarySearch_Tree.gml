@@ -157,6 +157,8 @@ function BSTree_node(Storage): Tree_node_trait() constructor {
 			}
 		}
 	}
+
+	Is_multiple = Storage.Is_multiple
 #endregion
 }
 
@@ -303,6 +305,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		return undefined
 	}
 
+	Is_multiple = false
 	node_rightest = undefined
 	key_inquire_comparator = compare_less
 	key_comparator = function(a, b) {
