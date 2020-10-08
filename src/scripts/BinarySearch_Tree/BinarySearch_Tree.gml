@@ -8,15 +8,6 @@ enum BSTree_type {
 ///@function BSTree_node(storage)
 function BSTree_node(Storage): Tree_node_trait() constructor {
 #region public
-	///@function set_parent(node)
-	static set_parent = function(Node) { _Under_set_parent(Node) }
-
-	///@function set_left(node)
-	static set_left = function(Node) { return _Under_set_left(Node) }
-
-	///@function set_right(node)
-	static set_right = function(Node) { return _Under_set_right(Node) }
-
 	///@function set_next(node)
 	static set_next = function(Node) {
 		if !is_undefined(node_next) {
@@ -37,7 +28,7 @@ function BSTree_node(Storage): Tree_node_trait() constructor {
 	static get = function() { return value }
 	
 	///@function insert(value)
-	static insert = function(Value) { return _Under_insert(Value) }
+	static insert = _Under_insert
 
 	///@function destroy()
 	/*
@@ -112,7 +103,7 @@ function BSTree_node(Storage): Tree_node_trait() constructor {
 #region private
 	///@function 
 	static _Under_insert = function(Value) {
-		if Value == value {
+		if !Is_multiple and Value == value {
 			return [self, BSTree_type.none]
 		} else {
 			var Compare = storage.key_inquire_comparator
@@ -235,6 +226,14 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 	///@function 
 	static _Under_insert_at_node = function(Node, Value) {
+		if 0 == inner_size {
+			inner_size++
+			node_head = new value_type(self).set(Value)
+			return node_head
+		}
+
+		return _Under_insert_at_node(node_head, Value)
+		
 		var Result = Node.insert(Value)
 		var Where = Result[0], Branch = Result[1]
 		

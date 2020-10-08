@@ -1,5 +1,3 @@
-function tag_none_iterator() {}
-
 function tag_const_iterator() {}
 
 function tag_forward_iterator() {}
@@ -57,12 +55,12 @@ function Iterator_trait(Index) constructor {
 	index = Index
 	index_modified = true
 	static type = undefined
-	static category = tag_none_iterator
+	static category = undefined
 }
 
 function Const_iterator(Index): Iterator_trait(Index) constructor {
 	///@function duplicate()
-	static duplicate = function() { return _Under_duplicate() }
+	static duplicate = _Under_duplicate
 
 	///@function get()
 	static get = function() {
@@ -123,6 +121,24 @@ function Const_iterator(Index): Iterator_trait(Index) constructor {
 				go_next()
 		}
 		return self
+	}
+
+	///@function distance(other)
+	static distance = function(Other) { 
+		if !is_struct(Other) {
+			return 0
+		} else {
+			var Result = 0
+			var Checker = duplicate()
+			while !is_undefined(Checker) {
+				if Checker.equals(Other)
+					break
+				Checker.go_next()
+				Result++
+			}
+			return Result
+		}
+		return 0
 	}
 
 	static type = Const_iterator

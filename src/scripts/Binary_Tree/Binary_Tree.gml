@@ -7,6 +7,29 @@ function Tree_node_trait() constructor {
 	node_next = undefined
 	node_previous = undefined
 
+	///@function set_parent(node)
+	static set_parent = function(Node) { parent = Node }
+
+	///@function set_left(node)
+	static set_left = function(Node) {
+		node_left = Node
+		if !is_undefined(Node) {
+			Node.parent = self
+			return true
+		}
+		return false
+	}
+
+	///@function set_right(node)
+	static set_right = function(Node) {
+		node_right = Node
+		if !is_undefined(Node) {
+			Node.parent = self
+			return true
+		}
+		return false
+	}
+
 	///@function find_leftest()
 	static find_leftest = function() {
 		var Result = self, Next = node_left
@@ -34,29 +57,6 @@ function Tree_node_trait() constructor {
 		} else if self == parent.node_right {
 			parent.node_right = undefined
 		}
-	}
-
-	///@function 
-	static _Under_set_parent = function(Node) { parent = Node }
-
-	///@function 
-	static _Under_set_left = function(Node) {
-		node_left = Node
-		if !is_undefined(Node) {
-			Node.parent = self
-			return true
-		}
-		return false
-	}
-
-	///@function 
-	static _Under_set_right = function(Node) {
-		node_right = Node
-		if !is_undefined(Node) {
-			Node.parent = self
-			return true
-		}
-		return false
 	}
 
 	///@function 
