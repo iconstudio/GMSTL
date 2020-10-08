@@ -93,22 +93,43 @@ function Priority_deque(): Container() constructor {
 	///@function clear()
 	static clear = function() { raw.clear() }
 
-	///@function set_key_extract(compare_function)
-	static set_key_extract = function(Func) { key_extractor = Func }
-
-	///@function set_key_compare(compare_function)
-	static set_key_compare = function(Func) { key_inquire_comparator = method(other, Func) }
-
 	///@function read(data_string)
 	static read = function(Str) { raw.read(Str) }
 
 	///@function write()
 	static write = function() { return raw.write() }
 
+	///@function destroy()
+	static destroy = function() { raw.destroy(); delete raw }
+
+	///@function set_key_extractor(compare_function)
+	static set_key_extractor = function(Func) { key_extractor = Func }
+
+	///@function set_key_compare(compare_function)
+	static set_key_compare = function(Func) { key_inquire_comparator = method(other, Func) }
+
 	static type = Priority_deque
 #endregion
 
 #region private
+	///@function function(index, value)
+	static _Under_iterator_set = undefined
+
+	///@function function(index)
+	static _Under_iterator_get = undefined
+
+	///@function function(value)
+	static _Under_iterator_add = push
+
+	///@function function(index, value)
+	static _Under_iterator_insert = undefined
+
+	///@function function(index)
+	static _Under_iterator_next = undefined
+
+	///@function function(index)
+	static _Under_iterator_prev = undefined
+
 	raw = new List()
 	key_extractor = function(Value) { return Value }
 	key_inquire_comparator = compare_less

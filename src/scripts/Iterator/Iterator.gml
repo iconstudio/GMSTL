@@ -1,5 +1,3 @@
-function tag_none_iterator() {}
-
 function tag_const_iterator() {}
 
 function tag_forward_iterator() {}
@@ -11,17 +9,17 @@ function tag_random_access_iterator() {}
 ///@function Iterator_trait(storage)
 function Iterator_trait(Index) constructor {
 	///@function 
-	static underlying_iterator_get = function() { return storage.underlying_iterator_get(index) }
+	static _Under_iterator_get = function() { return storage._Under_iterator_get(index) }
 
 	///@function 
-	static underlying_iterator_next = function() {
-		index = storage.underlying_iterator_next(index)
+	static _Under_iterator_next = function() {
+		index = storage._Under_iterator_next(index)
 		index_modified = true
 		return self
 	}
 
 	///@function 
-	static underlying_copy = function(Other) {
+	static _Under_copy = function(Other) {
 		if category != Other.category
 			throw "Types of two iterators unmatched."
 		Other.storage = storage
@@ -31,14 +29,14 @@ function Iterator_trait(Index) constructor {
 	}
 
 	///@function 
-	static underlying_duplicate = function() {
+	static _Under_duplicate = function() {
 		var Result = new type(storage)
-		return underlying_copy(Result)
+		return _Under_copy(Result)
 	}
 
 	///@function 
-	static underlying_move = function(Other) {
-		var Result = Other.underlying_copy(self)
+	static _Under_move = function(Other) {
+		var Result = Other._Under_copy(self)
 		delete Other
 		gc_collect()
 		return Result
@@ -57,24 +55,24 @@ function Iterator_trait(Index) constructor {
 	index = Index
 	index_modified = true
 	static type = undefined
-	static category = tag_none_iterator
+	static category = undefined
 }
 
 function Const_iterator(Index): Iterator_trait(Index) constructor {
 	///@function duplicate()
-	static duplicate = function() { return underlying_duplicate() }
+	static duplicate = _Under_duplicate
 
 	///@function get()
 	static get = function() {
 		if index_modified {
-			value = underlying_iterator_get()
+			value = _Under_iterator_get()
 			index_modified = false
 		}
 		return value
 	}
 
 	///@function go_next()
-	static go_next = function() { return underlying_iterator_next() }
+	static go_next = function() { return _Under_iterator_next() }
 
 	///@function make_next()
 	static make_next = function() { return (duplicate().go_next().pure()) }
@@ -125,25 +123,43 @@ function Const_iterator(Index): Iterator_trait(Index) constructor {
 		return self
 	}
 
+	///@function distance(other)
+	static distance = function(Other) { 
+		if !is_struct(Other) {
+			return 0
+		} else {
+			var Result = 0
+			var Checker = duplicate()
+			while !is_undefined(Checker) {
+				if Checker.equals(Other)
+					break
+				Checker.go_next()
+				Result++
+			}
+			return Result
+		}
+		return 0
+	}
+
 	static type = Const_iterator
 	static category = tag_const_iterator
 }
 
 function Forward_iterator(Index): Const_iterator(Index) constructor {
 	///@function 
-	static underlying_iterator_set = function(Index, Value) { return storage.underlying_iterator_set(Index, Value) }
+	static _Under_iterator_set = function(Index, Value) { return storage._Under_iterator_set(Index, Value) }
 
 	///@function 
-	static underlying_iterator_insert = function(Value) {
+	static _Under_iterator_insert = function(Value) {
 		index_modified = true
-		return underlying_iterator_insert(Value)
+		return _Under_iterator_insert(Value)
 	}
 
 	///@function set(value)
-	static set = function(Value) { return underlying_iterator_set(index, Value) }
+	static set = function(Value) { return _Under_iterator_set(index, Value) }
 
 	///@function insert(value)
-	static insert = function(Value) { return underlying_iterator_insert(index, Value) }
+	static insert = function(Value) { return _Under_iterator_insert(index, Value) }
 
 	///@function swap(iterator)
 	static swap = function(It) {
@@ -159,17 +175,17 @@ function Forward_iterator(Index): Const_iterator(Index) constructor {
 
 function Bidirectional_iterator(Index): Forward_iterator(Index) constructor {
 	///@function 
-	static underlying_iterator_prev = function() {
-		index = storage.underlying_iterator_prev(index)
+	static _Under_iterator_prev = function() {
+		index = storage._Under_iterator_prev(index)
 		index_modified = true
 		return self
 	}
 
 	///@function go_prev()
-	static go_prev = function() { return underlying_iterator_prev(); index_modified = true }
+	static go_prev = function() { return _Under_iterator_prev(); index_modified = true }
 
 	///@function make_previous()
-	static make_previous = function() { return (underlying_duplicate().go_prev().pure()) }
+	static make_previous = function() { return (_Under_duplicate().go_prev().pure()) }
 
 	///@function advance(other)
 	static advance = function(Other) {
@@ -253,17 +269,31 @@ function Iterator(Index) {
 	if !is_struct(self)
 		throw "Cannot make a iterator on outer scope!"
 
-	return underlying_make_iterator(Index).pure()
+	return _Under_make_iterator(Index).pure()
 }
 
 ///@function iterator_distance(iterator_1, iterator_2)
 function iterator_distance(ItA, ItB) {
-	if is_real(ItA) and is_real(ItB)
-		abs(ItB - ItA)
-	else if is_iterator(ItA)
-		return ItA.distance(ItB)
-	else if is_iterator(ItB)
-		return ItB.distance(ItA)
+	if is_real(ItA) and is_real(ItB) {
+		return abs(ItB - ItA)
+	} else {
+		var CheckA = is_iterator(ItA), CheckB = is_iterator(ItB)
+		if CheckA and !CheckB {
+			return ItA.distance(ItB)
+		} else if !CheckA and CheckB {
+			return ItB.distance(ItA)
+		} else { // both are iterator
+			var TagA = ItA.category, TagB = ItB.category
+			if TagA == TagB and TagA == tag_random_access_iterator {
+				return ItA.distance(ItB)
+			} else if TagA != tag_random_access_iterator or TagB != tag_random_access_iterator {
+				var Result = 0
+				while ItA.not_equals(ItB)
+					Result++
+				return Result
+			}
+		}
+	}
 	return 0
 }
 

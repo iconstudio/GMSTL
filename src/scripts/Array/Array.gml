@@ -20,11 +20,14 @@ function Array(): Container() constructor {
 	///@function empty()
 	static empty = function() { return bool(inner_size == 0) }
 
-	///@function valid(Index)
+	///@function valid(index)
 	static valid = function(Index) { return bool(0 <= Index and Index < inner_size) }
 
+	///@function clear()
+	static clear = function() { raw = 0; inner_index = 0; raw = array_create(inner_size) }
+
 	///@function at(index)
-	static at = function(Index) { if !valid(Index) return undefined; return raw[Index] }
+	static at = function(Index) {if !valid(Index) return undefined; return raw[Index] }
 
 	///@function front()
 	static front = function() { return at(0) }
@@ -41,17 +44,6 @@ function Array(): Container() constructor {
 	//////@function set_at(index, value)
 	static set_at = function(Index, Value) { raw[Index] = Value; return self }
 
-	///@function assign(begin, end)
-	static assign = function(First, Last) {
-		First = check_iterator(First)
-
-		var Output = 0
-		while First.not_equals(Last) {
-			set_at(Output++, First.get())
-			First.go_next()
-		}
-	}
-
 	///@function location(value)
 	static location = function(Value) { return find(first(), last(), Value) }
 
@@ -66,30 +58,40 @@ function Array(): Container() constructor {
 #endregion
 
 #region private
-	///@function 
-	static underlying_iterator_set = function(Index, Value) { return set_at(Index, Value) }
+	///@function function(index, value)
+	static _Under_iterator_set = set_at
 
-	///@function 
-	static underlying_iterator_get = function(Index) { return at(Index) }
+	///@function function(index)
+	static _Under_iterator_get = at
 
-	///@function 
-	static underlying_iterator_next = function(Index) { return Index + 1 }
+	///@function function(value)
+	static _Under_iterator_add = function(Value) {
+		if inner_size <= inner_index
+			throw "Cannot add more values into the Array."
+		set_at(inner_index, Value)
+		inner_index++
+	}
 
-	///@function 
-	static underlying_iterator_prev = function(Index) { return Index - 1 }
+	///@function function(index, value)
+	static _Under_iterator_insert = set_at
 
-	///@function 
-	static underlying_iterator_insert = undefined
+	///@function function(index)
+	static _Under_iterator_next = function(Index) { return Index + 1 }
+
+	///@function function(index)
+	static _Under_iterator_prev = function(Index) { return Index - 1 }
 
 	///@function
-	static underlying_reserve = function(Size) {
+	static _Under_reserve = function(Size) {
 		raw = 0
+		inner_index = 0
 		inner_size = Size
 		raw = array_create(Size)
 	}
 
 	raw = -1
 	inner_size = 0
+	inner_index = -1
 #endregion
 
 	// ** Contructor **
@@ -98,19 +100,19 @@ function Array(): Container() constructor {
 			var Item = argument[0]
 			if is_array(Item) {
 				// (*) Built-in Array
-				underlying_reserve(array_length(Item))
+				_Under_reserve(array_length(Item))
 				array_copy(raw, 0, Item, 0, inner_size)
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
-				underlying_reserve(ds_list_size(Item))
+				_Under_reserve(ds_list_size(Item))
 				for (var i = 0; i < inner_size; ++i) set_at(i, Item[| i])
 			} else if is_struct(Item) and is_iterable(Item) {
 				// (*) Container
-				underlying_reserve(Item.size())
+				_Under_reserve(Item.size())
 				assign(Item.first(), Item.last())
 			} else {
 				// (*) Arg
-				underlying_reserve(1)
+				_Under_reserve(1)
 				set_at(0, Item)
 			}
 		} else {
@@ -123,7 +125,7 @@ function Array(): Container() constructor {
 				}
 			}
 			// (*) Arg0, Arg1, ...
-			underlying_reserve(argument_count)
+			_Under_reserve(argument_count)
 			for (var i = 0; i < argument_count; ++i) set_at(i, argument[i])
 		}
 	}

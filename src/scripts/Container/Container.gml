@@ -1,8 +1,13 @@
 function Container() {
 #region public
+	///@function data()
 	static data = function() { return raw }
 
+	///@function duplicate()
 	static duplicate = function() { return new type(self) }
+
+	///@function assign(begin, end)
+	static assign = function(First, Last) { clear(); foreach(First, Last, _Under_iterator_add) }
 
 	static type = Container
 	static iterator_type = undefined
@@ -10,11 +15,29 @@ function Container() {
 
 #region private
 	///@function 
-	static underlying_make_iterator = function(Index) {
+	static _Under_make_iterator = function(Index) {
 		var Iter = new iterator_type(Index)
 		Iter.storage = self
 		return Iter
 	}
+
+	///@function function(index, value)
+	static _Under_iterator_set = undefined
+
+	///@function function(index)
+	static _Under_iterator_get = undefined
+
+	///@function function(value)
+	static _Under_iterator_add = undefined
+
+	///@function function(index, value)
+	static _Under_iterator_insert = undefined
+
+	///@function function(index)
+	static _Under_iterator_next = undefined
+
+	///@function function(index)
+	static _Under_iterator_prev = undefined
 
 	raw = undefined
 #endregion

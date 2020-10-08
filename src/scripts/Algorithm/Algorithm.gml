@@ -468,8 +468,9 @@ function lower_bound(First, Last, Value) { // return the first and largest eleme
 
 		if Compare(It.get(), Value) {
 			It.go_next()
-		  First = It
-		  count -= Step + 1
+			delete First
+			First = It
+			count -= Step + 1
 		} else {
 			count = Step
 		}
@@ -493,8 +494,9 @@ function upper_bound(First, Last, Value) { // return a greater element to the va
 
 		if !Compare(Value, It.get()) {
 			It.go_next()
-		  First = It
-		  count -= Step + 1
+			delete First
+			First = It
+			count -= Step + 1
 		} else {
 			count = Step
 		}
@@ -504,8 +506,6 @@ function upper_bound(First, Last, Value) { // return a greater element to the va
 
 ///@function binary_search(begin, end, value, [comparator=compare_less])
 function binary_search(First, Last, Value) {
-	First = check_iterator(First)
-
 	var Compare
 	if 3 < argument_count
 		Compare = argument[3]

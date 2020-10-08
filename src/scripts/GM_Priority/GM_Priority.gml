@@ -50,9 +50,6 @@ function GM_Priority(): Container() constructor {
 	///@function push(value)
 	static push = function(Value) { var Pair = argument[0]; return insert_at(Pair[0], Pair[1]) }
 
-	///@function assign(begin, end)
-	static assign = function(First, Last) { clear(); foreach(First, Last, push) }
-
 	///@function erase_of(value)
 	static erase_of = function(Value) { ds_priority_delete_value(raw, Value) }
 
@@ -81,6 +78,24 @@ function GM_Priority(): Container() constructor {
 #endregion
 
 #region private
+	///@function function(index, value)
+	static _Under_iterator_set = undefined
+
+	///@function function(index)
+	static _Under_iterator_get = undefined
+
+	///@function function(value)
+	static _Under_iterator_add = push
+
+	///@function function(index, value)
+	static _Under_iterator_insert = insert_at
+
+	///@function function(index)
+	static _Under_iterator_next = undefined
+
+	///@function function(index)
+	static _Under_iterator_prev = undefined
+
 	raw = ds_priority_create()
 #endregion
 

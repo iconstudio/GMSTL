@@ -20,7 +20,7 @@ function List(): Container() constructor {
 	///@function empty()
 	static empty = function() { return ds_list_empty(raw) }
 
-	///@function valid(Index)
+	///@function valid(index)
 	static valid = function(Index) { return bool(0 <= Index and Index < size()) }
 
 	///@function clear()
@@ -55,9 +55,6 @@ function List(): Container() constructor {
 
 	///@function push_back(value)
 	static push_back = function(Value) { ds_list_add(raw, Value); return self }
-
-	///@function assign(begin, end)
-	static assign = function(First, Last) { clear(); foreach(First, Last, push_back) }
 
 	///@function erase_at(index)
 	static erase_at = function(Index) { var Result = at(Index); ds_list_delete(raw, Index); return Result }
@@ -112,20 +109,23 @@ function List(): Container() constructor {
 #endregion
 
 #region private
-	///@function 
-	static underlying_iterator_set = function(Index, Value) { return set_at(Index, Value) }
+	///@function function(index, value)
+	static _Under_iterator_set = set_at
 
-	///@function 
-	static underlying_iterator_get = function(Index) { return at(Index) }
+	///@function function(index)
+	static _Under_iterator_get = at
 
-	///@function 
-	static underlying_iterator_next = function(Index) { return Index + 1 }
+	///@function function(value)
+	static _Under_iterator_add = push_back
 
-	///@function 
-	static underlying_iterator_prev = function(Index) { return Index - 1 }
+	///@function function(index, value)
+	static _Under_iterator_insert = insert_at
 
-	///@function 
-	static underlying_iterator_insert = function(Index, Value) { return insert_at(Index, Value) }
+	///@function function(index)
+	static _Under_iterator_next = function(Index) { return Index + 1 }
+
+	///@function function(index)
+	static _Under_iterator_prev = function(Index) { return Index - 1 }
 
 	raw = ds_list_create()
 	clear() // To avoid the 0-populate-value problem.

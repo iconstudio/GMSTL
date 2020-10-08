@@ -36,9 +36,6 @@ function Stack(): Container() constructor {
 	///@function push_back(value)
 	static push_back = function(Value) { ds_stack_push(raw, Value) }
 
-	///@function assign(begin, end)
-	static assign = function(First, Last) { clear(); foreach(First, Last, push_back) }
-
 	///@function pop()
 	static pop = function() { ds_stack_pop(raw) }
 
@@ -58,6 +55,24 @@ function Stack(): Container() constructor {
 #endregion
 
 #region private
+	///@function function(index, value)
+	static _Under_iterator_set = undefined
+
+	///@function function(index)
+	static _Under_iterator_get = undefined
+
+	///@function function(value)
+	static _Under_iterator_add = push
+
+	///@function function(index, value)
+	static _Under_iterator_insert = undefined
+
+	///@function function(index)
+	static _Under_iterator_next = undefined
+
+	///@function function(index)
+	static _Under_iterator_prev = undefined
+
 	raw = ds_stack_create()
 #endregion
 

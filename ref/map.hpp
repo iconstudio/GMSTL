@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #pragma once
+#define _NODISCARD
 #ifndef _MAP_
 #define _MAP_
 #include "yvals_core.h"
@@ -23,14 +24,21 @@ _STL_DISABLE_CLANG_WARNINGS
 #pragma push_macro("new")
 #undef new
 
+// ** pair **
+template <typename _Ty1, typename _Ty2>
+struct pair {
+    _Ty1 first;
+    _Ty2 second;
+};
+
 namespace std {
-  // CLASS TEMPLATE _Tmap_traits
+  // CLASS TEMPLATE Tree_proxy
   template <class _Kty, // key type
       class _Ty, // mapped type
       class _Pr, // comparator predicate type
       class _Alloc, // actual allocator type (should be value allocator)
       bool _Mfl> // true if multiple equivalent keys are permitted
-  class _Tmap_traits { // traits required to make _Tree behave like a map
+  class Tree_proxy { // traits required to make Tree behave like a map
   public:
       using key_type       = _Kty;
       using value_type     = pair<const _Kty, _Ty>;
@@ -58,7 +66,7 @@ namespace std {
           }
 
       protected:
-          friend _Tree<_Tmap_traits>;
+          friend Tree<Tree_proxy>;
 
           value_compare(key_compare _Pred) : comp(_Pred) {}
 
@@ -73,13 +81,13 @@ namespace std {
 
   // CLASS TEMPLATE map
   template <class _Kty, class _Ty, class _Pr = less<_Kty>, class _Alloc = allocator<pair<const _Kty, _Ty>>>
-  class map : public _Tree<_Tmap_traits<_Kty, _Ty, _Pr, _Alloc, false>> {
+  class map : public Tree<Tree_proxy<_Kty, _Ty, _Pr, _Alloc, false>> {
       // ordered red-black tree of {key, mapped} values, unique keys
   public:
       static_assert(!_ENFORCE_MATCHING_ALLOCATORS || is_same_v<pair<const _Kty, _Ty>, typename _Alloc::value_type>,
           _MISMATCHED_ALLOCATOR_MESSAGE("map<Key, Value, Compare, Allocator>", "pair<const Key, Value>"));
 
-      using _Mybase                = _Tree<_Tmap_traits<_Kty, _Ty, _Pr, _Alloc, false>>;
+      using _Mybase                = Tree<Tree_proxy<_Kty, _Ty, _Pr, _Alloc, false>>;
       using _Nodeptr               = typename _Mybase::_Nodeptr;
       using key_type               = _Kty;
       using mapped_type            = _Ty;
@@ -379,13 +387,13 @@ namespace std {
 
   // CLASS TEMPLATE multimap
   template <class _Kty, class _Ty, class _Pr = less<_Kty>, class _Alloc = allocator<pair<const _Kty, _Ty>>>
-  class multimap : public _Tree<_Tmap_traits<_Kty, _Ty, _Pr, _Alloc, true>> {
+  class multimap : public Tree<Tree_proxy<_Kty, _Ty, _Pr, _Alloc, true>> {
       // ordered red-black tree of {key, mapped} values, non-unique keys
   public:
       static_assert(!_ENFORCE_MATCHING_ALLOCATORS || is_same_v<pair<const _Kty, _Ty>, typename _Alloc::value_type>,
           _MISMATCHED_ALLOCATOR_MESSAGE("multimap<Key, Value, Compare, Allocator>", "pair<const Key, Value>"));
 
-      using _Mybase                = _Tree<_Tmap_traits<_Kty, _Ty, _Pr, _Alloc, true>>;
+      using _Mybase                = Tree<Tree_proxy<_Kty, _Ty, _Pr, _Alloc, true>>;
       using key_type               = _Kty;
       using mapped_type            = _Ty;
       using key_compare            = _Pr;
