@@ -28,7 +28,52 @@ function BSTree_node(Storage): Tree_node_trait() constructor {
 	static get = function() { return value }
 	
 	///@function insert(value)
-	static insert = _Under_insert
+	static insert = function(Value) {
+		if !Is_multiple and Value == value {
+			return [self, BSTree_type.none]
+		} else {
+			var Compare = storage.key_inquire_comparator
+			if Compare(Value, value) {
+				if is_undefined(node_left) {
+					var ValueNode = new type(storage).set(Value)
+					set_left(ValueNode)
+
+					if !is_undefined(node_previous)
+						node_previous.set_next(ValueNode)
+					ValueNode.set_next(self)
+
+					return [ValueNode, BSTree_type.left]
+				} else {
+					return node_left.insert(Value)
+				}
+			} else {
+				if is_undefined(node_right) {
+					var ValueNode = new type(storage).set(Value)
+					set_right(ValueNode)
+
+					var Promote = parent, ProValue, Upheal
+					while !is_undefined(Promote) {
+						ProValue = Promote.value
+						if Compare(Value, ProValue) {
+							ValueNode.set_next(Promote)
+							break
+						} else {
+							Upheal = Promote.parent
+							if is_undefined(Upheal)
+								break
+
+							Promote = Upheal
+						}
+					}
+					set_next(ValueNode)
+
+					return [ValueNode, BSTree_type.right]
+				} else {
+					return node_right.insert(Value)
+				}
+			}
+		}
+	}
 
 	///@function destroy()
 	/*
@@ -101,54 +146,6 @@ function BSTree_node(Storage): Tree_node_trait() constructor {
 #endregion
 
 #region private
-	///@function 
-	static _Under_insert = function(Value) {
-		if !Is_multiple and Value == value {
-			return [self, BSTree_type.none]
-		} else {
-			var Compare = storage.key_inquire_comparator
-			if Compare(Value, value) {
-				if is_undefined(node_left) {
-					var ValueNode = new type(storage).set(Value)
-					set_left(ValueNode)
-
-					if !is_undefined(node_previous)
-						node_previous.set_next(ValueNode)
-					ValueNode.set_next(self)
-
-					return [ValueNode, BSTree_type.left]
-				} else {
-					return node_left.insert(Value)
-				}
-			} else {
-				if is_undefined(node_right) {
-					var ValueNode = new type(storage).set(Value)
-					set_right(ValueNode)
-
-					var Promote = parent, ProValue, Upheal
-					while !is_undefined(Promote) {
-						ProValue = Promote.value
-						if Compare(Value, ProValue) {
-							ValueNode.set_next(Promote)
-							break
-						} else {
-							Upheal = Promote.parent
-							if is_undefined(Upheal)
-								break
-
-							Promote = Upheal
-						}
-					}
-					set_next(ValueNode)
-
-					return [ValueNode, BSTree_type.right]
-				} else {
-					return node_right.insert(Value)
-				}
-			}
-		}
-	}
-
 	Is_multiple = Storage.Is_multiple
 #endregion
 }
