@@ -6,13 +6,6 @@ function RBTree_node(Storage): BSTree_node(Storage) constructor {
 		return (color == RBColor.Black ? "Black: " : "Red: ") + string(value)
 	}
 
-	///@function insert(value)
-	static insert = function(Value){
-		var Info = _Under_insert(Value)
-		var Node = Info[0], Position = Info[1]
-		
-	}
-
 	color = RBColor.Red
 	node_nil = Storage.node_nil
 
