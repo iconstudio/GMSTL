@@ -171,7 +171,13 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static insert = function(Value) { Iterator(_Under_insert_at_node(node_head, Value)) }
 
 	///@function insert_at(index, value)
-	static insert_at = function(Key, Value) { return Iterator(_Under_insert_at_node(_Under_lower_bound(Key), Value)) }
+	static insert_at = function(Key, Value) {
+		var Loc = _Under_lower_bound(Key)
+		if !is_undefined(Loc)
+			return Iterator(_Under_insert_at_node(Loc, Value))
+		else
+			return undefined
+	}
 
 	///@function insert_iter(iterator, value)
 	static insert_iter = function(It, Value) {

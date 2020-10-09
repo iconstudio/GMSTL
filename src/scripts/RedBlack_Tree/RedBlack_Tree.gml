@@ -20,8 +20,37 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 	static valid = function(Node) { return !is_undefined(Node) and Node != node_nil }
 
 	///@function insert(value)
-	///@description Imported from Visual Studio.
-	static insert = function(Value) { return Iterator(_Under_insert_and_fix(Value)) }
+	static insert = function(Value) { return Iterator(_Under_insert_at_node(node_head, Value)) }
+
+	///@function insert_at(index, value)
+	static insert_at = function(Key, Value) {
+		var Loc = _Under_lower_bound(Key)
+		if !is_undefined(Loc)
+			return Iterator(_Under_insert_at_node(Loc, Value))
+		else
+			return undefined
+	}
+
+	///@function insert_iter(iterator, value)
+	static insert_iter = function(It, Value) {
+		if It.storage == self
+			return insert_at(It.index, Value)
+		else
+			return undefined
+	}
+
+	///@function erase_at(index)
+	static erase_at = function(Key) {
+		var Where = _Under_lower_bound(Key)
+		if !is_undefined(Where)
+			_Under_erase_node(Where)
+	}
+
+	///@function erase_iter(iterator)
+	static erase_iter = function(It) {
+		if It.storage == self
+			_Under_erase_node(It.index)
+	}
 
 	static type = RedBlack_Tree
 	static value_type = RBTree_node
@@ -34,13 +63,13 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 		var Succesor = Node.node_right
 		Node.node_right = Succesor.node_left
 
-		if !is_undefined(Succesor.node_left) {
+		if valid(Succesor.node_left) {
 			Succesor.node_left.parent = Node
 		}
 
+		Succesor.set_parent(Node.parent)
 		if Node == node_head {
 			node_head = Succesor
-			Succesor.set_parent(undefined)
 		} else if Node == Node.parent.node_left {
 			Node.parent.set_left(Succesor)
 		} else {
@@ -55,13 +84,13 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 		var Succesor = Node.node_left
 		Node.node_left = Succesor.node_right
 
-		if !is_undefined(Succesor.node_right) {
+		if valid(Succesor.node_right) {
 			Succesor.node_right.parent = Node
 		}
 
+		Succesor.set_parent(Node.parent)
 		if Node == node_head {
 			node_head = Succesor
-			Succesor.set_parent(undefined)
 		} else if Node == Node.parent.node_right {
 			Node.parent.set_right(Succesor)
 		} else {
@@ -71,11 +100,12 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 		Succesor.set_right(Node)
 	}
 
-	static _Under_insert_and_fix = function(Value) { // This is a pure value.
-		var Node = _Under_insert_at_node(node_head, Value) // increasing size
+	///@function 
+	static _Under_insert_and_fix = function(Node, Value) { // This is a pure value.
+		Node = _Under_insert_at_node(Node, Value) // increasing size
 		if inner_size == 1 {
 			Node.color = RBColor.Black
-			show_debug_message("New Node: " + string(Node))
+			show_debug_message("Head Node: " + string(Node))
 			return Node
 		}
 		show_debug_message("New Node: " + string(Node))
@@ -89,8 +119,10 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 				Aunt = Grandparent.node_right
 			else
 				Aunt = Grandparent.node_left
-			Aunt_is_alive = !is_undefined(Aunt)
+			Aunt_is_alive = valid(Aunt)
 			Aunt_is_red = (Aunt_is_alive and Aunt.color == RBColor.Red)
+			// Every nil node is BLACK.
+			Aunt_is_black = (Aunt_is_alive and Aunt.color == RBColor.Black) or (!Aunt_is_alive)
 
 			if Aunt_is_red { // Recoloring
 				Node.parent.color = RBColor.Black
@@ -124,10 +156,18 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 		return Node
 	}
 
+	///@function 
+	static _Under_erase_node = function(Node) {
+		
+	}
+
 	key_inquire_compare = compare_complex_less
 	check_inquire_compare = compare_equal
 	check_comparator = function(a, b) { return check_inquire_compare(a.value, b.value) }
-	static node_nil = {}
+	static node_nil = {
+		parent: undefined,
+		color: RBColor.Black
+	}
 #endregion
 
 	// ** Contructor **

@@ -25,12 +25,9 @@ tree_indicator_start_pos = [room_width * 0.5, room_height * 0.2]
 tree_indicator_node_radius = 16
 
 tree_indicator_node_link_length_begin = 190
-tree_indicator_node_link_length_end = tree_indicator_node_radius * 2
-tree_indicator_node_link_length = tree_indicator_node_link_length_begin
-tree_indicator_node_link_angle_begin = 10
+tree_indicator_node_link_length_end = tree_indicator_node_radius * 3
+tree_indicator_node_link_angle_begin = 8
 tree_indicator_node_link_angle_end = 75
-tree_indicator_node_link_angle = tree_indicator_node_link_angle_begin
-
 test_tree = new RedBlack_Tree(test_sum)
 test_tree.insert(5)
 test_tree.insert(12)
@@ -42,7 +39,7 @@ repeat 60
 
 tree_head = test_tree.node_head
 tree_size = test_tree.size()
-tree_scaler = ceil(log2(tree_size) + 1)
+tree_scaler = ceil(log2(tree_size))
 
 function rbtree_print(Cont, NodeStart, Msg) {
 	Msg = select_argument(Msg, "[" + string(NodeStart) + "]\t")
@@ -84,26 +81,34 @@ function draw_rbtree(Dx, Dy, Node, Height) {
 
 	var Indicator_ratio = Height / tree_scaler
 	var Length_ratio = min(1, Indicator_ratio * 0.5)
-	var Angle_ratio = min(1, Indicator_ratio * Indicator_ratio * 2)
+	var Angle_ratio = min(1, Indicator_ratio * Indicator_ratio * 1.7)
 	var Length = lerp(tree_indicator_node_link_length_begin, tree_indicator_node_link_length_end, Length_ratio)
 	var Angle = lerp(tree_indicator_node_link_angle_begin, tree_indicator_node_link_angle_end, Angle_ratio)
 	var Llx = lengthdir_x(1, 180 + Angle), Lly = lengthdir_y(1, 180 + Angle), Nx, Ny
-	var Scolor, Ecolor
+	var Scolor, Ecolor, Alen = Length - tree_indicator_node_radius
 
 	if LeftChk {
 		Nx = Dx + Llx * Length
 		Ny = Dy + Lly * Length
-		if Node.color == RBColor.Red
-			Scolor = $ff
-		else
-			Scolor = $101010
-		if LeftNode.color == RBColor.Red
-			Ecolor = $ff
-		else
-			Ecolor = $101010
-		draw_set_color($ffffff)
-		draw_line_width(Dx, Dy, Nx, Ny, 6)
-		draw_line_width_color(Dx, Dy, Nx, Ny, 4, Scolor, Ecolor)
+		if LeftNode.node_next == Node {
+			draw_set_color($adf8350)
+			var Ax = Nx - Llx * Alen
+			var Ay = Ny - Lly * Alen
+			draw_line_width(Dx + Llx * 30, Dy + Lly * 30, Nx, Ny, 4)
+			draw_arrow(Nx, Ny, Ax, Ay, 18)
+		} else {
+			if Node.color == RBColor.Red
+				Scolor = $ff
+			else
+				Scolor = $101010
+			if LeftNode.color == RBColor.Red
+				Ecolor = $ff
+			else
+				Ecolor = $101010
+			draw_set_color($ffffff)
+			draw_line_width(Dx, Dy, Nx, Ny, 6)
+			draw_line_width_color(Dx, Dy, Nx, Ny, 4, Scolor, Ecolor)
+		}
 
 		draw_rbtree(Nx, Ny, LeftNode, Height + 1)
 	}
@@ -111,17 +116,25 @@ function draw_rbtree(Dx, Dy, Node, Height) {
 	if RightChk {
 		Nx = Dx - Llx * Length
 		Ny = Dy + Lly * Length
-		if Node.color == RBColor.Red
-			Scolor = $ff
-		else
-			Scolor = $101010
-		if RightNode.color == RBColor.Red
-			Ecolor = $ff
-		else
-			Ecolor = $101010
-		draw_set_color($ffffff)
-		draw_line_width(Dx, Dy, Nx, Ny, 6)
-		draw_line_width_color(Dx, Dy, Nx, Ny, 4, Scolor, Ecolor)
+		if Node.node_next == RightNode {
+			draw_set_color($adf8350)
+			var Ax = Dx - Llx * Alen
+			var Ay = Dy + Lly * Alen
+			draw_line_width(Dx, Dy, Nx + Llx * 30, Ny - Lly * 30, 4)
+			draw_arrow(Dx, Dy, Ax, Ay, 18)
+		} else {
+			if Node.color == RBColor.Red
+				Scolor = $0000ff
+			else
+				Scolor = $101010
+			if RightNode.color == RBColor.Red
+				Ecolor = $0000ff
+			else
+				Ecolor = $101010
+			draw_set_color($ffffff)
+			draw_line_width(Dx, Dy, Nx, Ny, 6)
+			draw_line_width_color(Dx, Dy, Nx, Ny, 4, Scolor, Ecolor)
+		}
 
 		draw_rbtree(Nx, Ny, RightNode, Height + 1)
 	}

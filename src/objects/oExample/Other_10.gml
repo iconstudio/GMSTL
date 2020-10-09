@@ -5,7 +5,6 @@ draw_set_color($ffffff)
 draw_set_halign(0)
 draw_set_valign(0)
 
-/*
 var caption = ""
 var parsed = accumulate(test1.first(), test1.last(), "", parser)
 caption = "test1: " + parsed
@@ -24,7 +23,7 @@ caption += "\ntest_sum (shuffled):" + parsed
 //parsed = accumulate(test_tree.first(), test_tree.last(), "", parser)
 //caption += "\n\nTree:" + parsed
 draw_text(8, 8, caption)
-*/
+
 draw_set_halign(1)
 draw_set_valign(1)
 draw_rbtree_init()
