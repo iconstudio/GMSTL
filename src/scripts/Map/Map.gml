@@ -28,23 +28,20 @@ function Map(): Container() constructor {
 	///@function size()
 	static size = function() { return ds_map_size(raw) }
 
-	///@function contains(key)
-	static contains = function(K) { return ds_map_exists(raw, K) }
-
-	///@function key_at(index)
-	static key_at = function(Index) { return cash.at(Index) }
-
-	///@function seek(key)
-	static seek = function(K) { return ds_map_find_value(raw, K) }
+	///@function clear()
+	static clear = function() { ds_map_clear(raw) }
 
 	///@function at(index)
 	static at = function(Index) { return ds_map_find_value(raw, key_at(Index)) }
 
-	///@function back()
-	static back = function() { return at(size() - 1) }
+	///@function key_at(index)
+	static key_at = function(Index) { return cash.at(Index) }
 
 	///@function front()
 	static front = function() { return at(0) }
+
+	///@function back()
+	static back = function() { return at(size() - 1) }
 
 	///@function first()
 	static first = function() { return (new iterator_type(self, 0)).pure() }
@@ -76,18 +73,6 @@ function Map(): Container() constructor {
 		return self
 	}
 
-	///@function set_list(key, builtin_list_id)
-	static set_list = function(K, Value) {
-		if !contains(K) cash_push(K)
-		ds_map_add_list(raw, K, Value)
-	}
-
-	///@function set_map(key, builtin_map_id)
-	static set_map = function(K, Value) {
-		if !contains(K) cash_push(K)
-		ds_map_add_map(raw, K, Value) 
-	}
-
 	///@function erase_at(key)
 	static erase_at = function(K) {
 		var Temp = seek(K)
@@ -96,8 +81,11 @@ function Map(): Container() constructor {
 		return Temp
 	}
 
-	///@function clear()
-	static clear = function() { ds_map_clear(raw) }
+	///@function seek(key)
+	static seek = function(K) { return ds_map_find_value(raw, K) }
+
+	///@function contains(key)
+	static contains = function(K) { return ds_map_exists(raw, K) }
 
 	///@function key_swap(key_1, key_2)
 	static key_swap = function(Key1, Key2) {
@@ -105,12 +93,6 @@ function Map(): Container() constructor {
 		ds_map_set(raw, Key1, seek(Key2))
 		ds_map_set(raw, Key2, Temp)
 	}
-
-	///@function is_list(key)
-	static is_list = function(K) { return ds_map_is_list(raw, K) }
-
-	///@function is_map(key)
-	static is_map = function(K) { return ds_map_is_map(raw, K) }
 
 	///@static cash_push = function(key)
 	static cash_push = function(K) {

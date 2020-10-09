@@ -2,14 +2,16 @@ enum RBColor { Black, Red }
 
 ///@function RBTree_node(storage)
 function RBTree_node(Storage): BSTree_node(Storage) constructor {
-	static toString = function() {
-		return (color == RBColor.Black ? "Black: " : "Red: ") + string(value)
-	}
+	///@function insert(value)
+	static insert = _Under_insert
 
 	color = RBColor.Red
 	node_nil = Storage.node_nil
-
 	static type = RBTree_node
+
+	static toString = function() {
+		return (color == RBColor.Black ? "Black: " : "Red: ") + string(value)
+	}
 }
 
 function RedBlack_Tree(): BinarySearch_tree() constructor {
@@ -17,109 +19,9 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 	///@function valid(element)
 	static valid = function(Node) { return !is_undefined(Node) and Node != node_nil }
 
-	///@function rotate_left(axis_node)
-	static rotate_left = function(Node) {
-		var Right = Node.node_right
-		var MoveTemp = Right.node_left
-		if valid(MoveTemp)
-			Node.set_right(MoveTemp)
-
-		var Parent = Node.parent
-		Right.parent = Parent // can be undefined.
-		if Node == node_head {
-			node_head = Right
-		} else if valid(Parent) {
-			if Node == Parent.node_left
-				Parent.set_left(Right)
-			else
-				Parent.set_right(Right)
-		}
-		Right.set_left(Node)
-	}
-
-	///@function rotate_right(node)
-	static rotate_right = function(Node) {
-		var Left = Node.node_left
-		var MoveTemp = Left.node_right
-		if valid(MoveTemp)
-			Node.set_left(MoveTemp)
-
-		var Parent = Node.parent
-		Left.parent = Parent // can be undefined.
-		if Node == node_head {
-			node_head = Left
-		} else if valid(Parent) {
-			if Node == Parent.node_right
-				Parent.set_right(Left)
-			else
-				Parent.set_left(Left)
-		}
-		Left.set_right(Node)
-	}
-
 	///@function insert(value)
 	///@description Imported from Visual Studio.
-	static insert = function(Value) { // This is a pure value.
-		var NewNode = _Under_insert(Value) // increasing size
-		show_debug_message("Value: " + string(Value))
-		if 2 < inner_size {
-			var Node = NewNode, Aunt = undefined, Aunt_is_alive, Aunt_is_red, Aunt_is_black
-			for (; valid(Node.parent) and valid(Node.parent.parent) and Node.parent.color == RBColor.Red;) { // both are red.
-
-				if Node.parent == Node.parent.parent.node_left {
-					Aunt = Node.parent.parent.node_right
-					Aunt_is_alive = valid(Aunt)
-					Aunt_is_red = (Aunt_is_alive and Aunt.color == RBColor.Red)
-					Aunt_is_black = !Aunt_is_alive or (Aunt_is_alive and Aunt.color == RBColor.Red)
-
-					if Aunt_is_red { // Recoloring
-						Node.parent.color = RBColor.Black
-						Aunt.color = RBColor.Black
-						Node.parent.parent.color = RBColor.Red
-
-						Node = Node.parent.parent
-					} else if Aunt_is_black { // parent's sibling has red and black children
-						if Node == Node.parent.node_right { // rotate right child to left
-							Node = Node.parent
-							rotate_left(Node)
-						}
-
-						Node.parent.color = RBColor.Black // propagate red up
-						Node.parent.parent.color = RBColor.Red
-						rotate_right(Node.parent.parent)
-					}
-				} else { // fixup red-red in right subtree
-					Aunt = Node.parent.parent.node_left
-					Aunt_is_alive = valid(Aunt)
-					Aunt_is_red = (Aunt_is_alive and Aunt.color == RBColor.Red)
-					Aunt_is_black = !Aunt_is_alive or (Aunt_is_alive and Aunt.color == RBColor.Red)
-
-					if Aunt_is_black { // Recoloring
-						Node.parent.color = RBColor.Black
-						Aunt.color = RBColor.Black
-						Node.parent.parent.color = RBColor.Red
-
-						Node = Node.parent.parent
-					} else if Aunt_is_black { // parent's sibling has red and black children
-						if Node.parent == Node.parent.parent.node_left { // rotate left child to right
-							Node = Node.parent
-							rotate_right(Node)
-						}
-
-						Node.parent.color = RBColor.Black // propagate red up
-						Node.parent.parent.color = RBColor.Red
-						rotate_left(Node.parent.parent)
-					}
-				}
-
-				if valid(Node) or !valid(Node.parent)
-					break
-			}
-		}
-
-		node_head.color = RBColor.Black
-		return Iterator(NewNode)
-	}
+	static insert = function(Value) { return Iterator(_Under_insert_and_fix(Value)) }
 
 	static type = RedBlack_Tree
 	static value_type = RBTree_node
@@ -127,6 +29,101 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 #endregion
 
 #region private
+	///@function 
+	static _Under_rotate_left = function(Node) {
+		var Succesor = Node.node_right
+		Node.node_right = Succesor.node_left
+
+		if !is_undefined(Succesor.node_left) {
+			Succesor.node_left.parent = Node
+		}
+
+		if Node == node_head {
+			node_head = Succesor
+			Succesor.set_parent(undefined)
+		} else if Node == Node.parent.node_left {
+			Node.parent.set_left(Succesor)
+		} else {
+			Node.parent.set_right(Succesor)
+		}
+
+		Succesor.set_left(Node)
+	}
+
+	///@function 
+	static _Under_rotate_right = function(Node) {
+		var Succesor = Node.node_left
+		Node.node_left = Succesor.node_right
+
+		if !is_undefined(Succesor.node_right) {
+			Succesor.node_right.parent = Node
+		}
+
+		if Node == node_head {
+			node_head = Succesor
+			Succesor.set_parent(undefined)
+		} else if Node == Node.parent.node_right {
+			Node.parent.set_right(Succesor)
+		} else {
+			Node.parent.set_left(Succesor)
+		}
+
+		Succesor.set_right(Node)
+	}
+
+	static _Under_insert_and_fix = function(Value) { // This is a pure value.
+		var Node = _Under_insert_at_node(node_head, Value) // increasing size
+		if inner_size == 1 {
+			Node.color = RBColor.Black
+			show_debug_message("New Node: " + string(Node))
+			return Node
+		}
+		show_debug_message("New Node: " + string(Node))
+
+		var Grandparent, Parent_on_Left = false, Aunt = undefined, Aunt_is_alive, Aunt_is_red, Aunt_is_black
+		while !is_undefined(Node.parent) and Node.parent.color == RBColor.Red {
+			Grandparent = Node.parent.parent
+			Parent_on_Left = (Node.parent == Grandparent.node_left)
+
+			if Parent_on_Left
+				Aunt = Grandparent.node_right
+			else
+				Aunt = Grandparent.node_left
+			Aunt_is_alive = !is_undefined(Aunt)
+			Aunt_is_red = (Aunt_is_alive and Aunt.color == RBColor.Red)
+
+			if Aunt_is_red { // Recoloring
+				Node.parent.color = RBColor.Black
+				Aunt.color = RBColor.Black
+				Grandparent.color = RBColor.Red
+
+				Node = Grandparent
+			} else { // parent's sibling has red and black children
+				if Parent_on_Left { // fixup red-red in left subtree
+					if Node == Node.parent.node_right { // rotate right child to left
+						Node = Node.parent
+						_Under_rotate_left(Node)
+					}
+
+					Node.parent.color = RBColor.Black // propagate red up
+					Grandparent.color = RBColor.Red
+					_Under_rotate_right(Grandparent)
+				} else { // fixup red-red in right subtree
+					if Node.parent == Grandparent.node_left { // rotate left child to right
+						Node = Node.parent
+						_Under_rotate_right(Node)
+					}
+
+					Node.parent.color = RBColor.Black // propagate red up
+					Grandparent.color = RBColor.Red
+					_Under_rotate_left(Grandparent)
+				}
+			}
+		}
+		node_head.color = RBColor.Black
+		return Node
+	}
+
 	key_inquire_compare = compare_complex_less
 	check_inquire_compare = compare_equal
 	check_comparator = function(a, b) { return check_inquire_compare(a.value, b.value) }

@@ -13,7 +13,11 @@ function Iterator_trait(Index) constructor {
 
 	///@function 
 	static _Under_iterator_next = function() {
-		index = storage._Under_iterator_next(index)
+		index_backward = index
+		if is_undefined(index)
+			index = index_forward
+		else
+			index = storage._Under_iterator_next(index)
 		index_modified = true
 		return self
 	}
@@ -53,6 +57,8 @@ function Iterator_trait(Index) constructor {
 	is_pure = false
 	value = undefined
 	index = Index
+	index_forward = Index
+	index_backward = Index
 	index_modified = true
 	static type = undefined
 	static category = undefined
@@ -176,7 +182,11 @@ function Forward_iterator(Index): Const_iterator(Index) constructor {
 function Bidirectional_iterator(Index): Forward_iterator(Index) constructor {
 	///@function 
 	static _Under_iterator_prev = function() {
-		index = storage._Under_iterator_prev(index)
+		index_forward = index
+		if is_undefined(index)
+			index = index_backward
+		else
+			index = storage._Under_iterator_prev(index)
 		index_modified = true
 		return self
 	}

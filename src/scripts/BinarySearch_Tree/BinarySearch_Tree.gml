@@ -7,28 +7,9 @@ enum BSTree_type {
 
 ///@function BSTree_node(storage)
 function BSTree_node(Storage): Tree_node_trait() constructor {
-#region public
-	///@function set_next(node)
-	static set_next = function(Node) {
-		if !is_undefined(node_next) {
-			node_next.node_previous = undefined
-		}
-		node_next = Node
-		if !is_undefined(Node) {
-			Node.node_previous = self
-			return true
-		}
-		return false
-	}
-
-	///@function set(value)
-	static set = function(Value) { value = Value; return self }
-
-	///@function get()
-	static get = function() { return value }
-	
-	///@function insert(value)
-	static insert = function(Value) {
+#region private
+///@function 
+	static _Under_insert = function(Value) {
 		if !Is_multiple and Value == value {
 			return [self, BSTree_type.none]
 		} else {
@@ -74,6 +55,32 @@ function BSTree_node(Storage): Tree_node_trait() constructor {
 			}
 		}
 	}
+
+	Is_multiple = Storage.Is_multiple
+#endregion
+
+#region public
+	///@function set_next(node)
+	static set_next = function(Node) {
+		if !is_undefined(node_next) {
+			node_next.node_previous = undefined
+		}
+		node_next = Node
+		if !is_undefined(Node) {
+			Node.node_previous = self
+			return true
+		}
+		return false
+	}
+
+	///@function set(value)
+	static set = function(Value) { value = Value; return self }
+
+	///@function get()
+	static get = function() { return value }
+	
+	///@function insert(value)
+	static insert = _Under_insert
 
 	///@function destroy()
 	/*
@@ -144,10 +151,6 @@ function BSTree_node(Storage): Tree_node_trait() constructor {
 	storage = Storage
 	static type = BSTree_node
 #endregion
-
-#region private
-	Is_multiple = Storage.Is_multiple
-#endregion
 }
 
 function BinarySearch_tree(): Binary_tree() constructor {
@@ -165,30 +168,22 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static last = function() { return undefined }
 
 	///@function insert(value)
-	static insert = function(Value) { return Iterator(_Under_insert(Value)) }
+	static insert = function(Value) { Iterator(_Under_insert_at_node(node_head, Value)) }
 
 	///@function insert_at(index, value)
-	static insert_at = function(Key, Value) {
-		var InsertedNode = _Under_location(Key)
-		if !is_undefined(InsertedNode) {
-			return Iterator(_Under_insert_at_node(InsertedNode, Value))
-		} else {
-			return insert(Value)
-		}
-	}
+	static insert_at = function(Key, Value) { return Iterator(_Under_insert_at_node(_Under_lower_bound(Key), Value)) }
 
 	///@function insert_iter(iterator, value)
 	static insert_iter = function(It, Value) {
-		if It.storage != self {
+		if It.storage == self
+			return insert_at(It.index, Value)
+		else
 			return undefined
-		} else {
-			return Iterator(insert_at(It.index, Value))
-		}
 	}
 
 	///@function erase_at(index)
 	static erase_at = function(Key) {
-		var Where = _Under_location(Key)
+		var Where = _Under_lower_bound(Key)
 		if !is_undefined(Where)
 			_Under_erase_node(Where)
 	}
@@ -200,8 +195,8 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	}
 
 	///@function location(value)
-	static location = function(Value) {
-		var Result = _Under_location(Value)
+	static location = function(Key) {
+		var Result = _Under_lower_bound(Key)
 		
 		if is_undefined(Result)
 			return undefined
@@ -229,8 +224,9 @@ function BinarySearch_tree(): Binary_tree() constructor {
 			return node_head
 		}
 
-		return _Under_insert_at_node(node_head, Value)
-		
+		if is_undefined(Node)
+			return undefined
+
 		var Result = Node.insert(Value)
 		var Where = Result[0], Branch = Result[1]
 		
@@ -256,17 +252,6 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	}
 
 	///@function 
-	static _Under_insert = function(Value) {
-		if 0 == inner_size {
-			inner_size++
-			node_head = new value_type(self).set(Value)
-			return node_head
-		}
-
-		return _Under_insert_at_node(node_head, Value)
-	}
-
-	///@function 
 	static _Under_erase_node = function(Node) {
 		var Successor = Node.destroy()
 		if inner_size == 1
@@ -282,7 +267,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	}
 
 	///@function 
-	static _Under_location = function(Value) {
+	static _Under_lower_bound = function(Value) {
 		if 0 == inner_size
 			return undefined
 

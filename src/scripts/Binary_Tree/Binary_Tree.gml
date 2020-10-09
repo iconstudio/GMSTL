@@ -51,18 +51,13 @@ function Tree_node_trait() constructor {
 	}
 
 	///@function 
-	static _Under_parent_clear = function() {
-		if self == parent.node_left {
-			parent.node_left = undefined
-		} else if self == parent.node_right {
-			parent.node_right = undefined
-		}
-	}
-
-	///@function 
 	static _Under_destroy = function() {
 		if !is_undefined(parent) {
-			_Under_parent_clear()
+			if self == parent.node_left {
+				parent.node_left = undefined
+			} else if self == parent.node_right {
+				parent.node_right = undefined
+			}
 		}
 
 		if !is_undefined(node_left) {

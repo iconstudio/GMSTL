@@ -42,7 +42,7 @@ function Unordered_map(): Container() constructor {
 	///@function last()
 	static last = function() { return undefined }
 
-	///@function insert([key, index])
+	///@function insert(value)
 	static insert = function(values) {
 		var Key = values[0]
 		var Value = values[1]
