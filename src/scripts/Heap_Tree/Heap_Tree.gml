@@ -94,22 +94,22 @@ function Heap_tree(): List() constructor {
 	///@function 
 	static find_parent = function(Index) { return floor((Index - 1) * 0.5) }
 
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_set = undefined
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_get = undefined
 
-	///@function function(value)
+	///@function (value)
 	static _Under_iterator_add = insert
 
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_insert = undefined
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_next = undefined
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_prev = undefined
 
 	key_comparator = compare_less

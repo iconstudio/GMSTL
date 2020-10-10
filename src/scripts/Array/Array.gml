@@ -20,11 +20,19 @@ function Array(): Container() constructor {
 	///@function empty()
 	static empty = function() { return bool(inner_size == 0) }
 
+	///@function reserve(size)
+	static reserve = function(Size) {
+		raw = 0
+		inner_index = 0
+		inner_size = Size
+		raw = array_create(Size)
+	}
+
 	///@function valid(index)
 	static valid = function(Index) { return bool(0 <= Index and Index < inner_size) }
 
 	///@function clear()
-	static clear = function() { raw = 0; inner_index = 0; raw = array_create(inner_size) }
+	static clear = function() { reserve(inner_size) }
 
 	///@function at(index)
 	static at = function(Index) {if !valid(Index) return undefined; return raw[Index] }
@@ -58,13 +66,13 @@ function Array(): Container() constructor {
 #endregion
 
 #region private
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_set = set_at
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_get = at
 
-	///@function function(value)
+	///@function (value)
 	static _Under_iterator_add = function(Value) {
 		if inner_size <= inner_index
 			throw "Cannot add more values into the Array."
@@ -72,22 +80,14 @@ function Array(): Container() constructor {
 		inner_index++
 	}
 
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_insert = set_at
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_next = function(Index) { return Index + 1 }
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_prev = function(Index) { return Index - 1 }
-
-	///@function
-	static _Under_reserve = function(Size) {
-		raw = 0
-		inner_index = 0
-		inner_size = Size
-		raw = array_create(Size)
-	}
 
 	raw = -1
 	inner_size = 0
@@ -100,19 +100,19 @@ function Array(): Container() constructor {
 			var Item = argument[0]
 			if is_array(Item) {
 				// (*) Built-in Array
-				_Under_reserve(array_length(Item))
+				reserve(array_length(Item))
 				array_copy(raw, 0, Item, 0, inner_size)
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
-				_Under_reserve(ds_list_size(Item))
+				reserve(ds_list_size(Item))
 				for (var i = 0; i < inner_size; ++i) set_at(i, Item[| i])
 			} else if is_struct(Item) and is_iterable(Item) {
 				// (*) Container
-				_Under_reserve(Item.size())
+				reserve(Item.size())
 				assign(Item.first(), Item.last())
 			} else {
 				// (*) Arg
-				_Under_reserve(1)
+				reserve(1)
 				set_at(0, Item)
 			}
 		} else {
@@ -125,7 +125,7 @@ function Array(): Container() constructor {
 				}
 			}
 			// (*) Arg0, Arg1, ...
-			_Under_reserve(argument_count)
+			reserve(argument_count)
 			for (var i = 0; i < argument_count; ++i) set_at(i, argument[i])
 		}
 	}

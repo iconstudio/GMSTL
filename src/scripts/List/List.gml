@@ -109,22 +109,22 @@ function List(): Container() constructor {
 #endregion
 
 #region private
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_set = set_at
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_get = at
 
-	///@function function(value)
+	///@function (value)
 	static _Under_iterator_add = push_back
 
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_insert = insert_at
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_next = function(Index) { return Index + 1 }
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_prev = function(Index) { return Index - 1 }
 
 	raw = ds_list_create()

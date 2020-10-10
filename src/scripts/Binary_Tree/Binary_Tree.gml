@@ -268,22 +268,22 @@ function Binary_tree(): Binary_tree_trait() constructor {
 #endregion
 
 #region private
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_set = function(Index, Value) { return Index.value = Value; return self }
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_get = function(Index) { return Index.value }
 
-	///@function function(value)
+	///@function (value)
 	static _Under_iterator_add = insert
 
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_insert = undefined
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_next = function(Index) { return Index.node_next }
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_prev = function(Index) { return Index.node_previous }
 
 	///@function 

@@ -10,7 +10,7 @@ function BSTree_node(Storage): Tree_node_trait() constructor {
 #region private
 ///@function 
 	static _Under_insert = function(Value) {
-		if !Is_multiple and Value == value {
+		if !is_multiple and Value == value {
 			return [self, BSTree_type.none]
 		} else {
 			var Compare = storage.key_inquire_comparator
@@ -56,7 +56,7 @@ function BSTree_node(Storage): Tree_node_trait() constructor {
 		}
 	}
 
-	Is_multiple = Storage.Is_multiple
+	is_multiple = Storage.is_multiple
 #endregion
 
 #region public
@@ -240,12 +240,12 @@ function BinarySearch_tree(): Binary_tree() constructor {
 			inner_size++
 			switch Branch {
 			    case BSTree_type.left:
-			        if is_undefined(node_leftest) or key_comparator(Where, node_leftest)
+			        if is_undefined(node_leftest) or Where.parent == node_leftest
 						node_leftest = Where
 				break
 
 			    case BSTree_type.right:
-			        if is_undefined(node_rightest) or !key_comparator(Where, node_rightest)
+			        if is_undefined(node_rightest) or Where.parent == node_rightest
 						node_rightest = Where
 				break
 
@@ -292,7 +292,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		return undefined
 	}
 
-	Is_multiple = false
+	is_multiple = false
 	node_rightest = undefined
 	key_inquire_comparator = compare_less
 	key_comparator = function(a, b) {

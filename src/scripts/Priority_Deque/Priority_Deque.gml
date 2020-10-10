@@ -21,7 +21,7 @@
 		}
 
 		AI_Buildorder = new Priority_deque()
-		AI_Buildorder.set_key_extract(function(build) {
+		AI_Buildorder.set_key_extractor(function(build) {
 			return build.priority
 		})
 		AI_Buildorder.set_key_compare(function(A_priority, B_priority) {
@@ -112,22 +112,22 @@ function Priority_deque(): Container() constructor {
 #endregion
 
 #region private
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_set = undefined
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_get = undefined
 
-	///@function function(value)
+	///@function (value)
 	static _Under_iterator_add = push
 
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_insert = undefined
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_next = undefined
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_prev = undefined
 
 	raw = new List()

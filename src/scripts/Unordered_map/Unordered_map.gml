@@ -104,22 +104,22 @@ function Unordered_map(): Container() constructor {
 #endregion
 
 #region private
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_set = function(Index, Value) { return set_at(Index, Value) }
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_get = function(Index) { return [Index, at(Index)] }
 
 	///@function function(value)
 	static _Under_iterator_add = insert
 
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_insert = set_at
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_next = function(Index) { return ds_map_find_next(raw, Index) }
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_prev = function(Index) { return ds_map_find_previous(raw, Index) }
 
 	raw = ds_map_create()

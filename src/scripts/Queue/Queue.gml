@@ -61,22 +61,22 @@ function Queue(): Container() constructor {
 #endregion
 
 #region private
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_set = undefined
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_get = undefined
 
 	///@function function(value)
 	static _Under_iterator_add = push
 
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_insert = undefined
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_next = undefined
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_prev = undefined
 
 	raw = ds_queue_create()
