@@ -20,14 +20,14 @@ function List(): Container() constructor {
 	///@function empty()
 	static empty = function() { return ds_list_empty(raw) }
 
-	///@function valid(index)
-	static valid = function(Index) { return bool(0 <= Index and Index < size()) }
-
 	///@function clear()
 	static clear = function() { ds_list_clear(raw) }
 
 	///@function at(index)
 	static at = function(Index) { return ds_list_find_value(raw, Index) }
+
+	///@function valid(index)
+	static valid = function(Index) { return bool(0 <= Index and Index < size()) }
 
 	///@function front()
 	static front = function() { return at(0) }

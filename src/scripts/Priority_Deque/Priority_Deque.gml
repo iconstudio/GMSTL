@@ -76,7 +76,7 @@ function Priority_deque(): Container() constructor {
 	static assign = function(First, Last) {
 		with raw {
 			clear()
-			foreach(First, Last, push_back)
+			foreach(First, Last, raw.push_back)
 		}
 		stable_sort(raw.first(), raw.last(), key_comparator)
 	}
