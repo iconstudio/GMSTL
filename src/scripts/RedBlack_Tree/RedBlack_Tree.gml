@@ -2,8 +2,21 @@ enum RBColor { Black, Red }
 
 ///@function RBTree_node(storage)
 function RBTree_node(Storage): BSTree_node(Storage) constructor {
-	///@function insert(value)
-	static insert = _Under_insert
+	///@function destroy()
+	/*
+			Splice the case of erasing a key from the Tree.
+			
+			case 1: a leaf node
+				Just remove it.
+			
+			case 2: the node has one child
+				Remove it and pull up its children.
+			
+			case 3: the node has two children
+				Replace it with smallest one and remove the original smallest one.
+	*/
+	static destroy = function() {
+	}
 
 	color = RBColor.Red
 	node_nil = Storage.node_nil
@@ -20,13 +33,13 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 	static valid = function(Node) { return !is_undefined(Node) and Node != node_nil }
 
 	///@function insert(value)
-	static insert = function(Value) { return Iterator(_Under_insert_at_node(node_head, Value)) }
+	static insert = function(Value) { return Iterator(_Under_insert_and_fix(node_head, Value)) }
 
 	///@function insert_at(index, value)
 	static insert_at = function(Key, Value) {
 		var Loc = _Under_lower_bound(Key)
 		if !is_undefined(Loc)
-			return Iterator(_Under_insert_at_node(Loc, Value))
+			return Iterator(_Under_insert_and_fix(Loc, Value))
 		else
 			return undefined
 	}
@@ -105,10 +118,8 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 		Node = _Under_insert_at_node(Node, Value) // increasing size
 		if inner_size == 1 {
 			Node.color = RBColor.Black
-			show_debug_message("Head Node: " + string(Node))
 			return Node
 		}
-		show_debug_message("New Node: " + string(Node))
 
 		var Grandparent, Parent_on_Left = false, Aunt = undefined, Aunt_is_alive, Aunt_is_red, Aunt_is_black
 		while !is_undefined(Node.parent) and Node.parent.color == RBColor.Red {
@@ -159,6 +170,20 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 	///@function 
 	static _Under_erase_node = function(Node) {
 		
+	}
+
+	///@function 
+	static _Under_upper_bound_from_lower = function(Lower) {
+		var Node = Lower, NodePrev = Lower, Key = _Under_extract_key(Lower), CompKey
+		while !is_undefined(Node) {
+			CompKey = _Under_extract_key(Node)
+			if Key != CompKey {
+				return Node
+			} else {
+				Node = Node.node_right
+			}
+		}
+		return undefined
 	}
 
 	key_inquire_compare = compare_complex_less
