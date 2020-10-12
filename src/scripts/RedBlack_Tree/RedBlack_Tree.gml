@@ -16,6 +16,7 @@ function RBTree_node(Storage): BSTree_node(Storage) constructor {
 				Replace it with smallest one and remove the original smallest one.
 	*/
 	static destroy = function() {
+		
 	}
 
 	color = RBColor.Red
@@ -114,7 +115,7 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 	}
 
 	///@function 
-	static _Under_insert_and_fix = function(Node, Value) { // This is a pure value.
+	static _Under_insert_and_fix = function(Node, Value) {
 		Node = _Under_insert_at_node(Node, Value) // increasing size
 		if inner_size == 1 {
 			Node.color = RBColor.Black
