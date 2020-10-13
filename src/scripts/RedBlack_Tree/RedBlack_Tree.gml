@@ -14,20 +14,33 @@ function RBTree_node(Storage): BSTree_node(Storage) constructor {
 				Remove this, pull up and blacken the child
 			
 			case 3: the node has two children
-				Replace it with smallest one and remove the original smallest one.
+				
 	*/
 	static destroy = function() {
 		var Left = node_left, Right = node_right
 		var LeftChk = !is_undefined(Left), RightChk = !is_undefined(Right)
 		var Left_IsRed = LeftChk and Left.color == RBColor.Red
 		var Right_IsRed = RightChk and Right.color == RBColor.Red
+		var Has_one_child = (LeftChk ^^ RightChk == 0) and LeftChk
 		var Is_head = is_undefined(parent)
 		var Result = Left
 
 		if color == RBColor.Red {
+			// case 1
 			BSTree_destroy()
 		} else {
-			
+			if Has_one_child {
+				// case 2
+				if Left_IsRed {
+					
+				} else if Right_IsRed {
+					
+				} else {
+					// case 3 - 2
+				}
+			} else {
+				// case 3 - 1
+			}
 		}
 	}
 
