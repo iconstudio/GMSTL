@@ -2,21 +2,33 @@ enum RBColor { Black, Red }
 
 ///@function RBTree_node(storage)
 function RBTree_node(Storage): BSTree_node(Storage) constructor {
+	BSTree_destroy = destroy
 	///@function destroy()
 	/*
 			Splice the case of erasing a key from the Tree.
 			
-			case 1: a leaf node
-				Just remove it.
+			case 1: a red node
+				Just remove this.
 			
-			case 2: the node has one child
-				Remove it and pull up its children.
+			case 2: the black node has only one red child
+				Remove this, pull up and blacken the child
 			
 			case 3: the node has two children
 				Replace it with smallest one and remove the original smallest one.
 	*/
 	static destroy = function() {
-		
+		var Left = node_left, Right = node_right
+		var LeftChk = !is_undefined(Left), RightChk = !is_undefined(Right)
+		var Left_IsRed = LeftChk and Left.color == RBColor.Red
+		var Right_IsRed = RightChk and Right.color == RBColor.Red
+		var Is_head = is_undefined(parent)
+		var Result = Left
+
+		if color == RBColor.Red {
+			BSTree_destroy()
+		} else {
+			
+		}
 	}
 
 	color = RBColor.Red
