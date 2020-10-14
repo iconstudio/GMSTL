@@ -21,25 +21,30 @@ function RBTree_node(Storage): BSTree_node(Storage) constructor {
 		var LeftChk = !is_undefined(Left), RightChk = !is_undefined(Right)
 		var Left_IsRed = LeftChk and Left.color == RBColor.Red
 		var Right_IsRed = RightChk and Right.color == RBColor.Red
-		var Has_one_child = (LeftChk ^^ RightChk == 0) and LeftChk
+		var Has_one_child = (LeftChk ^^ RightChk)
 		var Is_head = is_undefined(parent)
 		var Result = Left
 
 		if color == RBColor.Red {
 			// case 1
-			BSTree_destroy()
+			var succesor = BSTree_destroy()
+			succesor.color = RBColor.Black
+			return succesor
 		} else {
-			if Has_one_child {
+			if Has_one_child and (Left_IsRed or Right_IsRed) {
 				// case 2
+				var succesor = BSTree_destroy()
+				succesor.color = RBColor.Black
+				return succesor
+			} else {
 				if Left_IsRed {
-					
+					// case 4-1: 
 				} else if Right_IsRed {
+					// case 4-2:
 					
 				} else {
-					// case 3 - 2
+					//
 				}
-			} else {
-				// case 3 - 1
 			}
 		}
 	}
