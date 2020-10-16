@@ -2,56 +2,6 @@ enum RBColor { Black, Red }
 
 ///@function RBTree_node(storage)
 function RBTree_node(Storage): BSTree_node(Storage) constructor {
-	BSTree_destroy = destroy
-	///@function destroy()
-	/*
-			Splice the case of erasing a key from the Tree.
-			
-			case 1: a red node
-				Just remove this.
-			
-			case 2: the black node has only one red child
-				Remove this, pull up and blacken the child
-			
-			case 3: the node has two children
-				
-	*/
-	static destroy = function() {
-		var Left = node_left, Right = node_right
-		var LeftChk = !is_undefined(Left), RightChk = !is_undefined(Right)
-		var Left_IsRed = LeftChk and Left.color == RBColor.Red
-		var Right_IsRed = RightChk and Right.color == RBColor.Red
-		var Has_one_child = (LeftChk ^^ RightChk)
-
-		var succesor = BSTree_destroy()
-		succesor.color = RBColor.Black
-		if color == RBColor.Red {
-			// case 1
-			return succesor
-		} else {
-			if Has_one_child and (Left_IsRed or Right_IsRed) {
-				// case 2
-				return succesor
-			} else {
-				var Is_head = is_undefined(parent)
-				var Parent_IsRed = !Is_head and parent.color == RBColor.Red
-				
-				if Parent_IsRed {
-					
-				} else {
-					if Left_IsRed {
-						// case 4-1: 
-					} else if Right_IsRed {
-						// case 4-2:
-					
-					} else {
-						//
-					}
-				}
-			}
-		}
-	}
-
 	color = RBColor.Red
 	node_nil = Storage.node_nil
 	static type = RBTree_node
@@ -202,8 +152,92 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 	}
 
 	///@function 
-	static _Under_erase_node = function(Node) {
-		
+	/*
+			Splice the case of erasing a key from the Tree.
+			
+			case 1: a red node
+				Just remove this.
+			
+			case 2: the black node has only one red child
+				Remove this, pull up and blacken the child
+			
+			case 3: the node has two children
+				
+	*/
+	static _Under_erase_and_fix = function(Node) {
+		if Node.color == RBColor.Red {
+			// case 1
+			var Succesor = _Under_erase_node(Node)
+			Succesor.color = RBColor.Black
+			return Succesor
+		} else {
+			var Left = Node.node_left, Right = Node.node_right
+			var LeftChk = !is_undefined(Left), RightChk = !is_undefined(Right)
+			var Left_IsRed = LeftChk and Left.color == RBColor.Red
+			var Right_IsRed = RightChk and Right.color == RBColor.Red
+			var Succesor = _Under_erase_node(Node)
+			Succesor.color = RBColor.Black
+
+			if LeftChk ^^ RightChk and (Left_IsRed or Right_IsRed) {
+				// case 2
+				return Succesor
+			} else {
+				Left = Succesor.node_left
+				Right = Succesor.node_right
+				LeftChk = !is_undefined(Left)
+				RightChk = !is_undefined(Right)
+				Left_IsRed = LeftChk and Left.color == RBColor.Red
+				Right_IsRed = RightChk and Right.color == RBColor.Red
+				var Parent = Succesor.parent
+				var Is_head = (Succesor == node_head)
+				var Parent_IsRed = !Is_head and Parent.color == RBColor.Red
+				var Node_on_Left = (Succesor == Parent.node_left)
+
+				var Cousin
+				if Node_on_Left
+					Cousin = Parent.node_right
+				else
+					Cousin = Parent.node_left
+				var Cousin_is_alive = valid(Cousin)
+				var Cousin_is_red = (Cousin_is_alive and Cousin.color == RBColor.Red)
+				// Every nil node is BLACK.
+				var Cousin_is_black = (Cousin_is_alive and Cousin.color == RBColor.Black) or (!Cousin_is_alive)
+
+				if Cousin_is_alive {
+					var CousinSib
+					if Node_on_Left {
+						CousinSib = Cousin.node_right
+						_Under_rotate_left(Parent)
+					} else {
+						CousinSib = Cousin.node_left
+						_Under_rotate_right(Parent)
+					}
+					if !valid(CousinSib)
+						CousinSib.color = RBColor.Black
+					if Parent_IsRed
+						Cousin.color = RBColor.Red
+					else
+						Cousin.color = RBColor.Black
+				}
+				
+				if Parent_IsRed {
+					if Cousin_is_red {
+						Parent.color = RBColor.Black
+						Cousin.color = RBColor.Red
+					}
+					return Succesor
+				} else {
+					if Left_IsRed {
+						// case 4-1: 
+					} else if Right_IsRed {
+						// case 4-2:
+					
+					} else {
+						//
+					}
+				}
+			}
+		}
 	}
 
 	///@function 

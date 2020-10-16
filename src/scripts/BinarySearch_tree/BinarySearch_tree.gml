@@ -86,7 +86,7 @@ function BSTree_node(Storage): Tree_node() constructor {
 		var Left = node_left, Right = node_right
 		var LeftChk = !is_undefined(Left), RightChk = !is_undefined(Right)
 		var Is_head = is_undefined(parent)
-		var Result = Left
+		var Result = undefined
 
 		if LeftChk and RightChk { // two children
 			var Leftest = node_next
@@ -104,31 +104,28 @@ function BSTree_node(Storage): Tree_node() constructor {
 				}
 			}
 
-			if !LeftChk and !RightChk { // has no child
-				_Under_destroy()
-			} else if LeftChk and !RightChk { // on left, this is the last element in a sequence.
+			if !LeftChk and !RightChk {
+				// has no child
+			} else {
+				if LeftChk and !RightChk {
+					// on left, this is the last element in a sequence.
+					Result = Left
+				} else if !LeftChk and RightChk {
+					// on right
+					Result = Right
+				}
+
 				if Is_head {
-					Left.parent = undefined
+					Result.parent = undefined
 				} else {
 					if self == parent.node_left
-						parent.set_left(Left)
+						parent.set_left(Result)
 					else if self == parent.node_right
-						parent.set_right(Left)
+						parent.set_right(Result)
 				}
 				
-				_Under_destroy()
-			} else if !LeftChk and RightChk { // on right
-				if Is_head {
-					Result = Right
-					Right.parent = undefined
-				} else {
-					if self == parent.node_left
-						parent.set_left(Right)
-					else if self == parent.node_right
-						parent.set_right(Right)
-				}
-				_Under_destroy()
 			}
+			_Under_destroy()
 		}
 
 		gc_collect()
@@ -247,14 +244,21 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	///@function 
 	static _Under_erase_node = function(Node) {
 		var Successor = Node.destroy()
-		if inner_size == 1
+		if inner_size == 1 {
 			node_head = undefined
-		else if Node == node_head
+		} else if Node == node_head {
 			node_head = Successor
-		else if Node == node_leftest
-			node_leftest = node_head.find_leftest()
-		else if Node == node_rightest
-			node_rightest = node_head.find_rightest()
+		} else if Node == node_leftest {
+			if is_undefined(Node.node_left)
+				node_leftest = node_head.find_leftest()
+			else
+				node_leftest = Node.node_left
+		} else if Node == node_rightest {
+			if is_undefined(Node.node_right)
+				node_rightest = node_head.find_rightest()
+			else
+				node_rightest = Node.node_right
+		}
 		inner_size--
 		delete Node
 	}
