@@ -40,13 +40,13 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 	static erase_at = function(Key) {
 		var Where = _Under_lower_bound(Key)
 		if !is_undefined(Where)
-			_Under_erase_node(Where)
+			_Under_erase_and_fix(Where)
 	}
 
 	///@function erase_iter(iterator)
 	static erase_iter = function(It) {
 		if It.storage == self
-			_Under_erase_node(It.index)
+			_Under_erase_and_fix(It.index)
 	}
 
 	static type = RedBlack_Tree
