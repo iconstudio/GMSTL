@@ -28,7 +28,7 @@ tree_indicator_node_link_length_begin = 190
 tree_indicator_node_link_length_end = tree_indicator_node_radius * 3
 tree_indicator_node_link_angle_begin = 8
 tree_indicator_node_link_angle_end = 75
-test_tree = new RedBlack_Tree(test_sum)
+test_tree = new RedBlack_tree(test_sum)
 test_tree.insert(5)
 test_tree.insert(12)
 test_tree.insert(7)

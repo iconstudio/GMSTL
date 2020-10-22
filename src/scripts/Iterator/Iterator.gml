@@ -297,9 +297,11 @@ function iterator_distance(ItA, ItB) {
 			if TagA == TagB and TagA == tag_random_access_iterator {
 				return ItA.distance(ItB)
 			} else if TagA != tag_random_access_iterator or TagB != tag_random_access_iterator {
-				var Result = 0
-				while ItA.not_equals(ItB)
+				var Result = 0, Cursor = ItA.duplicate()
+				while Cursor.not_equals(ItB) {
 					Result++
+					Cursor.go_next()
+				}
 				return Result
 			}
 		}
@@ -327,7 +329,6 @@ function check_iterator(Param) {
 	}
 	return Param
 }
-
 
 ///@function is_iterator(iterator)
 function is_iterator(iterator) {
