@@ -20,34 +20,12 @@
 		
 */
 #macro Dictionary Map
-function Map(): Container() constructor {
+function Map(): RedBlack_tree() constructor {
 #region public
-	///@function empty()
-	static empty = function() { return ds_map_empty(raw) }
-
-	///@function size()
-	static size = function() { return ds_map_size(raw) }
-
-	///@function clear()
-	static clear = function() { ds_map_clear(raw) }
-
 	///@function at(index)
-	static at = function(Index) { return ds_map_find_value(raw, key_at(Index)) }
-
-	///@function key_at(index)
-	static key_at = function(Index) { return cash.at(Index) }
-
-	///@function front()
-	static front = function() { return at(0) }
-
-	///@function back()
-	static back = function() { return at(size() - 1) }
-
-	///@function first()
-	static first = function() { return (new iterator_type(self, 0)).pure() }
-
-	///@function last()
-	static last = function() { return (new iterator_type(self, size())).pure() }
+	static at = function(Key) {
+		
+	}
 
 	//////@function set_at(index, value)
 	static set_at = function(Index, Value) { 
@@ -59,15 +37,9 @@ function Map(): Container() constructor {
 
 	///@function insert(item)
 	static insert = function() {
-		var Key, Value
-		if argument_count == 2 {
-			Key = argument[0]
-			Value = argument[1]
-		} else {
-			var Pair = argument[0]
-			Key = Pair[0]
-			Value = Pair[1]
-		}
+		var Pair = argument[0]
+		var Key = Pair[0]
+		var Value = Pair[1]
 		if !contains(Key) cash_push(Key)
 		ds_map_set(raw, Key, Value)
 		return self
@@ -81,27 +53,11 @@ function Map(): Container() constructor {
 		return Temp
 	}
 
-	///@function seek(key)
-	static seek = function(K) { return ds_map_find_value(raw, K) }
-
-	///@function contains(key)
-	static contains = function(K) { return ds_map_exists(raw, K) }
-
 	///@function key_swap(key_1, key_2)
 	static key_swap = function(Key1, Key2) {
 		var Temp = seek(Key1)
 		ds_map_set(raw, Key1, seek(Key2))
 		ds_map_set(raw, Key2, Temp)
-	}
-
-	///@static cash_push = function(key)
-	static cash_push = function(K) {
-		if 1 < cash.size() {
-			cash.push_back(K)
-			cash.sort_builtin(true)
-		} else {
-			cash.push_back(K)
-		}
 	}
 
 	///@function read(data_string)
@@ -126,7 +82,7 @@ function Map(): Container() constructor {
 	static destroy = function() { ds_map_destroy(raw); cash.destroy(); delete cash; gc_collect() }
 
 	static type = Map
-	static iterator_type = Forward_iterator
+	static iterator_type = Bidirectional_iterator
 #endregion
 
 #region private
@@ -147,6 +103,9 @@ function Map(): Container() constructor {
 
 	///@function (index)
 	static _Under_iterator_prev = function(Index) { return Index - 1 }
+
+	///@function 
+	static _Under_extract_key = function(Node) { return Node.value[0] }
 
 	raw = ds_map_create()
 	cash = new List()
