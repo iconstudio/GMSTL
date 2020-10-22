@@ -11,7 +11,7 @@ function RBTree_node(Storage): BSTree_node(Storage) constructor {
 	}
 }
 
-function RedBlack_Tree(): BinarySearch_tree() constructor {
+function RedBlack_tree(): BinarySearch_tree() constructor {
 #region public
 	///@function valid(element)
 	static valid = function(Node) { return !is_undefined(Node) and Node != node_nil }
@@ -49,7 +49,7 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 			_Under_erase_and_fix(It.index)
 	}
 
-	static type = RedBlack_Tree
+	static type = RedBlack_tree
 	static value_type = RBTree_node
 	static iterator_type = Bidirectional_iterator
 #endregion
@@ -242,7 +242,7 @@ function RedBlack_Tree(): BinarySearch_tree() constructor {
 
 	///@function 
 	static _Under_upper_bound_from_lower = function(Lower) {
-		var Node = Lower, NodePrev = Lower, Key = _Under_extract_key(Lower), CompKey
+		var Node = Lower, Key = _Under_extract_key(Lower), CompKey
 		while !is_undefined(Node) {
 			CompKey = _Under_extract_key(Node)
 			if Key != CompKey {

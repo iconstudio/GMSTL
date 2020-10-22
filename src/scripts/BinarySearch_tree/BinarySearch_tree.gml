@@ -194,6 +194,9 @@ function BinarySearch_tree(): Binary_tree() constructor {
 			return Iterator(Result)
 	}
 
+	///@function contains(value)
+	static contains = function(Key) { return binary_search(first(), last(), Key) }
+
 	///@function set_key_compare(compare_function)
 	static set_key_compare = function(Func) { key_inquire_comparator = method(other, Func) }
 

@@ -249,10 +249,10 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	}
 
 	///@function location(value)
-	static location = function(Value) { return find(first(), last(), Value) }
+	static location = function(Key) { return find(first(), last(), Key) }
 
 	///@function contains(value)
-	static contains = function(Value) { return !is_undefined(location(Value)) }
+	static contains = function(Key) { return !is_undefined(location(Key)) }
 
 	static type = Binary_tree
 	static iterator_type = Bidirectional_iterator
