@@ -156,7 +156,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 	///@function insert_at(index, value)
 	static insert_at = function(Key, Value) {
-		var Loc = _Under_lower_bound(Key)
+		var Loc = first_of(Key)
 		if !is_undefined(Loc)
 			return Iterator(_Under_insert_at_node(Loc, Value))
 		else
@@ -173,7 +173,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 	///@function erase_at(index)
 	static erase_at = function(Key) {
-		var Where = _Under_lower_bound(Key)
+		var Where = first_of(Key)
 		if !is_undefined(Where)
 			_Under_erase_node(Where)
 	}
@@ -184,18 +184,31 @@ function BinarySearch_tree(): Binary_tree() constructor {
 			_Under_erase_node(It.index)
 	}
 
-	///@function location(value)
-	static location = function(Key) {
-		var Result = _Under_lower_bound(Key)
-		
-		if is_undefined(Result)
+	///@function first_of(value)
+	static first_of = function(Key) {
+		if 0 == inner_size
 			return undefined
-		else
-			return Iterator(Result)
+
+		var Node = node_head, CompVal
+		while !is_undefined(Node) {
+			CompVal = _Under_iterator_get(Node)
+			if Key == CompVal {
+				return Node
+			} else {
+				if key_inquire_comparator(Key, CompVal)
+					Node = Node.node_left
+				else
+					Node = Node.node_right
+			}
+		}
+		return undefined
 	}
 
+	///@function location(value)
+	static location = first_of
+
 	///@function contains(value)
-	static contains = function(Key) { return binary_search(first(), last(), Key) }
+	static contains = function(Key) { return !is_undefined(first_of(Key)) }
 
 	///@function set_key_compare(compare_function)
 	static set_key_compare = function(Func) { key_inquire_comparator = method(other, Func) }
@@ -206,8 +219,23 @@ function BinarySearch_tree(): Binary_tree() constructor {
 #endregion
 
 #region private
-	///@function 
-	static _Under_extract_key = function(Node) { return Node.value }
+	///@function (index, value)
+	static _Under_iterator_set = function(Node, Value) { return Node.value = Value; return self }
+
+	///@function (index)
+	static _Under_iterator_get = function(Node) { return Node.value }
+
+	///@function (value)
+	static _Under_iterator_add = insert
+
+	///@function (index, value)
+	static _Under_iterator_insert = insert_at
+
+	///@function (index)
+	static _Under_iterator_next = function(Node) { return Node.node_next }
+
+	///@function (index)
+	static _Under_iterator_prev = function(Node) { return Node.node_previous }
 
 	///@function 
 	static _Under_insert_at_node = function(Node, Value) {
@@ -222,7 +250,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 		var Result = Node.insert(Value)
 		var Where = Result[0], Branch = Result[1]
-		
+
 		if Branch != BSTree_type.none {
 			inner_size++
 			switch Branch {
@@ -266,31 +294,11 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		delete Node
 	}
 
-	///@function 
-	static _Under_lower_bound = function(Value) {
-		if 0 == inner_size
-			return undefined
-
-		var Node = node_head, CompVal
-		while !is_undefined(Node) {
-			CompVal = _Under_extract_key(Node)
-			if Value == CompVal {
-				return Node
-			} else {
-				if key_inquire_comparator(Value, CompVal)
-					Node = Node.node_left
-				else
-					Node = Node.node_right
-			}
-		}
-		return undefined
-	}
-
 	is_multiple = false
 	node_rightest = undefined
 	key_inquire_comparator = compare_less
 	key_comparator = function(a, b) {
-		var A = _Under_extract_key(a), B = _Under_extract_key(b)
+		var A = _Under_iterator_get(a), B = _Under_iterator_get(b)
 		if A == B
 			return b < a
 		else

@@ -3,7 +3,7 @@ enum RBColor { Black, Red }
 ///@function RBTree_node(storage)
 function RBTree_node(Storage): BSTree_node(Storage) constructor {
 	color = RBColor.Red
-	node_nil = Storage.node_nil
+
 	static type = RBTree_node
 
 	static toString = function() {
@@ -13,45 +13,30 @@ function RBTree_node(Storage): BSTree_node(Storage) constructor {
 
 function RedBlack_tree(): BinarySearch_tree() constructor {
 #region public
-	///@function valid(element)
-	static valid = function(Node) { return !is_undefined(Node) and Node != node_nil }
-
 	///@function insert(value)
 	static insert = function(Value) { return Iterator(_Under_insert_and_fix(node_head, Value)) }
 
 	///@function insert_at(index, value)
 	static insert_at = function(Key, Value) {
-		var Loc = _Under_lower_bound(Key)
+		var Loc = first_of(Key)
 		if !is_undefined(Loc)
 			return Iterator(_Under_insert_and_fix(Loc, Value))
 		else
 			return undefined
 	}
 
-	///@function insert_iter(iterator, value)
-	static insert_iter = function(It, Value) {
-		if It.storage == self
-			return insert_at(It.index, Value)
-		else
-			return undefined
-	}
-
 	///@function erase_at(index)
 	static erase_at = function(Key) {
-		var Where = _Under_lower_bound(Key)
+		var Where = first_of(Key)
 		if !is_undefined(Where)
 			_Under_erase_and_fix(Where)
 	}
 
 	///@function erase_iter(iterator)
-	static erase_iter = function(It) {
-		if It.storage == self
-			_Under_erase_and_fix(It.index)
-	}
+	static erase_iter = function(It) { if It.storage == self _Under_erase_and_fix(It.index) }
 
 	static type = RedBlack_tree
 	static value_type = RBTree_node
-	static iterator_type = Bidirectional_iterator
 #endregion
 
 #region private
@@ -60,7 +45,7 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 		var Succesor = Node.node_right
 		Node.node_right = Succesor.node_left
 
-		if valid(Succesor.node_left) {
+		if !is_undefined(Succesor.node_left) {
 			Succesor.node_left.parent = Node
 		}
 
@@ -81,7 +66,7 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 		var Succesor = Node.node_left
 		Node.node_left = Succesor.node_right
 
-		if valid(Succesor.node_right) {
+		if !is_undefined(Succesor.node_right) {
 			Succesor.node_right.parent = Node
 		}
 
@@ -114,7 +99,7 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 				Aunt = Grandparent.node_right
 			else
 				Aunt = Grandparent.node_left
-			Aunt_is_alive = valid(Aunt)
+			Aunt_is_alive = !is_undefined(Aunt)
 			Aunt_is_red = (Aunt_is_alive and Aunt.color == RBColor.Red)
 			// Every nil node is BLACK.
 			Aunt_is_black = (Aunt_is_alive and Aunt.color == RBColor.Black) or (!Aunt_is_alive)
@@ -198,7 +183,7 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 					Cousin = Parent.node_right
 				else
 					Cousin = Parent.node_left
-				var Cousin_is_alive = valid(Cousin)
+				var Cousin_is_alive = !is_undefined(Cousin)
 				var Cousin_is_red = (Cousin_is_alive and Cousin.color == RBColor.Red)
 				// Every nil node is BLACK.
 				var Cousin_is_black = (Cousin_is_alive and Cousin.color == RBColor.Black) or (!Cousin_is_alive)
@@ -212,7 +197,7 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 						CousinSib = Cousin.node_left
 						_Under_rotate_right(Parent)
 					}
-					if !valid(CousinSib)
+					if is_undefined(CousinSib)
 						CousinSib.color = RBColor.Black
 					if Parent_IsRed
 						Cousin.color = RBColor.Red
@@ -242,9 +227,9 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 
 	///@function 
 	static _Under_upper_bound_from_lower = function(Lower) {
-		var Node = Lower, Key = _Under_extract_key(Lower), CompKey
+		var Node = Lower, Key = _Under_iterator_get(Lower), CompKey
 		while !is_undefined(Node) {
-			CompKey = _Under_extract_key(Node)
+			CompKey = _Under_iterator_get(Node)
 			if Key != CompKey {
 				return Node
 			} else {
@@ -252,14 +237,6 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 			}
 		}
 		return undefined
-	}
-
-	key_inquire_compare = compare_complex_less
-	check_inquire_compare = compare_equal
-	check_comparator = function(a, b) { return check_inquire_compare(a.value, b.value) }
-	static node_nil = {
-		parent: undefined,
-		color: RBColor.Black
 	}
 #endregion
 

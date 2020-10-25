@@ -127,9 +127,6 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	///@function empty()
 	static empty = function() { return bool(inner_size == 0) }
 
-	///@function valid(Index)
-	static valid = function(Index) { return bool(0 <= Index and Index < inner_size) }
-
 	///@function clear()
 	static clear = function() {
 		if !is_undefined(node_head) {
@@ -138,6 +135,29 @@ function Binary_tree(): Binary_tree_trait() constructor {
 		node_head = undefined
 		inner_size = 0
 		gc_collect()
+	}
+
+	///@function valid(Index)
+	static valid = function(Index) { return bool(0 <= Index and Index < inner_size) }
+
+	///@function at(index)
+	static at = function(Index) {
+		if valid(Index) {
+			if Index < cash_size {
+				return cash[Index]
+			} else {
+				var Target, It = cash[cash_size - 1], Max = Index - cash_size + 1
+				repeat Max {
+					Target = It.node_next
+					if is_undefined(Target)
+						break
+					It = Target
+				}
+				return It.value
+			}
+		} else {
+			return undefined
+		}
 	}
 
 	///@function front()
@@ -206,7 +226,7 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	}
 
 	///@function push_back(value)
-	static push_back = function(Value) { insert(Value) }
+	static push_back = insert
 
 	///@function pop_back()
 	static pop_back = function() {
@@ -260,10 +280,10 @@ function Binary_tree(): Binary_tree_trait() constructor {
 
 #region private
 	///@function (index, value)
-	static _Under_iterator_set = function(Index, Value) { return Index.value = Value; return self }
+	static _Under_iterator_set = function(Node, Value) { return Node.value = Value; return self }
 
 	///@function (index)
-	static _Under_iterator_get = function(Index) { return Index.value }
+	static _Under_iterator_get = function(Node) { return Node.value }
 
 	///@function (value)
 	static _Under_iterator_add = insert
@@ -272,30 +292,10 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	static _Under_iterator_insert = undefined
 
 	///@function (index)
-	static _Under_iterator_next = function(Index) { return Index.node_next }
+	static _Under_iterator_next = function(Node) { return Node.node_next }
 
 	///@function (index)
-	static _Under_iterator_prev = function(Index) { return Index.node_previous }
-
-	///@function 
-	static _Under_at = function(Index) {
-		if valid(Index) {
-			if Index < cash_size {
-				return cash[Index]
-			} else {
-				var Target, It = node_tail, Max = Index - cash_size + 1
-				repeat Max {
-					Target = It.node_next
-					if is_undefined(Target)
-						break
-					It = Target
-				}
-				return It.value
-			}
-		} else {
-			return undefined
-		}
-	}
+	static _Under_iterator_prev = function(Node) { return Node.node_previous }
 
 	///@function 
 	static _Under_clear = function(Node) {
