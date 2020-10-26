@@ -155,10 +155,10 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static insert = function(Value) { Iterator(_Under_insert_at_node(node_head, Value)) }
 
 	///@function insert_at(index, value)
-	static insert_at = function(Key, Value) {
-		var Loc = first_of(Key)
+	static insert_at = function(Hint, Key) {
+		var Loc = first_of(Hint)
 		if !is_undefined(Loc)
-			return Iterator(_Under_insert_at_node(Loc, Value))
+			return Iterator(_Under_insert_at_node(Loc, Key))
 		else
 			return undefined
 	}
@@ -205,7 +205,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	}
 
 	///@function location(value)
-	static location = first_of
+	static location = function(Key) { return Iterator(first_of(Key)) }
 
 	///@function contains(value)
 	static contains = function(Key) { return !is_undefined(first_of(Key)) }

@@ -33,7 +33,7 @@ function Map(): RedBlack_tree() constructor {
 		return self
 	}
 
-	///@function insert(item)
+	///@function insert(value)
 	static insert = function() {
 		
 		return self

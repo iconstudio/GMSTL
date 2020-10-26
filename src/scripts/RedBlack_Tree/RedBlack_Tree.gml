@@ -17,10 +17,10 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 	static insert = function(Value) { return Iterator(_Under_insert_and_fix(node_head, Value)) }
 
 	///@function insert_at(index, value)
-	static insert_at = function(Key, Value) {
-		var Loc = first_of(Key)
+	static insert_at = function(Hint, Key) {
+		var Loc = first_of(Hint)
 		if !is_undefined(Loc)
-			return Iterator(_Under_insert_and_fix(Loc, Value))
+			return Iterator(_Under_insert_and_fix(Loc, Key))
 		else
 			return undefined
 	}
@@ -233,7 +233,7 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 			if Key != CompKey {
 				return Node
 			} else {
-				Node = Node.node_right
+				Node = Node.node_next
 			}
 		}
 		return undefined
