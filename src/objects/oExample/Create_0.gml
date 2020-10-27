@@ -21,13 +21,6 @@ merge(test1.first(), test1.last(), test2.first(), test2.last(), test_sum.first()
 random_shuffle(test_sum.first(), test_sum.last())
 
 //BinarySearch_tree
-tree_indicator_start_pos = [room_width * 0.5, room_height * 0.2]
-tree_indicator_node_radius = 16
-
-tree_indicator_node_link_length_begin = 190
-tree_indicator_node_link_length_end = tree_indicator_node_radius * 3
-tree_indicator_node_link_angle_begin = 8
-tree_indicator_node_link_angle_end = 75
 test_tree = new RedBlack_tree(test_sum)
 test_tree.insert(5)
 test_tree.insert(12)
@@ -40,6 +33,13 @@ repeat 60
 tree_head = test_tree.node_head
 tree_size = test_tree.size()
 tree_scaler = ceil(log2(tree_size))
+
+tree_indicator_start_pos = [room_width * 0.5, room_height * 0.2]
+tree_indicator_node_radius = 16
+tree_indicator_node_link_length_begin = 190
+tree_indicator_node_link_length_end = tree_indicator_node_radius * 3
+tree_indicator_node_link_angle_begin = 8
+tree_indicator_node_link_angle_end = 75
 
 function rbtree_print(Cont, NodeStart, Msg) {
 	Msg = select_argument(Msg, "[" + string(NodeStart) + "]\t")
