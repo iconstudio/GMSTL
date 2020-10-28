@@ -68,7 +68,7 @@ function draw_rbtree_node(Dx, Dy, Node) {
 		draw_set_color($ffffff)
 	draw_circle(Dx, Dy, tree_indicator_node_radius, true)
 	draw_set_color($ffffff)
-	draw_text(Dx, Dy, Node.value)
+	draw_text(Dx, Dy, Node.get())
 }
 
 function draw_rbtree_init() {

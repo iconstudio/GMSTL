@@ -10,11 +10,11 @@ function BSTree_node(Storage): Tree_node() constructor {
 #region private
 ///@function 
 	static _Under_insert = function(Value) {
-		if !is_multiple and Value == value {
+		if !is_multiple and Value == key {
 			return [self, BSTree_type.none]
 		} else {
 			var Compare = storage.key_inquire_comparator
-			if Compare(Value, value) {
+			if Compare(Value, key) {
 				if is_undefined(node_left) {
 					var ValueNode = new type(storage).set(Value)
 					set_left(ValueNode)
@@ -34,7 +34,7 @@ function BSTree_node(Storage): Tree_node() constructor {
 
 					var Promote = parent, ProValue, Upheal
 					while !is_undefined(Promote) {
-						ProValue = Promote.value
+						ProValue = Promote.key
 						if Compare(Value, ProValue) {
 							ValueNode.set_next(Promote)
 							break
@@ -60,12 +60,6 @@ function BSTree_node(Storage): Tree_node() constructor {
 #endregion
 
 #region public
-	///@function set(value)
-	static set = function(Value) { value = Value; return self }
-
-	///@function get()
-	static get = function() { return value }
-	
 	///@function insert(value)
 	static insert = _Under_insert
 
@@ -219,12 +213,6 @@ function BinarySearch_tree(): Binary_tree() constructor {
 #endregion
 
 #region private
-	///@function (index, value)
-	static _Under_iterator_set = function(Node, Value) { return Node.value = Value; return self }
-
-	///@function (index)
-	static _Under_iterator_get = function(Node) { return Node.value }
-
 	///@function (value)
 	static _Under_iterator_add = insert
 

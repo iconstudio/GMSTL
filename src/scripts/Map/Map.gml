@@ -19,12 +19,23 @@
 			}
 		
 */
+///@function Map_node(storage)
+function Map_node(Storage): RBTree_node(Storage) constructor {
+	value = undefined
+
+	static type = Map_node
+}
+
 #macro Dictionary Map
 function Map(): RedBlack_tree() constructor {
 #region public
 	///@function at(index)
 	static at = function(Key) {
-		
+		var Where = first_of(Key)
+		if !is_undefined(Where)
+			return Where.get()
+		else
+			return undefined
 	}
 
 	//////@function set_at(index, value)
@@ -63,6 +74,7 @@ function Map(): RedBlack_tree() constructor {
 	static destroy = function() {  gc_collect() }
 
 	static type = Map
+	static value_type = Map_node
 #endregion
 
 #region private

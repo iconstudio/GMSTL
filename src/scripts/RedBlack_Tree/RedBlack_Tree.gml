@@ -7,7 +7,7 @@ function RBTree_node(Storage): BSTree_node(Storage) constructor {
 	static type = RBTree_node
 
 	static toString = function() {
-		return (color == RBColor.Black ? "Black: " : "Red: ") + string(value)
+		return (color == RBColor.Black ? "Black: " : "Red: ") + string(key)
 	}
 }
 

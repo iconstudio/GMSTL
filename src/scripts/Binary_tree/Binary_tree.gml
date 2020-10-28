@@ -1,11 +1,17 @@
 ///@function 
 function Tree_node_trait() constructor {
-	value = undefined
+	key = undefined
 	parent = undefined
 	node_left = undefined
 	node_right = undefined
 	node_next = undefined
 	node_previous = undefined
+
+	///@function set(value)
+	static set = function(Value) { key = Value; return self }
+
+	///@function get()
+	static get = function() { return key }
 
 	///@function 
 	static _Under_destroy = function() {
@@ -26,7 +32,7 @@ function Tree_node_trait() constructor {
 		}
 	}
 
-	static toString = function() { return string(value) }
+	static toString = function() { return string(key) }
 }
 
 ///@function 
@@ -153,7 +159,7 @@ function Binary_tree(): Binary_tree_trait() constructor {
 						break
 					It = Target
 				}
-				return It.value
+				return It.key
 			}
 		} else {
 			return undefined
@@ -175,7 +181,7 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	///@function make_node(value)
 	static make_node = function(Value) {
 		var Node = _Under_make_node()
-		Node.value = Value
+		Node.key = Value
 		return Node
 	}
 
@@ -246,7 +252,7 @@ function Binary_tree(): Binary_tree_trait() constructor {
 					Result = cash[inner_size - 1]
 					cash[inner_size - 1] = undefined
 				} else {
-					Result = node_tail.value
+					Result = node_tail.key
 				}
 
 				var Butt = node_tail.parent
@@ -280,10 +286,10 @@ function Binary_tree(): Binary_tree_trait() constructor {
 
 #region private
 	///@function (index, value)
-	static _Under_iterator_set = function(Node, Value) { return Node.value = Value; return self }
+	static _Under_iterator_set = function(Node, Value) { return Node.key = Value; return self }
 
 	///@function (index)
-	static _Under_iterator_get = function(Node) { return Node.value }
+	static _Under_iterator_get = function(Node) { return Node.key }
 
 	///@function (value)
 	static _Under_iterator_add = insert
