@@ -107,25 +107,7 @@ function Tree_node(): Tree_node_trait() constructor {
 	}
 }
 
-///@function 
-function Binary_tree_trait(): Container() constructor {
-	///@function 
-	static _Under_cash_allocate = function() {
-		cash = 0
-		cash = array_create(cash_size, undefined)
-	}
-
-	///@function 
-	static _Under_make_node = function() { return new value_type() }
-
-	node_head = undefined
-	node_tail = undefined
-	cash_size = 64
-	cash = array_create(cash_size, undefined)
-	static value_type = Tree_node
-}
-
-function Binary_tree(): Binary_tree_trait() constructor {
+function Binary_tree(): Container() constructor {
 #region public
 	///@function size()
 	static size = function() { return inner_size }
@@ -304,6 +286,15 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	static _Under_iterator_prev = function(Node) { return Node.node_previous }
 
 	///@function 
+	static _Under_cash_allocate = function() {
+		cash = 0
+		cash = array_create(cash_size, undefined)
+	}
+
+	///@function 
+	static _Under_make_node = function() { return new value_type() }
+
+	///@function 
 	static _Under_clear = function(Node) {
 		var Left = Node.node_left, Right = Node.node_right
 		if !is_undefined(Left)
@@ -316,8 +307,14 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	}
 
 	inner_size = 0
+	cash_size = 64
+	cash = array_create(cash_size, undefined)
+
+	node_head = undefined
+	node_tail = undefined
 	node_inserter_parent = undefined
 	node_leftest = undefined
+	static value_type = Tree_node
 #endregion
 
 	// ** Contructor **

@@ -284,9 +284,9 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 	is_multiple = false
 	node_rightest = undefined
-	key_inquire_comparator = compare_less
-	key_comparator = function(a, b) {
-		var A = _Under_iterator_get(a), B = _Under_iterator_get(b)
+	static key_inquire_comparator = compare_less
+	static key_comparator = function(a, b) {
+		var A = a.key, B = b.key
 		if A == B
 			return b < a
 		else

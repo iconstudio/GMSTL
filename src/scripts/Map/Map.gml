@@ -33,7 +33,7 @@ function Map(): RedBlack_tree() constructor {
 	static at = function(Key) {
 		var Where = first_of(Key)
 		if !is_undefined(Where)
-			return Where.get()
+			return Where.value
 		else
 			return undefined
 	}
@@ -99,6 +99,7 @@ function Map(): RedBlack_tree() constructor {
 	///@function (index)
 	static _Under_iterator_prev = function(Index) { return Index - 1 }
 
+	static key_inquire_comparator = compare_complex_less
 #endregion
 
 	if 0 < argument_count {
