@@ -40,7 +40,11 @@ function Map(): RedBlack_tree() constructor {
 
 	//////@function set_at(index, value)
 	static set_at = function(Index, Value) { 
-		
+		var Where = first_of(Key)
+		if !is_undefined(Where)
+			Where.value = Value
+		else
+			insert_at
 		return self
 	}
 

@@ -85,7 +85,7 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 	///@function 
 	static _Under_insert_and_fix = function(Node, Value) {
 		Node = _Under_insert_at_node(Node, Value) // increasing size
-		if inner_size == 1 {
+		if Node == node_head {
 			Node.color = RBColor.Black
 			return Node
 		}
