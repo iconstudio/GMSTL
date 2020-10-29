@@ -207,7 +207,6 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	///@function set_key_compare(compare_function)
 	static set_key_compare = function(Func) { key_inquire_comparator = method(other, Func) }
 
-	static node_nil = {}
 	static type = BinarySearch_tree
 	static value_type = BSTree_node
 	static iterator_type = Bidirectional_iterator
@@ -227,17 +226,13 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static _Under_iterator_prev = function(Node) { return Node.node_previous }
 
 	///@function 
-	static _Under_insert_begin = function(Value, Hint) {
-		if is_undefined(Hint) {
+	static _Under_insert_at_node = function(Node, Value) {
+		if 0 == inner_size {
 			inner_size++
 			node_head = new value_type(self).set(Value)
 			return node_head
 		}
-		return _Under_insert_at_node(Hint, Value)
-	}
 
-	///@function 
-	static _Under_insert_at_node = function(Node, Value) {
 		if is_undefined(Node)
 			return undefined
 

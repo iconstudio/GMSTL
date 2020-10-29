@@ -44,7 +44,7 @@ function Map(): RedBlack_tree() constructor {
 		if !is_undefined(Where)
 			Where.value = Value
 		else
-			insert_at
+			insert_at()
 		return self
 	}
 
