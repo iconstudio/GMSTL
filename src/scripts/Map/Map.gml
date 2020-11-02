@@ -39,13 +39,33 @@ function Map(): RedBlack_tree() constructor {
 	}
 
 	//////@function set_at(index, value)
-	static set_at = function(Index, Value) { 
-		var Where = first_of(Key)
-		if !is_undefined(Where)
+	static set_at = function(Key, Value) { 
+		if !is_undefined(Hint) {
 			Where.value = Value
-		else
-			insert_at()
+		} else {
+			var Node = _Under_insert_and_fix(Hint, Pair[0])
+			Node.value = Pair[1]
+		}
 		return self
+	}
+ 
+	///@function insert(value)
+	static insert = function(Pair) {
+		var Node = _Under_insert_and_fix(node_head, Pair[0])
+		Node.value = Pair[1]
+		return Iterator(Node)
+	}
+
+	///@function insert_at(index, value)
+	static insert_at = function(Hint, Pair) {
+		var Loc = first_of(Hint)
+		if !is_undefined(Loc) {
+			var Node = _Under_insert_and_fix(Loc, Pair[0])
+			Node.value = Pair[1]
+			return Iterator(Node)
+		} else {
+			return undefined
+		}
 	}
 
 	///@function insert(value)
