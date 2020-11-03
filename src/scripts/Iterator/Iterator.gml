@@ -29,6 +29,7 @@ function Iterator_trait(Index) constructor {
 		Other.storage = storage
 		Other.value = value
 		Other.index = index
+		
 		return Other
 	}
 

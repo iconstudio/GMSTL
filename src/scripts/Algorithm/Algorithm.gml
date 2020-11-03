@@ -897,7 +897,7 @@ function inplace_merge(First, Middle, Last) {
 	else
 		Compare = compare_less
 	var Temp = duplicate()
-	Temp.merge(self, First, Middle, self, Middle, Last, First, Compare)
+	Temp.merge(First, Middle, Middle, Last, First, Compare)
 	copy(Temp.first(), Temp.last(), First)
 	delete Temp
 }
