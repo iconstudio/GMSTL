@@ -192,6 +192,7 @@ var nth_result_value = nth_result_iterator.get()
 show_debug_message("The " + string(nth) + "th Iterator: " + string(nth_result_iterator.index))
 show_debug_message("The " + string(nth) + "th Value: " + string(nth_result_value))
 print(test_sum)
+*/
 
 show_debug_message("\nTransform a List into a paired List")
 test_mapped_list = new List("D", "E", "A", "T", "H", "K", "N", "I", "G", "H", "T")
@@ -224,23 +225,15 @@ print(test_unomap)
 
 show_debug_message("\nMultimap")
 test_multimap = new Multimap(test_mapped_list)
-test_multimap.insert(1, 10)
-test_multimap.insert(2, 15)
-test_multimap.insert(10, 50)
-test_multimap.insert(11, 55)
-test_multimap.insert(12, 60)
-test_multimap.insert(0, new Wrapper("0-1st"))
-test_multimap.insert(0, new Wrapper("0-2nd"))
-test_multimap.insert(0, new Wrapper("0-3rd"))
-test_multimap.insert(1, new Wrapper("1-1st"))
-test_multimap.insert(1, new Wrapper("1-2nd"))
-test_multimap.insert(1, new Wrapper("1-3rd"))
-
-var i, TempPair, Key, Values
-for (i = 0; i < test_multimap.bucket_count(); ++i) {
-	TempPair = test_multimap.at(i)
-	Key = TempPair[0]
-	Values = TempPair[1] // List
-	show_debug_message("Values with key " + string(Key) + ": ")
-	print(Values)
-}
+test_multimap.insert([1, 10])
+test_multimap.insert([2, 15])
+test_multimap.insert([10, 50])
+test_multimap.insert([11, 55])
+test_multimap.insert([12, 60])
+test_multimap.insert([0, new Wrapper("0-1st")])
+test_multimap.insert([0, new Wrapper("0-2nd")])
+test_multimap.insert([0, new Wrapper("0-3rd")])
+test_multimap.insert([1, new Wrapper("1-1st")])
+test_multimap.insert([1, new Wrapper("1-2nd")])
+test_multimap.insert([1, new Wrapper("1-3rd")])
+print(test_multimap)

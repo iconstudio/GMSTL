@@ -2,7 +2,6 @@
 	Constructors:
 		Map()
 		Map(Arg)
-		Map(Multimaps)
 		Map(Paired-Container)
 		Map(Builtin-Paired-Array)
 		Map(Builtin-Paired-List)
@@ -52,16 +51,22 @@ function Map(): RedBlack_tree() constructor {
  
 	///@function insert(value)
 	static insert = function(Pair) {
-		var Node = _Under_insert_and_fix(node_head, Pair[0])
-		Node.value = Pair[1]
-		return Iterator(Node)
+		var Where = first_of(Pair[0])
+		if !is_undefined(Where) {
+			Where.value = Pair[1]
+			return Iterator(Where)
+		} else {
+			var Node = _Under_insert_and_fix(node_head, Pair[0])
+			Node.value = Pair[1]
+			return Iterator(Node)
+		}
 	}
 
 	///@function insert_at(index, value)
 	static insert_at = function(Hint, Pair) {
-		var Loc = first_of(Hint)
-		if !is_undefined(Loc) {
-			var Node = _Under_insert_and_fix(Loc, Pair[0])
+		var Where = first_of(Hint)
+		if !is_undefined(Where) {
+			var Node = _Under_insert_and_fix(Where, Pair[0])
 			Node.value = Pair[1]
 			return Iterator(Node)
 		} else {
@@ -70,13 +75,23 @@ function Map(): RedBlack_tree() constructor {
 	}
 
 	///@function erase_at(key)
-	static erase_at = function(K) {
-		
+	static erase_at = function(Key) {
+		var Result = undefined, Where = first_of(Key)
+		if !is_undefined(Where) {
+			Result = Iterator(Where.node_next)
+			_Under_erase_and_fix(Where)
+		}
+		return Result
 	}
 
 	///@function key_swap(key_1, key_2)
 	static key_swap = function(Key1, Key2) {
-		
+		var Where1 = first_of(Key1), Where2 = first_of(Key2)
+		if !is_undefined(Where1) and !is_undefined(Where2) {
+			var Temp = Where1.value
+			Where1.value = Where2.value
+			Where2.value = Temp
+		}
 	}
 
 	///@function read(data_string)
@@ -89,34 +104,22 @@ function Map(): RedBlack_tree() constructor {
 		
 	}
 
-	///@function destroy()
-	static destroy = function() {  gc_collect() }
-
 	static type = Map
 	static value_type = Map_node
 #endregion
 
 #region private
-	///@function 
-	static _Under_extract_key = function(Node) { return Node.value[0] }
-
 	///@function (index, value)
 	static _Under_iterator_set = set_at
 
 	///@function (index)
-	static _Under_iterator_get = function(Node) { return Node.value } // pair
+	static _Under_iterator_get = function(Node) { return Node.value }
 
 	///@function (value)
-	static _Under_iterator_add = push_back
+	static _Under_iterator_add = insert
 
 	///@function (index, value)
 	static _Under_iterator_insert = insert_at
-
-	///@function (index)
-	static _Under_iterator_next = function(Index) { return Index + 1 }
-
-	///@function (index)
-	static _Under_iterator_prev = function(Index) { return Index - 1 }
 
 	static key_inquire_comparator = compare_complex_less
 #endregion
@@ -142,20 +145,9 @@ function Map(): RedBlack_tree() constructor {
 							break
 					}
 				}
-			} else if is_struct(Item) {
-				var Type = instanceof(Item)
-				if Type == "Multimap" or Type == "Unordered_Multimap" {
-					// (*) Multimaps
-					foreach(Item.first(), Item.last(), function(Value) {
-						var Key = Value[0], KList = Value[1].duplicate()
-						insert(Key, KList)
-					})
-				} else if is_iterable(Item) {
-					// (*) Paired-Container
-					foreach(Item.first(), Item.last(), function(Value) {
-						insert(Value)
-					})
-				}
+			} else if is_struct(Item) and is_iterable(Item) {
+				// (*) Paired-Container
+				foreach(Item.first(), Item.last(), insert)
 			} else {
 				// (*) Arg
 				insert(Item)
