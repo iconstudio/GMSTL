@@ -39,12 +39,13 @@ function Map(): RedBlack_tree() constructor {
 	}
 
 	//////@function set_at(index, value)
-	static set_at = function(Key, Value) { 
-		if !is_undefined(Hint) {
+	static set_at = function(Key, Value) {
+		var Where = first_of(Key)
+		if !is_undefined(Where) {
 			Where.value = Value
 		} else {
-			var Node = _Under_insert_and_fix(Hint, Pair[0])
-			Node.value = Pair[1]
+			var Node = _Under_insert_and_fix(node_head, Key)
+			Node.value = Value
 		}
 		return self
 	}
@@ -66,12 +67,6 @@ function Map(): RedBlack_tree() constructor {
 		} else {
 			return undefined
 		}
-	}
-
-	///@function insert(value)
-	static insert = function() {
-		
-		return self
 	}
 
 	///@function erase_at(key)
