@@ -1,42 +1,5 @@
 ///@function 
-function Tree_node_trait() constructor {
-	key = undefined
-	parent = undefined
-	node_left = undefined
-	node_right = undefined
-	node_next = undefined
-	node_previous = undefined
-
-	///@function set(value)
-	static set = function(Value) { key = Value; return self }
-
-	///@function get()
-	static get = function() { return key }
-
-	///@function 
-	static _Under_destroy = function() {
-		if !is_undefined(parent) {
-			if self == parent.node_left {
-				parent.node_left = undefined
-			} else if self == parent.node_right {
-				parent.node_right = undefined
-			}
-		}
-
-		if !is_undefined(node_left) {
-			node_left.parent = undefined
-		}
-
-		if !is_undefined(node_right) {
-			node_right.parent = undefined
-		}
-	}
-
-	static toString = function() { return string(key) }
-}
-
-///@function 
-function Tree_node(): Tree_node_trait() constructor {
+function Tree_node() constructor {
 	///@function set_parent(node)
 	static set_parent = function(Node) { parent = Node }
 
@@ -105,6 +68,40 @@ function Tree_node(): Tree_node_trait() constructor {
 
 		return node_previous
 	}
+
+	///@function set(value)
+	static set = function(Value) { key = Value; return self }
+
+	///@function get()
+	static get = function() { return key }
+
+	///@function 
+	static _Under_destroy = function() {
+		if !is_undefined(parent) {
+			if self == parent.node_left {
+				parent.node_left = undefined
+			} else if self == parent.node_right {
+				parent.node_right = undefined
+			}
+		}
+
+		if !is_undefined(node_left) {
+			node_left.parent = undefined
+		}
+
+		if !is_undefined(node_right) {
+			node_right.parent = undefined
+		}
+	}
+
+	static toString = function() { return string(key) }
+
+	key = undefined
+	parent = undefined
+	node_left = undefined
+	node_right = undefined
+	node_next = undefined
+	node_previous = undefined
 }
 
 function Binary_tree(): Container() constructor {
@@ -268,10 +265,10 @@ function Binary_tree(): Container() constructor {
 
 #region private
 	///@function (index, value)
-	static _Under_iterator_set = function(Node, Value) { return Node.key = Value; return self }
+	static _Under_iterator_set = function(Node, Value) { return Node.set(Value); return self }
 
 	///@function (index)
-	static _Under_iterator_get = function(Node) { return Node.key }
+	static _Under_iterator_get = function(Node) { return Node.get() }
 
 	///@function (value)
 	static _Under_iterator_add = insert
