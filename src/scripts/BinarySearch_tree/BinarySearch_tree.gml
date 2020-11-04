@@ -198,6 +198,26 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		return undefined
 	}
 
+	///@function first_of(value)
+	static first_of = function(Key) {
+		if 0 == inner_size
+			return undefined
+
+		var Node = node_head, CompVal
+		while !is_undefined(Node) {
+			CompVal = _Under_iterator_get(Node)
+			if Key == CompVal {
+				return Node
+			} else {
+				if key_inquire_comparator(Key, CompVal)
+					Node = Node.node_left
+				else
+					Node = Node.node_right
+			}
+		}
+		return undefined
+	}
+
 	///@function location(value)
 	static location = function(Key) { return Iterator(first_of(Key)) }
 

@@ -84,13 +84,25 @@ function Map(): RedBlack_tree() constructor {
 		return Result
 	}
 
-	///@function key_swap(key_1, key_2)
-	static key_swap = function(Key1, Key2) {
+	///@function key_swap_first_of(key_1, key_2)
+	static key_swap_first_of = function(Key1, Key2) {
 		var Where1 = first_of(Key1), Where2 = first_of(Key2)
 		if !is_undefined(Where1) and !is_undefined(Where2) {
 			var Temp = Where1.value
 			Where1.value = Where2.value
 			Where2.value = Temp
+		}
+	}
+
+	///@function key_swap(key_1, key_2)
+	static key_swap = key_swap_first_of
+
+	///@function iter_swap(iterator_1, iterator_2)
+	static iter_swap = function(Iter1, Iter2) {
+		if Iter1.storage == self and Iter2.storage == self {
+			var Temp = Iter1.value
+			Iter1.value = Iter2.value
+			Iter2.value = Temp
 		}
 	}
 
