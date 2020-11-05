@@ -150,7 +150,7 @@ function swap_range(First, Last, Output) {
 	Output = check_iterator(Output)
 
 	while First.not_equals(Last) {
-	  swap(First, Output)
+		swap(First, Output)
 		First.go_next()
 		Output.go_next()
 	}

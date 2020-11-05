@@ -225,19 +225,6 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 		}
 	}
 
-	///@function 
-	static _Under_upper_bound_from_lower = function(Lower) {
-		var Node = Lower, Key = _Under_iterator_get(Lower), CompKey
-		while !is_undefined(Node) {
-			CompKey = _Under_iterator_get(Node)
-			if Key != CompKey {
-				return Node
-			} else {
-				Node = Node.node_next
-			}
-		}
-		return undefined
-	}
 #endregion
 
 	// ** Contructor **
