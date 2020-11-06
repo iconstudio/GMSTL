@@ -7,7 +7,7 @@ function RBTree_node(Storage): BSTree_node(Storage) constructor {
 	static type = RBTree_node
 
 	static toString = function() {
-		return (color == RBColor.Black ? "Black: " : "Red: ") + string(key)
+		return (color == RBColor.Black ? "Black: " : "Red: ") + string(data)
 	}
 }
 
@@ -40,6 +40,12 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 #endregion
 
 #region private
+	///@function (value)
+	static _Under_iterator_add = insert
+
+	///@function (index, value)
+	static _Under_iterator_insert = insert_at
+
 	///@function 
 	static _Under_rotate_left = function(Node) {
 		var Succesor = Node.node_right
@@ -138,7 +144,7 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 
 	///@function 
 	/*
-			Splice the case of erasing a key from the Tree.
+			Splice the case of erasing a data from the Tree.
 			
 			case 1: a red node
 				Just remove this.

@@ -1,5 +1,14 @@
-///@function 
+///@function Tree_node()
 function Tree_node() constructor {
+	///@function set(value)
+	static set = function(Key) { data = Key; return self }
+
+	///@function get()
+	static get = function() { return data }
+
+	///@function extract()
+	static extract = function() { return data }
+
 	///@function set_parent(node)
 	static set_parent = function(Node) { parent = Node }
 
@@ -69,12 +78,6 @@ function Tree_node() constructor {
 		return node_previous
 	}
 
-	///@function set(value)
-	static set = function(Value) { key = Value; return self }
-
-	///@function get()
-	static get = function() { return key }
-
 	///@function 
 	static _Under_destroy = function() {
 		if !is_undefined(parent) {
@@ -94,9 +97,9 @@ function Tree_node() constructor {
 		}
 	}
 
-	static toString = function() { return string(key) }
+	static toString = function() { return string(data) }
 
-	key = undefined
+	data = undefined
 	parent = undefined
 	node_left = undefined
 	node_right = undefined
@@ -138,7 +141,7 @@ function Binary_tree(): Container() constructor {
 						break
 					It = Target
 				}
-				return It.key
+				return It.data
 			}
 		} else {
 			return undefined
@@ -160,7 +163,7 @@ function Binary_tree(): Container() constructor {
 	///@function make_node(value)
 	static make_node = function(Value) {
 		var Node = _Under_make_node()
-		Node.key = Value
+		Node.data = Value
 		return Node
 	}
 
@@ -231,7 +234,7 @@ function Binary_tree(): Container() constructor {
 					Result = cash[inner_size - 1]
 					cash[inner_size - 1] = undefined
 				} else {
-					Result = node_tail.key
+					Result = node_tail.data
 				}
 
 				var Butt = node_tail.parent

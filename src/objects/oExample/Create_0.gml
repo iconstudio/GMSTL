@@ -143,6 +143,7 @@ function draw_rbtree(Dx, Dy, Node, Height) {
 }
 
 rbtree_print(test_tree, tree_head)
+print(test_tree)
 event_user(0)
 show_debug_message("")
 
@@ -200,6 +201,7 @@ test_mapped_list = new List("D", "E", "A", "T", "H", "K", "N", "I", "G", "H", "T
 transform(test_mapped_list.first(), test_mapped_list.last(), test_mapped_list.first(), function (Value) {
 	return [Value, irandom(3)]
 })
+
 test_mapped_list.push_back(["@", "1st"])
 test_mapped_list.push_back(["@", "2nd"])
 test_mapped_list.push_back(["@", "3rd"])
@@ -215,7 +217,9 @@ test_mapped_list.push_back(["CT", "CT_5"])
 test_mapped_list.push_back(["CT", "CT_6"])
 test_mapped_list.push_back(["CZ", "CZ"])
 test_mapped_list.push_back(["AC", "AC"]) // 17
-show_debug_message("Map")
+print(test_mapped_list)
+
+show_debug_message("\nMap")
 test_map = new Map(test_mapped_list)
 print(test_map)
 

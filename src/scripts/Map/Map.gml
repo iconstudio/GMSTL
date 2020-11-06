@@ -20,7 +20,16 @@
 */
 ///@function Map_node(storage)
 function Map_node(Storage): RBTree_node(Storage) constructor {
-	value = undefined
+	///@function set(value)
+	static set = function(Key) { data[0] = Key; return self }
+
+	///@function get()
+	static get = function() { return data }
+
+	///@function extract()
+	static extract = function() { return data[0] }
+
+	data = array_create(2, undefined)
 
 	static type = Map_node
 }
@@ -32,7 +41,7 @@ function Map(): RedBlack_tree() constructor {
 	static at = function(Key) {
 		var Where = first_of(Key)
 		if !is_undefined(Where)
-			return Where.value
+			return Where.data[1]
 		else
 			return undefined
 	}
@@ -41,40 +50,42 @@ function Map(): RedBlack_tree() constructor {
 	static set_at = function(Key, Value) {
 		var Where = first_of(Key)
 		if !is_undefined(Where) {
-			Where.value = Value
+			Where.data[1] = Value
 		} else {
 			var Node = _Under_insert_and_fix(node_head, Key)
-			Node.value = Value
+			Node.data[1] = Value
 		}
 		return self
 	}
  
 	///@function insert(value)
 	static insert = function(Pair) {
-		var Where = first_of(Pair[0])
+		var Key = Pair[0], Value = Pair[1]
+		var Where = first_of(Key)
 		if !is_undefined(Where) {
-			Where.value = Pair[1]
+			Where.data[1] = Value
 			return Iterator(Where)
 		} else {
-			var Node = _Under_insert_and_fix(node_head, Pair[0])
-			Node.value = Pair[1]
+			var Node = _Under_insert_and_fix(node_head, Key)
+			Node.data[1] = Value
 			return Iterator(Node)
 		}
 	}
 
 	///@function insert_at(index, value)
 	static insert_at = function(Hint, Pair) {
+		var Key = Pair[0], Value = Pair[1]
 		var Where = first_of(Hint)
 		if !is_undefined(Where) {
-			var Node = _Under_insert_and_fix(Where, Pair[0])
-			Node.value = Pair[1]
+			var Node = _Under_insert_and_fix(Where, Key)
+			Node.data[1] = Value
 			return Iterator(Node)
 		} else {
 			return undefined
 		}
 	}
 
-	///@function erase_at(key)
+	///@function erase_at(data)
 	static erase_at = function(Key) {
 		var Result = undefined, Where = first_of(Key)
 		if !is_undefined(Where) {
@@ -122,10 +133,10 @@ function Map(): RedBlack_tree() constructor {
 
 #region private
 	///@function (index, value)
-	static _Under_iterator_set = set_at
+	static _Under_iterator_set = function(Node, Value) { return Node.set(Value); return self }
 
 	///@function (index)
-	static _Under_iterator_get = function(Node) { return Node.value }
+	static _Under_iterator_get = function(Node) { return Node.data }
 
 	///@function (value)
 	static _Under_iterator_add = insert

@@ -27,7 +27,7 @@ function Unordered_map(): Container() constructor {
 	///@function clear()
 	static clear = function() { ds_map_clear(raw) }
 
-	///@function at(key)
+	///@function at(data)
 	static at = function(K) { return ds_map_find_value(raw, K) }
 
 	///@function front()
@@ -50,16 +50,16 @@ function Unordered_map(): Container() constructor {
 		return self
 	}
 
-	///@function set_at(key, value)
+	///@function set_at(data, value)
 	static set_at = function(K, Value) { ds_map_set(raw, K, Value); return self }
 
-	///@function set_list(key, builtin_list_id)
+	///@function set_list(data, builtin_list_id)
 	static set_list = function(K, Value) { ds_map_add_list(raw, K, Value); return self }
 
-	///@function set_map(key, builtin_map_id)
+	///@function set_map(data, builtin_map_id)
 	static set_map = function(K, Value) { ds_map_add_map(raw, K, Value); return self  }
 
-	///@function erase_at(key)
+	///@function erase_at(data)
 	static erase_at = function(K) {
 		var Temp = at(K)
 		ds_map_delete(raw, K)
@@ -69,12 +69,12 @@ function Unordered_map(): Container() constructor {
 	///@function seek(value)
 	static seek = function(Value) { return find(first(), last(), Value) }
 
-	///@function location(key)
+	///@function location(data)
 	static location = function(K) { return find(first(), last(), K, function (It, Key) {
 		return bool(It[0] == Key)
 	})}
 
-	///@function contains(key)
+	///@function contains(data)
 	static contains = function(K) { return ds_map_exists(raw, K) }
 
 	///@function key_swap(key_1, key_2)
@@ -84,10 +84,10 @@ function Unordered_map(): Container() constructor {
 		ds_map_set(raw, Key2, Temp)
 	}
 
-	///@function is_list(key)
+	///@function is_list(data)
 	static is_list = function(K) { return ds_map_is_list(raw, K) }
 
-	///@function is_map(key)
+	///@function is_map(data)
 	static is_map = function(K) { return ds_map_is_map(raw, K) }
 
 	///@function read(data_string)

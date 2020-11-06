@@ -10,11 +10,12 @@ function BSTree_node(Storage): Tree_node() constructor {
 #region private
 ///@function 
 	static _Under_insert = function(Value) {
-		if !is_multiple and Value == key {
+		var Key = extract()
+		if !is_multiple and Value == Key {
 			return [self, BSTree_type.none]
 		} else {
 			var Compare = storage.key_inquire_comparator
-			if Compare(Value, key) {
+			if Compare(Value, Key) {
 				if is_undefined(node_left) {
 					var ValueNode = new type(storage).set(Value)
 					set_left(ValueNode)
@@ -34,7 +35,7 @@ function BSTree_node(Storage): Tree_node() constructor {
 
 					var Promote = parent, ProValue, Upheal
 					while !is_undefined(Promote) {
-						ProValue = Promote.key
+						ProValue = Promote.data
 						if Compare(Value, ProValue) {
 							ValueNode.set_next(Promote)
 							break
@@ -65,7 +66,7 @@ function BSTree_node(Storage): Tree_node() constructor {
 
 	///@function destroy()
 	/*
-			Splice the case of erasing a key from the Tree.
+			Splice the case of erasing a data from the Tree.
 			
 			case 1: a leaf node
 				Just remove it.
@@ -146,7 +147,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static last = function() { return undefined }
 
 	///@function insert(value)
-	static insert = function(Value) { Iterator(_Under_insert_at_node(node_head, Value)) }
+	static insert = function(Key) { Iterator(_Under_insert_at_node(node_head, Key)) }
 
 	///@function insert_at(index, value)
 	static insert_at = function(Hint, Key) {
@@ -158,9 +159,9 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	}
 
 	///@function insert_iter(iterator, value)
-	static insert_iter = function(It, Value) {
+	static insert_iter = function(It, Key) {
 		if It.storage == self
-			return insert_at(It.index, Value)
+			return insert_at(It.index, Key)
 		else
 			return undefined
 	}
@@ -212,7 +213,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		return undefined
 	}
 
-	///@function last_of(key)
+	///@function last_of(data)
 	static last_of = function(Key) {
 		if 0 == inner_size
 			return undefined
@@ -236,6 +237,12 @@ function BinarySearch_tree(): Binary_tree() constructor {
 #endregion
 
 #region private
+	///@function (index, value)
+	static _Under_iterator_set = function(Node, Value) { return Node.set(Value); return self }
+
+	///@function (index)
+	static _Under_iterator_get = function(Node) { return Node.get() }
+
 	///@function (value)
 	static _Under_iterator_add = insert
 
@@ -249,17 +256,17 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static _Under_iterator_prev = function(Node) { return Node.node_previous }
 
 	///@function 
-	static _Under_insert_at_node = function(Node, Value) {
+	static _Under_insert_at_node = function(Node, Key) {
 		if 0 == inner_size {
 			inner_size++
-			node_head = new value_type(self).set(Value)
+			node_head = new value_type(self).set(Key)
 			return node_head
 		}
 
 		if is_undefined(Node)
 			return undefined
 
-		var Result = Node.insert(Value)
+		var Result = Node.insert(Key)
 		var Where = Result[0], Branch = Result[1]
 
 		if Branch != BSTree_type.none {
@@ -309,7 +316,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	node_rightest = undefined
 	static key_inquire_comparator = compare_less
 	static key_comparator = function(a, b) {
-		var A = a.key, B = b.key
+		var A = a.data, B = b.data
 		if A == B
 			return b < a
 		else
