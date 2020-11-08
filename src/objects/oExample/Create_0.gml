@@ -142,7 +142,6 @@ function draw_rbtree(Dx, Dy, Node, Height) {
 	draw_rbtree_node(Dx, Dy, Node)
 }
 
-rbtree_print(test_tree, tree_head)
 print(test_tree)
 event_user(0)
 show_debug_message("")
@@ -207,6 +206,7 @@ test_mapped_list.push_back(["@", "2nd"])
 test_mapped_list.push_back(["@", "3rd"])
 test_mapped_list.push_back(["@", "4th"])
 test_mapped_list.push_back(["@", "5th"])
+//*
 test_mapped_list.push_back(["AA", "AA"])
 test_mapped_list.push_back(["AB", "AB"])
 test_mapped_list.push_back(["CT", "CT_1"])
@@ -217,17 +217,20 @@ test_mapped_list.push_back(["CT", "CT_5"])
 test_mapped_list.push_back(["CT", "CT_6"])
 test_mapped_list.push_back(["CZ", "CZ"])
 test_mapped_list.push_back(["AC", "AC"]) // 17
+//*/
 print(test_mapped_list)
-
-show_debug_message("\nMap")
-test_map = new Map(test_mapped_list)
+//show_debug_message(real("4t32452523"))
+//show_debug_message(real("AA"))
+//show_debug_message(real("C1s845124hj"))
+test_map = new RedBlack_tree(test_mapped_list)
+show_debug_message("\nMap: " + string(test_map.size()))
 print(test_map)
+rbtree_print(test_map, test_map.node_head)
 
-show_debug_message("\nUnordered_Map")
 test_unomap = new Unordered_map(test_mapped_list)
+show_debug_message("\nUnordered_Map: " + string(test_unomap.size()))
 print(test_unomap)
 
-show_debug_message("\nMultimap")
 test_multimap = new Multimap(test_mapped_list)
 test_multimap.insert([1, 10])
 test_multimap.insert([2, 15])
@@ -240,4 +243,5 @@ test_multimap.insert([0, new Wrapper("0-3rd")])
 test_multimap.insert([1, new Wrapper("1-1st")])
 test_multimap.insert([1, new Wrapper("1-2nd")])
 test_multimap.insert([1, new Wrapper("1-3rd")])
+show_debug_message("\nMultimap" + string(test_multimap.size()))
 print(test_multimap)

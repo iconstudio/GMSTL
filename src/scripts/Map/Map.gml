@@ -20,14 +20,26 @@
 */
 ///@function Map_node(storage)
 function Map_node(Storage): RBTree_node(Storage) constructor {
+	///@function extract()
+	static extract = function() { return data[0] }
+
+	///@function set_key(value)
+	static set_key = function(Key) { data[0] = Key; return self }
+
+	///@function set_value(value)
+	static set_value = function(Key) { data[1] = Key; return self }
+
+	///@function get_key()
+	static get_key = function() { return data[0] }
+
+	///@function get_value()
+	static get_value = function() { return data[1] }
+
 	///@function set(value)
-	static set = function(Key) { data[0] = Key; return self }
+	static set = set_key
 
 	///@function get()
 	static get = function() { return data }
-
-	///@function extract()
-	static extract = function() { return data[0] }
 
 	data = array_create(2, undefined)
 
@@ -41,7 +53,7 @@ function Map(): RedBlack_tree() constructor {
 	static at = function(Key) {
 		var Where = first_of(Key)
 		if !is_undefined(Where)
-			return Where.data[1]
+			return Where.get_value()
 		else
 			return undefined
 	}
@@ -50,10 +62,10 @@ function Map(): RedBlack_tree() constructor {
 	static set_at = function(Key, Value) {
 		var Where = first_of(Key)
 		if !is_undefined(Where) {
-			Where.data[1] = Value
+			Where.set_value(Value)
 		} else {
 			var Node = _Under_insert_and_fix(node_head, Key)
-			Node.data[1] = Value
+			Node.set_value(Value)
 		}
 		return self
 	}
@@ -63,11 +75,11 @@ function Map(): RedBlack_tree() constructor {
 		var Key = Pair[0], Value = Pair[1]
 		var Where = first_of(Key)
 		if !is_undefined(Where) {
-			Where.data[1] = Value
+			Where.set_value(Value)
 			return Iterator(Where)
 		} else {
 			var Node = _Under_insert_and_fix(node_head, Key)
-			Node.data[1] = Value
+			Node.set_value(Value)
 			return Iterator(Node)
 		}
 	}
@@ -78,7 +90,7 @@ function Map(): RedBlack_tree() constructor {
 		var Where = first_of(Hint)
 		if !is_undefined(Where) {
 			var Node = _Under_insert_and_fix(Where, Key)
-			Node.data[1] = Value
+			Node.set_value(Value)
 			return Iterator(Node)
 		} else {
 			return undefined
@@ -99,9 +111,9 @@ function Map(): RedBlack_tree() constructor {
 	static key_swap_first_of = function(Key1, Key2) {
 		var Where1 = first_of(Key1), Where2 = first_of(Key2)
 		if !is_undefined(Where1) and !is_undefined(Where2) {
-			var Temp = Where1.value
-			Where1.value = Where2.value
-			Where2.value = Temp
+			var Temp = Where1.get_value()
+			Where1.set_value(Where2.get_value())
+			Where2.set_value(Temp)
 		}
 	}
 
@@ -111,9 +123,9 @@ function Map(): RedBlack_tree() constructor {
 	///@function iter_swap(iterator_1, iterator_2)
 	static iter_swap = function(Iter1, Iter2) {
 		if Iter1.storage == self and Iter2.storage == self {
-			var Temp = Iter1.value
-			Iter1.value = Iter2.value
-			Iter2.value = Temp
+			var Temp = Iter1.get_value()
+			Iter1.set_value(Iter2.get_value())
+			Iter2.set_value(Temp)
 		}
 	}
 

@@ -186,7 +186,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 		var Node = node_head, CompKey
 		while !is_undefined(Node) {
-			CompKey = Node.get()
+			CompKey = Node.extract()
 			if Key == CompKey {
 				return Node
 			} else {
@@ -201,9 +201,9 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 	///@function last_of_first(lower_bound)
 	static last_of_first = function(LowerBound) {
-		var Node = LowerBound, Key = LowerBound.get(), CompKey
+		var Node = LowerBound, Key = LowerBound.extract(), CompKey
 		while !is_undefined(Node) {
-			CompKey = Node.get()
+			CompKey = Node.extract()
 			if Key != CompKey {
 				return Node
 			} else {

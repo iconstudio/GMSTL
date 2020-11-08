@@ -1,13 +1,13 @@
 ///@function Tree_node()
 function Tree_node() constructor {
+	///@function extract()
+	static extract = function() { return data }
+
 	///@function set(value)
 	static set = function(Key) { data = Key; return self }
 
 	///@function get()
 	static get = function() { return data }
-
-	///@function extract()
-	static extract = function() { return data }
 
 	///@function set_parent(node)
 	static set_parent = function(Node) { parent = Node }
