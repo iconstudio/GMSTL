@@ -139,6 +139,10 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 			}
 		}
 		node_head.color = RBColor.Black
+		if 1 < inner_size {
+			node_leftest = node_head.find_leftest()
+			node_rightest = node_head.find_rightest()
+		}
 		return Node
 	}
 

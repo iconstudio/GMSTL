@@ -26,7 +26,7 @@ function BSTree_node(Storage): Tree_node() constructor {
 
 					return [ValueNode, BSTree_type.left]
 				} else {
-					return node_left.insert(Value)
+					return node_left._Under_insert(Value)
 				}
 			} else {
 				if is_undefined(node_right) {
@@ -51,7 +51,7 @@ function BSTree_node(Storage): Tree_node() constructor {
 
 					return [ValueNode, BSTree_type.right]
 				} else {
-					return node_right.insert(Value)
+					return node_right._Under_insert(Value)
 				}
 			}
 		}
@@ -86,7 +86,7 @@ function BSTree_node(Storage): Tree_node() constructor {
 		if LeftChk and RightChk { // two children
 			var Leftest = node_next
 			var Temp = string(self)
-			set(Leftest.value)
+			set(Leftest.extract())
 			Leftest.destroy()
 			delete Leftest
 			Result = self
