@@ -8,35 +8,37 @@ enum BSTree_type {
 ///@function BSTree_node(storage)
 function BSTree_node(Storage): Tree_node() constructor {
 #region private
-///@function 
-	static _Under_insert = function(Value) {
-		var Key = extract()
-		if !is_multiple and Value == Key {
+	///@function 
+	static _Under_insert = function(NewKey) {
+		var MyKey = extract()
+		if NewKey == MyKey and !is_multiple {
 			return [self, BSTree_type.none]
 		} else {
 			var Compare = storage.key_inquire_comparator
-			if Compare(Value, Key) {
+			var ValueNode
+
+			if Compare(NewKey, MyKey) { // less
 				if is_undefined(node_left) {
-					var ValueNode = new type(storage).set(Value)
+					ValueNode = new type(storage).set(NewKey)
 					set_left(ValueNode)
 
 					if !is_undefined(node_previous)
 						node_previous.set_next(ValueNode)
 					ValueNode.set_next(self)
 
-					return [ValueNode, BSTree_type.left]
+					//return [ValueNode, BSTree_type.left]
 				} else {
-					return node_left._Under_insert(Value)
+					return node_left._Under_insert(NewKey)
 				}
-			} else {
+			} else { // equal or greater
 				if is_undefined(node_right) {
-					var ValueNode = new type(storage).set(Value)
+					ValueNode = new type(storage).set(NewKey)
 					set_right(ValueNode)
 
 					var Promote = parent, ProValue, Upheal
 					while !is_undefined(Promote) {
 						ProValue = Promote.data
-						if Compare(Value, ProValue) {
+						if Compare(NewKey, ProValue) {
 							ValueNode.set_next(Promote)
 							break
 						} else {
@@ -49,11 +51,12 @@ function BSTree_node(Storage): Tree_node() constructor {
 					}
 					set_next(ValueNode)
 
-					return [ValueNode, BSTree_type.right]
+					//return [ValueNode, BSTree_type.right]
 				} else {
-					return node_right._Under_insert(Value)
+					return node_right._Under_insert(NewKey)
 				}
 			}
+			return ValueNode
 		}
 	}
 
@@ -147,24 +150,10 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static last = function() { return undefined }
 
 	///@function insert(value)
-	static insert = function(Key) { Iterator(_Under_insert_at_node(node_head, Key)) }
+	static insert = function(Key) { Iterator(_Under_try_insert_bs(node_pointer_head, Key)) }
 
 	///@function insert_at(index, value)
-	static insert_at = function(Hint, Key) {
-		var Loc = first_of(Hint)
-		if !is_undefined(Loc)
-			return Iterator(_Under_insert_at_node(Loc, Key))
-		else
-			return undefined
-	}
-
-	///@function insert_iter(iterator, value)
-	static insert_iter = function(It, Key) {
-		if It.storage == self
-			return insert_at(It.index, Key)
-		else
-			return undefined
-	}
+	static insert_at = function(Hint, Key) { return Iterator(_Under_try_insert_bs(first_of(Hint), Key)) }
 
 	///@function erase_at(index)
 	static erase_at = function(Key) {
@@ -256,18 +245,32 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static _Under_iterator_prev = function(Node) { return Node.node_previous }
 
 	///@function 
-	static _Under_insert_at_node = function(Node, Key) {
-		if 0 == inner_size {
-			inner_size++
-			node_head = new value_type(self).set(Key)
-			return node_head
-		}
-
-		if is_undefined(Node)
+	static _Under_try_insert_bs = function(Location, Key) {
+		if is_undefined(Location) {
 			return undefined
+		} else if Location == node_pointer_head and !is_undefined(node_head) {
+			inner_size = 1
+			node_head = new value_type(self).set(Key)
+			node_leftest = node_head
+			return node_head
+		} else {
+			if Location == node_pointer_head
+				return _Under_insert(node_head, Key)
+			 else
+				return _Under_insert(Location, Key)
+		}
+	}
 
+	///@function 
+	static _Under_insert_at_node = function(Node, Key) {
 		var Result = Node.insert(Key)
-		var Where = Result[0], Branch = Result[1]
+		if is_undefined(Result.node_left)
+			node_leftest = Result
+		else if is_undefined(Result.node_right)
+			node_rightest = Result
+		return Result
+		
+		/*var Where = Result[0], Branch = Result[1]
 
 		if Branch != BSTree_type.none {
 			inner_size++
@@ -287,8 +290,11 @@ function BinarySearch_tree(): Binary_tree() constructor {
 				break
 			}
 		}
-		return Where
+		return Where*/
 	}
+
+	///@function 
+	static _Under_insert = _Under_insert_at_node
 
 	///@function 
 	static _Under_erase_node = function(Node) {
@@ -314,6 +320,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 	is_multiple = false
 	node_rightest = undefined
+	static node_pointer_head = {}
 	static key_inquire_comparator = compare_less
 	static key_comparator = function(a, b) {
 		var A = a.data, B = b.data

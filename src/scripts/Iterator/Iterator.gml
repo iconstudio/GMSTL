@@ -65,6 +65,7 @@ function Iterator_trait(Index) constructor {
 	static category = undefined
 }
 
+///@function Const_iterator(index)
 function Const_iterator(Index): Iterator_trait(Index) constructor {
 	///@function duplicate()
 	static duplicate = _Under_duplicate
@@ -152,6 +153,7 @@ function Const_iterator(Index): Iterator_trait(Index) constructor {
 	static category = tag_const_iterator
 }
 
+///@function Forward_iterator(index)
 function Forward_iterator(Index): Const_iterator(Index) constructor {
 	///@function 
 	static _Under_iterator_set = function(Index, Value) { return storage._Under_iterator_set(Index, Value) }
@@ -180,6 +182,7 @@ function Forward_iterator(Index): Const_iterator(Index) constructor {
 	static category = tag_forward_iterator
 }
 
+///@function Bidirectional_iterator(index)
 function Bidirectional_iterator(Index): Forward_iterator(Index) constructor {
 	///@function 
 	static _Under_iterator_prev = function() {
@@ -220,6 +223,7 @@ function Bidirectional_iterator(Index): Forward_iterator(Index) constructor {
 	static category = tag_bidirectional_iterator
 }
 
+///@function Random_iterator(index)
 function Random_iterator(Index): Bidirectional_iterator(Index) constructor {
 	///@function advance(other)
 	static advance = function(Other) {
@@ -277,6 +281,8 @@ function Random_iterator(Index): Bidirectional_iterator(Index) constructor {
 
 ///@function Iterator(index)
 function Iterator(Index) {
+	if is_undefined(Index)
+		return undefined
 	if !is_struct(self)
 		throw "Cannot make a iterator on outer scope!"
 
