@@ -14,16 +14,10 @@ function RBTree_node(Storage): BSTree_node(Storage) constructor {
 function RedBlack_tree(): BinarySearch_tree() constructor {
 #region public
 	///@function insert(value)
-	static insert = function(Value) { return Iterator(_Under_insert_and_fix(node_head, Value)) }
+	static insert = function(Value) { return Iterator(_Under_try_insert(node_pointer_head, Value)) }
 
 	///@function insert_at(index, value)
-	static insert_at = function(Hint, Key) {
-		var Loc = first_of(Hint)
-		if !is_undefined(Loc)
-			return Iterator(_Under_insert_and_fix(Loc, Key))
-		else
-			return undefined
-	}
+	static insert_at = function(Hint, Key) { return Iterator(_Under_try_insert(first_of(Hint), Key)) }
 
 	///@function erase_at(index)
 	static erase_at = function(Key) {
@@ -45,6 +39,24 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 
 	///@function (index, value)
 	static _Under_iterator_insert = insert_at
+
+	///@function 
+	static _Under_try_insert = function(Location, Key) {
+		if is_undefined(Location) {
+			return undefined
+		} else if Location == node_pointer_head and is_undefined(node_head) {
+			inner_size = 1
+			node_head = new value_type(self).set(Key)
+			node_head.color = RBColor.Black
+			node_leftest = node_head
+			return node_head
+		} else {
+			if Location == node_pointer_head
+				return _Under_insert_and_fix(node_head, Key)
+			 else
+				return _Under_insert_and_fix(Location, Key)
+		}
+	}
 
 	///@function 
 	static _Under_rotate_left = function(Node) {
@@ -91,10 +103,8 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 	///@function 
 	static _Under_insert_and_fix = function(Node, Value) {
 		Node = _Under_insert_at_node(Node, Value) // increasing size
-		if Node == node_head {
-			Node.color = RBColor.Black
-			return Node
-		}
+		if is_undefined(Node)
+			return undefined
 
 		var Grandparent, Parent_on_Left = false, Aunt = undefined, Aunt_is_alive, Aunt_is_red, Aunt_is_black
 		while !is_undefined(Node.parent) and Node.parent.color == RBColor.Red {
@@ -145,6 +155,9 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 		}
 		return Node
 	}
+
+	///@function 
+	static _Under_inserter = _Under_insert_and_fix
 
 	///@function 
 	/*

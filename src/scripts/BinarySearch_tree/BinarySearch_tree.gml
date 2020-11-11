@@ -12,7 +12,7 @@ function BSTree_node(Storage): Tree_node() constructor {
 	static _Under_insert = function(NewKey) {
 		var MyKey = extract()
 		if NewKey == MyKey and !is_multiple {
-			return [self, BSTree_type.none]
+			return undefined
 		} else {
 			var Compare = storage.key_inquire_comparator
 			var ValueNode
@@ -150,10 +150,10 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static last = function() { return undefined }
 
 	///@function insert(value)
-	static insert = function(Key) { Iterator(_Under_try_insert_bs(node_pointer_head, Key)) }
+	static insert = function(Key) { Iterator(_Under_try_insert(node_pointer_head, Key)) }
 
 	///@function insert_at(index, value)
-	static insert_at = function(Hint, Key) { return Iterator(_Under_try_insert_bs(first_of(Hint), Key)) }
+	static insert_at = function(Hint, Key) { return Iterator(_Under_try_insert(first_of(Hint), Key)) }
 
 	///@function erase_at(index)
 	static erase_at = function(Key) {
@@ -245,56 +245,34 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static _Under_iterator_prev = function(Node) { return Node.node_previous }
 
 	///@function 
-	static _Under_try_insert_bs = function(Location, Key) {
+	static _Under_try_insert = function(Location, Key) {
 		if is_undefined(Location) {
 			return undefined
-		} else if Location == node_pointer_head and !is_undefined(node_head) {
+		} else if Location == node_pointer_head and is_undefined(node_head) {
 			inner_size = 1
 			node_head = new value_type(self).set(Key)
 			node_leftest = node_head
 			return node_head
 		} else {
 			if Location == node_pointer_head
-				return _Under_insert(node_head, Key)
+				return _Under_insert_at_node(node_head, Key)
 			 else
-				return _Under_insert(Location, Key)
+				return _Under_insert_at_node(Location, Key)
 		}
 	}
 
 	///@function 
 	static _Under_insert_at_node = function(Node, Key) {
 		var Result = Node.insert(Key)
-		if is_undefined(Result.node_left)
-			node_leftest = Result
-		else if is_undefined(Result.node_right)
-			node_rightest = Result
-		return Result
-		
-		/*var Where = Result[0], Branch = Result[1]
-
-		if Branch != BSTree_type.none {
+		if !is_undefined(Result) {
 			inner_size++
-			switch Branch {
-			    case BSTree_type.left:
-			        if is_undefined(node_leftest) or Where.parent == node_leftest
-						node_leftest = Where
-				break
-
-			    case BSTree_type.right:
-			        if is_undefined(node_rightest) or Where.parent == node_rightest
-						node_rightest = Where
-				break
-
-			    default:
-			        throw "Wrong position of node: " + string(Result)
-				break
-			}
+			if is_undefined(Result.node_left)
+				node_leftest = Result
+			else if is_undefined(Result.node_right)
+				node_rightest = Result
 		}
-		return Where*/
+		return Result
 	}
-
-	///@function 
-	static _Under_insert = _Under_insert_at_node
 
 	///@function 
 	static _Under_erase_node = function(Node) {
