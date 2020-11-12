@@ -34,19 +34,14 @@ function BSTree_node(Storage): Tree_node() constructor {
 					ValueNode = new type(storage).set_key(NewKey)
 					set_right(ValueNode)
 
-					var Checker = self, Promote = parent, ProValue, Upheal
+					var Checker = self, Promote = parent
 					while !is_undefined(Promote) {
-						ProValue = Promote.data
-						if Checker == Promote.node_left { //if Compare(NewKey, ProValue) {
+						if Checker == Promote.node_left {
 							ValueNode.set_next(Promote)
 							break
 						} else {
-							Upheal = Promote.parent
-							if is_undefined(Upheal)
-								break
-
 							Checker = Promote
-							Promote = Upheal
+							Promote = Promote.parent
 						}
 					}
 					set_next(ValueNode)

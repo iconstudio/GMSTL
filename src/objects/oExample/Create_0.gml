@@ -235,7 +235,7 @@ test_multimap.insert([1, new Wrapper("1-3rd")])
 show_debug_message("\nMultimap: " + string(test_multimap.size()))
 print(test_multimap)
 
-tree_content = test_map
+tree_content = test_tree
 function draw_rbtree_init() {
 	draw_rbtree(tree_indicator_start_pos[0], tree_indicator_start_pos[1], tree_content.node_head, 0)
 }
