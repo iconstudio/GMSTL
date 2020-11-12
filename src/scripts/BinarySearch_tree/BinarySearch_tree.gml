@@ -10,7 +10,7 @@ function BSTree_node(Storage): Tree_node() constructor {
 #region private
 	///@function 
 	static _Under_insert = function(NewKey) {
-		var MyKey = extract()
+		var MyKey = get_key()
 		if NewKey == MyKey and !is_multiple {
 			return undefined
 		} else {
@@ -19,20 +19,18 @@ function BSTree_node(Storage): Tree_node() constructor {
 
 			if Compare(NewKey, MyKey) { // less
 				if is_undefined(node_left) {
-					ValueNode = new type(storage).set(NewKey)
+					ValueNode = new type(storage).set_key(NewKey)
 					set_left(ValueNode)
 
 					if !is_undefined(node_previous)
 						node_previous.set_next(ValueNode)
 					ValueNode.set_next(self)
-
-					//return [ValueNode, BSTree_type.left]
 				} else {
 					return node_left._Under_insert(NewKey)
 				}
 			} else { // equal or greater
 				if is_undefined(node_right) {
-					ValueNode = new type(storage).set(NewKey)
+					ValueNode = new type(storage).set_key(NewKey)
 					set_right(ValueNode)
 
 					var Promote = parent, ProValue, Upheal
@@ -50,8 +48,6 @@ function BSTree_node(Storage): Tree_node() constructor {
 						}
 					}
 					set_next(ValueNode)
-
-					//return [ValueNode, BSTree_type.right]
 				} else {
 					return node_right._Under_insert(NewKey)
 				}
@@ -89,7 +85,7 @@ function BSTree_node(Storage): Tree_node() constructor {
 		if LeftChk and RightChk { // two children
 			var Leftest = node_next
 			var Temp = string(self)
-			set(Leftest.extract())
+			set_data(Leftest.get_data())
 			Leftest.destroy()
 			delete Leftest
 			Result = self
@@ -147,7 +143,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static first = function() { return Iterator(node_leftest) }
 
 	///@function last()
-	static last = function() { return undefined }
+	static last = function() { return Iterator(node_rightest).go_next().pure() }
 
 	///@function insert(value)
 	static insert = function(Key) { Iterator(_Under_try_insert(node_pointer_head, Key)) }
@@ -156,17 +152,10 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static insert_at = function(Hint, Key) { return Iterator(_Under_try_insert(first_of(Hint), Key)) }
 
 	///@function erase_at(index)
-	static erase_at = function(Key) {
-		var Where = first_of(Key)
-		if !is_undefined(Where)
-			_Under_erase_node(Where)
-	}
+	static erase_at = function(Key) { _Under_erase_node(first_of(Key)) }
 
 	///@function erase_iter(iterator)
-	static erase_iter = function(It) {
-		if It.storage == self
-			_Under_erase_node(It.index)
-	}
+	static erase_iter = function(It) { if It.storage == self _Under_erase_node(It.index) }
 
 	///@function first_of(value)
 	static first_of = function(Key) {
@@ -175,7 +164,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 		var Node = node_head, CompKey
 		while !is_undefined(Node) {
-			CompKey = Node.extract()
+			CompKey = Node.get_key()
 			if Key == CompKey {
 				return Node
 			} else {
@@ -190,9 +179,9 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 	///@function last_of_first(lower_bound)
 	static last_of_first = function(LowerBound) {
-		var Node = LowerBound, Key = LowerBound.extract(), CompKey
+		var Node = LowerBound, Key = LowerBound.get_key(), CompKey
 		while !is_undefined(Node) {
-			CompKey = Node.extract()
+			CompKey = Node.get_key()
 			if Key != CompKey {
 				return Node
 			} else {
@@ -227,10 +216,10 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 #region private
 	///@function (index, value)
-	static _Under_iterator_set = function(Node, Value) { return Node.set(Value); return self }
+	static _Under_iterator_set = function(Node, Value) { return Node.set_data(Value); return self }
 
 	///@function (index)
-	static _Under_iterator_get = function(Node) { return Node.get() }
+	static _Under_iterator_get = function(Node) { return Node.get_data() }
 
 	///@function (value)
 	static _Under_iterator_add = insert
@@ -276,6 +265,8 @@ function BinarySearch_tree(): Binary_tree() constructor {
 
 	///@function 
 	static _Under_erase_node = function(Node) {
+		if is_undefined(Node)
+			exit
 		var Successor = Node.destroy()
 		if inner_size == 1 {
 			node_head = undefined

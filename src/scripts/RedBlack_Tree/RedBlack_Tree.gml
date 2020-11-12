@@ -14,17 +14,13 @@ function RBTree_node(Storage): BSTree_node(Storage) constructor {
 function RedBlack_tree(): BinarySearch_tree() constructor {
 #region public
 	///@function insert(value)
-	static insert = function(Value) { return Iterator(_Under_try_insert(node_pointer_head, Value)) }
+	static insert = function(Key) { return Iterator(_Under_try_insert(node_pointer_head, Key)) }
 
 	///@function insert_at(index, value)
 	static insert_at = function(Hint, Key) { return Iterator(_Under_try_insert(first_of(Hint), Key)) }
 
 	///@function erase_at(index)
-	static erase_at = function(Key) {
-		var Where = first_of(Key)
-		if !is_undefined(Where)
-			_Under_erase_and_fix(Where)
-	}
+	static erase_at = function(Key) { _Under_erase_and_fix(first_of(Key)) }
 
 	///@function erase_iter(iterator)
 	static erase_iter = function(It) { if It.storage == self _Under_erase_and_fix(It.index) }
@@ -46,9 +42,8 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 			return undefined
 		} else if Location == node_pointer_head and is_undefined(node_head) {
 			inner_size = 1
-			node_head = new value_type(self).set(Key)
+			node_head = new value_type(self).set_key(Key)
 			node_head.color = RBColor.Black
-			node_leftest = node_head
 			return node_head
 		} else {
 			if Location == node_pointer_head
@@ -101,11 +96,15 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 	}
 
 	///@function 
-	static _Under_insert_and_fix = function(Node, Value) {
-		Node = _Under_insert_at_node(Node, Value) // increasing size
+	static _Under_insert_and_fix = function(Hint, Value) {
+		if is_undefined(Hint)
+			return undefined
+
+		var Node = _Under_insert_at_node(Hint, Value) // increasing size
 		if is_undefined(Node)
 			return undefined
 
+		var NewNode = Node
 		var Grandparent, Parent_on_Left = false, Aunt = undefined, Aunt_is_alive, Aunt_is_red, Aunt_is_black
 		while !is_undefined(Node.parent) and Node.parent.color == RBColor.Red {
 			Grandparent = Node.parent.parent
@@ -153,7 +152,7 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 			node_leftest = node_head.find_leftest()
 			node_rightest = node_head.find_rightest()
 		}
-		return Node
+		return NewNode
 	}
 
 	///@function 
@@ -173,7 +172,9 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 				
 	*/
 	static _Under_erase_and_fix = function(Node) {
-		if Node.color == RBColor.Red {
+		if is_undefined(Node) {
+			return undefined
+		} else if Node.color == RBColor.Red {
 			// case 1
 			var Succesor = _Under_erase_node(Node)
 			Succesor.color = RBColor.Black

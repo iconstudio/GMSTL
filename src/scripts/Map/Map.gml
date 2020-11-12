@@ -20,26 +20,17 @@
 */
 ///@function Map_node(storage)
 function Map_node(Storage): RBTree_node(Storage) constructor {
-	///@function extract()
-	static extract = function() { return data[0] }
-
 	///@function set_key(value)
 	static set_key = function(Key) { data[0] = Key; return self }
 
 	///@function set_value(value)
-	static set_value = function(Key) { data[1] = Key; return self }
+	static set_value = function(Value) { data[1] = Value; return self }
 
 	///@function get_key()
 	static get_key = function() { return data[0] }
 
 	///@function get_value()
 	static get_value = function() { return data[1] }
-
-	///@function set(value)
-	static set = set_key
-
-	///@function get()
-	static get = function() { return data }
 
 	data = array_create(2, undefined)
 
@@ -64,7 +55,7 @@ function Map(): RedBlack_tree() constructor {
 		if !is_undefined(Where) {
 			Where.set_value(Value)
 		} else {
-			var Node = _Under_insert_and_fix(node_head, Key)
+			var Node = _Under_try_insert(node_pointer_head, Key)
 			Node.set_value(Value)
 		}
 		return self
@@ -75,10 +66,11 @@ function Map(): RedBlack_tree() constructor {
 		var Key = Pair[0], Value = Pair[1]
 		var Where = first_of(Key)
 		if !is_undefined(Where) {
+			if is_undefined(Value) throw "The value of " + string(Key) + " is undefined!\nNode: " + string(Where)
 			Where.set_value(Value)
 			return Iterator(Where)
 		} else {
-			var Node = _Under_insert_and_fix(node_head, Key)
+			var Node = _Under_try_insert(node_pointer_head, Key)
 			Node.set_value(Value)
 			return Iterator(Node)
 		}
@@ -89,7 +81,7 @@ function Map(): RedBlack_tree() constructor {
 		var Key = Pair[0], Value = Pair[1]
 		var Where = first_of(Hint)
 		if !is_undefined(Where) {
-			var Node = _Under_insert_and_fix(Where, Key)
+			var Node = _Under_try_insert(Where, Key)
 			Node.set_value(Value)
 			return Iterator(Node)
 		} else {
@@ -145,10 +137,10 @@ function Map(): RedBlack_tree() constructor {
 
 #region private
 	///@function (index, value)
-	static _Under_iterator_set = function(Node, Value) { return Node.set(Value); return self }
+	static _Under_iterator_set = function(Node, Value) { return Node.set_data(Value); return self }
 
 	///@function (index)
-	static _Under_iterator_get = function(Node) { return Node.data }
+	static _Under_iterator_get = function(Node) { return Node.get_data() }
 
 	///@function (value)
 	static _Under_iterator_add = insert

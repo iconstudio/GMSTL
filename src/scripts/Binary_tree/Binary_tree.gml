@@ -1,13 +1,16 @@
 ///@function Tree_node()
 function Tree_node() constructor {
-	///@function extract()
-	static extract = function() { return data }
+	///@function set_data(value)
+	static set_data = function(Key) { data = Key; return self }
 
-	///@function set(value)
-	static set = function(Key) { data = Key; return self }
+	///@function get_data()
+	static get_data = function() { return data }
 
-	///@function get()
-	static get = function() { return data }
+	///@function set_key(value)
+	static set_key = function(Key) { data = Key; return self }
+
+	///@function get_key()
+	static get_key = function() { return data }
 
 	///@function set_parent(node)
 	static set_parent = function(Node) { parent = Node }
@@ -88,13 +91,11 @@ function Tree_node() constructor {
 			}
 		}
 
-		if !is_undefined(node_left) {
+		if !is_undefined(node_left)
 			node_left.parent = undefined
-		}
 
-		if !is_undefined(node_right) {
+		if !is_undefined(node_right)
 			node_right.parent = undefined
-		}
 	}
 
 	static toString = function() { return string(data) }
