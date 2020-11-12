@@ -2,7 +2,6 @@
 	Constructors:
 		Map()
 		Map(Arg)
-		Map(Multimaps)
 		Map(Paired-Container)
 		Map(Builtin-Paired-Array)
 		Map(Builtin-Paired-List)
@@ -19,155 +18,137 @@
 			}
 		
 */
+///@function Map_node(storage)
+function Map_node(Storage): RBTree_node(Storage) constructor {
+	///@function set_key(value)
+	static set_key = function(Key) { data[0] = Key; return self }
+
+	///@function set_value(value)
+	static set_value = function(Value) { data[1] = Value; return self }
+
+	///@function get_key()
+	static get_key = function() { return data[0] }
+
+	///@function get_value()
+	static get_value = function() { return data[1] }
+
+	data = array_create(2, undefined)
+
+	static type = Map_node
+}
+
 #macro Dictionary Map
-function Map(): Container() constructor {
+function Map(): RedBlack_tree() constructor {
 #region public
-	///@function empty()
-	static empty = function() { return ds_map_empty(raw) }
-
-	///@function size()
-	static size = function() { return ds_map_size(raw) }
-
-	///@function contains(key)
-	static contains = function(K) { return ds_map_exists(raw, K) }
-
-	///@function key_at(index)
-	static key_at = function(Index) { return cash.at(Index) }
-
-	///@function seek(key)
-	static seek = function(K) { return ds_map_find_value(raw, K) }
-
 	///@function at(index)
-	static at = function(Index) { return ds_map_find_value(raw, key_at(Index)) }
-
-	///@function back()
-	static back = function() { return at(size() - 1) }
-
-	///@function front()
-	static front = function() { return at(0) }
-
-	///@function first()
-	static first = function() { return (new iterator_type(self, 0)).pure() }
-
-	///@function last()
-	static last = function() { return (new iterator_type(self, size())).pure() }
+	static at = function(Key) {
+		var Where = first_of(Key)
+		if !is_undefined(Where)
+			return Where.get_value()
+		else
+			return undefined
+	}
 
 	//////@function set_at(index, value)
-	static set_at = function(Index, Value) { 
-		var Key = cash.at(Index)
-		if !is_undefined(Key)
-			ds_map_set(raw, Key, Value)
-		return self
-	}
-
-	///@function insert(item)
-	static insert = function() {
-		var Key, Value
-		if argument_count == 2 {
-			Key = argument[0]
-			Value = argument[1]
+	static set_at = function(Key, Value) {
+		var Where = first_of(Key)
+		if !is_undefined(Where) {
+			Where.set_value(Value)
 		} else {
-			var Pair = argument[0]
-			Key = Pair[0]
-			Value = Pair[1]
+			var Node = _Under_try_insert(node_pointer_head, Key)
+			Node.set_value(Value)
 		}
-		if !contains(Key) cash_push(Key)
-		ds_map_set(raw, Key, Value)
 		return self
 	}
-
-	///@function set_list(key, builtin_list_id)
-	static set_list = function(K, Value) {
-		if !contains(K) cash_push(K)
-		ds_map_add_list(raw, K, Value)
+ 
+	///@function insert(value)
+	static insert = function(Pair) {
+		var Key = Pair[0], Value = Pair[1]
+		var Where = first_of(Key)
+		if !is_undefined(Where) {
+			if is_undefined(Value) throw "The value of " + string(Key) + " is undefined!\nNode: " + string(Where)
+			Where.set_value(Value)
+			return Iterator(Where)
+		} else {
+			var Node = _Under_try_insert(node_pointer_head, Key)
+			Node.set_value(Value)
+			return Iterator(Node)
+		}
 	}
 
-	///@function set_map(key, builtin_map_id)
-	static set_map = function(K, Value) {
-		if !contains(K) cash_push(K)
-		ds_map_add_map(raw, K, Value) 
+	///@function insert_at(index, value)
+	static insert_at = function(Hint, Pair) {
+		var Key = Pair[0], Value = Pair[1]
+		var Where = first_of(Hint)
+		if !is_undefined(Where) {
+			var Node = _Under_try_insert(Where, Key)
+			Node.set_value(Value)
+			return Iterator(Node)
+		} else {
+			return undefined
+		}
 	}
 
-	///@function erase_at(key)
-	static erase_at = function(K) {
-		var Temp = seek(K)
-		ds_map_delete(raw, K)
-		remove(cash.first(), cash.last(), K)
-		return Temp
+	///@function erase_at(data)
+	static erase_at = function(Key) {
+		var Result = undefined, Where = first_of(Key)
+		if !is_undefined(Where) {
+			Result = Iterator(Where.node_next)
+			_Under_erase_and_fix(Where)
+		}
+		return Result
 	}
 
-	///@function clear()
-	static clear = function() { ds_map_clear(raw) }
+	///@function key_swap_first_of(key_1, key_2)
+	static key_swap_first_of = function(Key1, Key2) {
+		var Where1 = first_of(Key1), Where2 = first_of(Key2)
+		if !is_undefined(Where1) and !is_undefined(Where2) {
+			var Temp = Where1.get_value()
+			Where1.set_value(Where2.get_value())
+			Where2.set_value(Temp)
+		}
+	}
 
 	///@function key_swap(key_1, key_2)
-	static key_swap = function(Key1, Key2) {
-		var Temp = seek(Key1)
-		ds_map_set(raw, Key1, seek(Key2))
-		ds_map_set(raw, Key2, Temp)
-	}
+	static key_swap = key_swap_first_of
 
-	///@function is_list(key)
-	static is_list = function(K) { return ds_map_is_list(raw, K) }
-
-	///@function is_map(key)
-	static is_map = function(K) { return ds_map_is_map(raw, K) }
-
-	///@static cash_push = function(key)
-	static cash_push = function(K) {
-		if 1 < cash.size() {
-			cash.push_back(K)
-			cash.sort_builtin(true)
-		} else {
-			cash.push_back(K)
+	///@function iter_swap(iterator_1, iterator_2)
+	static iter_swap = function(Iter1, Iter2) {
+		if Iter1.storage == self and Iter2.storage == self {
+			var Temp = Iter1.get_value()
+			Iter1.set_value(Iter2.get_value())
+			Iter2.set_value(Temp)
 		}
 	}
 
 	///@function read(data_string)
 	static read = function(Str) {
-		var loaded = ds_map_create()
-		ds_map_read(loaded, Str)
-		if 0 < ds_map_size(loaded) {
-			var MIt = ds_map_find_first(loaded)
-			while true {
-				insert(MIt, ds_map_find_value(loaded, MIt))
-				MIt = ds_map_find_next(loaded, MIt)
-				if is_undefined(MIt)
-					break
-			}
-		}
+		
 	}
 
 	///@function write()
-	static write = function() { return ds_map_write(raw) }
-
-	///@function destroy()
-	static destroy = function() { ds_map_destroy(raw); cash.destroy(); delete cash; gc_collect() }
+	static write = function() {
+		
+	}
 
 	static type = Map
-	static iterator_type = Forward_iterator
+	static value_type = Map_node
 #endregion
 
 #region private
-	///@function function(index, value)
-	static _Under_iterator_set = set_at
+	///@function (index, value)
+	static _Under_iterator_set = function(Node, Value) { return Node.set_data(Value); return self }
 
-	///@function function(index)
-	static _Under_iterator_get = at
+	///@function (index)
+	static _Under_iterator_get = function(Node) { return Node.get_data() }
 
-	///@function function(value)
-	static _Under_iterator_add = push_back
+	///@function (value)
+	static _Under_iterator_add = insert
 
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_insert = insert_at
 
-	///@function function(index)
-	static _Under_iterator_next = function(Index) { return Index + 1 }
-
-	///@function function(index)
-	static _Under_iterator_prev = function(Index) { return Index - 1 }
-
-	raw = ds_map_create()
-	cash = new List()
+	static key_inquire_comparator = compare_complex_less
 #endregion
 
 	if 0 < argument_count {
@@ -191,20 +172,9 @@ function Map(): Container() constructor {
 							break
 					}
 				}
-			} else if is_struct(Item) {
-				var Type = instanceof(Item)
-				if Type == "Multimap" or Type == "Unordered_Multimap" {
-					// (*) Multimaps
-					foreach(Item.first(), Item.last(), function(Value) {
-						var Key = Value[0], KList = Value[1].duplicate()
-						insert(Key, KList)
-					})
-				} else if is_iterable(Item) {
-					// (*) Paired-Container
-					foreach(Item.first(), Item.last(), function(Value) {
-						insert(Value)
-					})
-				}
+			} else if is_struct(Item) and is_iterable(Item) {
+				// (*) Paired-Container
+				foreach(Item.first(), Item.last(), insert)
 			} else {
 				// (*) Arg
 				insert(Item)

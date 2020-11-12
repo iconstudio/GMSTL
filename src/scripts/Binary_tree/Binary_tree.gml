@@ -1,11 +1,16 @@
-///@function 
-function Tree_node_trait() constructor {
-	value = undefined
-	parent = undefined
-	node_left = undefined
-	node_right = undefined
-	node_next = undefined
-	node_previous = undefined
+///@function Tree_node()
+function Tree_node() constructor {
+	///@function set_data(value)
+	static set_data = function(Key) { data = Key; return self }
+
+	///@function get_data()
+	static get_data = function() { return data }
+
+	///@function set_key(value)
+	static set_key = function(Key) { data = Key; return self }
+
+	///@function get_key()
+	static get_key = function() { return data }
 
 	///@function set_parent(node)
 	static set_parent = function(Node) { parent = Node }
@@ -25,6 +30,19 @@ function Tree_node_trait() constructor {
 		node_right = Node
 		if !is_undefined(Node) {
 			Node.parent = self
+			return true
+		}
+		return false
+	}
+
+	///@function set_next(node)
+	static set_next = function(Node) {
+		if !is_undefined(node_next) {
+			node_next.node_previous = undefined
+		}
+		node_next = Node
+		if !is_undefined(Node) {
+			Node.node_previous = self
 			return true
 		}
 		return false
@@ -50,57 +68,6 @@ function Tree_node_trait() constructor {
 		return Result
 	}
 
-	///@function 
-	static _Under_parent_clear = function() {
-		if self == parent.node_left {
-			parent.node_left = undefined
-		} else if self == parent.node_right {
-			parent.node_right = undefined
-		}
-	}
-
-	///@function 
-	static _Under_destroy = function() {
-		if !is_undefined(parent) {
-			_Under_parent_clear()
-		}
-
-		if !is_undefined(node_left) {
-			node_left.parent = undefined
-		}
-
-		if !is_undefined(node_right) {
-			node_right.parent = undefined
-		}
-	}
-
-	static toString = function() { return string(value) }
-}
-
-///@function 
-function Tree_node(): Tree_node_trait() constructor {
-	///@function set_parent(node)
-	static set_parent = function(Node) { _Under_set_parent(Node) }
-
-	///@function set_left(node)
-	static set_left = function(Node) { return _Under_set_left(Node) }
-
-	///@function set_right(node)
-	static set_right = function(Node) { return _Under_set_right(Node) }
-
-	///@function set_next(node)
-	static set_next = function(Node) {
-		if !is_undefined(node_next) {
-			node_next.node_previous = undefined
-		}
-		node_next = Node
-		if !is_undefined(Node) {
-			Node.node_previous = self
-			return true
-		}
-		return false
-	}
-
 	///@function destroy()
 	static destroy = function() {
 		if !is_undefined(node_previous) {
@@ -113,36 +80,41 @@ function Tree_node(): Tree_node_trait() constructor {
 
 		return node_previous
 	}
-}
 
-///@function 
-function Binary_tree_trait(): Container() constructor {
 	///@function 
-	static _Under_cash_allocate = function() {
-		cash = 0
-		cash = array_create(cash_size, undefined)
+	static _Under_destroy = function() {
+		if !is_undefined(parent) {
+			if self == parent.node_left {
+				parent.node_left = undefined
+			} else if self == parent.node_right {
+				parent.node_right = undefined
+			}
+		}
+
+		if !is_undefined(node_left)
+			node_left.parent = undefined
+
+		if !is_undefined(node_right)
+			node_right.parent = undefined
 	}
 
-	///@function 
-	static _Under_make_node = function() { return new value_type() }
+	static toString = function() { return string(data) }
 
-	node_head = undefined
-	node_tail = undefined
-	cash_size = 64
-	cash = array_create(cash_size, undefined)
-	static value_type = Tree_node
+	data = undefined
+	parent = undefined
+	node_left = undefined
+	node_right = undefined
+	node_next = undefined
+	node_previous = undefined
 }
 
-function Binary_tree(): Binary_tree_trait() constructor {
+function Binary_tree(): Container() constructor {
 #region public
 	///@function size()
 	static size = function() { return inner_size }
 
 	///@function empty()
 	static empty = function() { return bool(inner_size == 0) }
-
-	///@function valid(Index)
-	static valid = function(Index) { return bool(0 <= Index and Index < inner_size) }
 
 	///@function clear()
 	static clear = function() {
@@ -152,6 +124,29 @@ function Binary_tree(): Binary_tree_trait() constructor {
 		node_head = undefined
 		inner_size = 0
 		gc_collect()
+	}
+
+	///@function valid(Index)
+	static valid = function(Index) { return bool(0 <= Index and Index < inner_size) }
+
+	///@function at(index)
+	static at = function(Index) {
+		if valid(Index) {
+			if Index < cash_size {
+				return cash[Index]
+			} else {
+				var Target, It = cash[cash_size - 1], Max = Index - cash_size + 1
+				repeat Max {
+					Target = It.node_next
+					if is_undefined(Target)
+						break
+					It = Target
+				}
+				return It.data
+			}
+		} else {
+			return undefined
+		}
 	}
 
 	///@function front()
@@ -169,7 +164,7 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	///@function make_node(value)
 	static make_node = function(Value) {
 		var Node = _Under_make_node()
-		Node.value = Value
+		Node.data = Value
 		return Node
 	}
 
@@ -220,7 +215,7 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	}
 
 	///@function push_back(value)
-	static push_back = function(Value) { insert(Value) }
+	static push_back = insert
 
 	///@function pop_back()
 	static pop_back = function() {
@@ -240,7 +235,7 @@ function Binary_tree(): Binary_tree_trait() constructor {
 					Result = cash[inner_size - 1]
 					cash[inner_size - 1] = undefined
 				} else {
-					Result = node_tail.value
+					Result = node_tail.data
 				}
 
 				var Butt = node_tail.parent
@@ -263,53 +258,42 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	}
 
 	///@function location(value)
-	static location = function(Value) { return find(first(), last(), Value) }
+	static location = function(Key) { return find(first(), last(), Key) }
 
 	///@function contains(value)
-	static contains = function(Value) { return !is_undefined(location(Value)) }
+	static contains = function(Key) { return !is_undefined(location(Key)) }
 
 	static type = Binary_tree
 	static iterator_type = Bidirectional_iterator
 #endregion
 
 #region private
-	///@function function(index, value)
-	static _Under_iterator_set = function(Index, Value) { return Index.value = Value; return self }
+	///@function (index, value)
+	static _Under_iterator_set = function(Node, Value) { return Node.set(Value); return self }
 
-	///@function function(index)
-	static _Under_iterator_get = function(Index) { return Index.value }
+	///@function (index)
+	static _Under_iterator_get = function(Node) { return Node.get() }
 
-	///@function function(value)
+	///@function (value)
 	static _Under_iterator_add = insert
 
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_insert = undefined
 
-	///@function function(index)
-	static _Under_iterator_next = function(Index) { return Index.node_next }
+	///@function (index)
+	static _Under_iterator_next = function(Node) { return Node.node_next }
 
-	///@function function(index)
-	static _Under_iterator_prev = function(Index) { return Index.node_previous }
+	///@function (index)
+	static _Under_iterator_prev = function(Node) { return Node.node_previous }
 
 	///@function 
-	static _Under_at = function(Index) {
-		if valid(Index) {
-			if Index < cash_size {
-				return cash[Index]
-			} else {
-				var Target, It = node_tail, Max = Index - cash_size + 1
-				repeat Max {
-					Target = It.node_next
-					if is_undefined(Target)
-						break
-					It = Target
-				}
-				return It.value
-			}
-		} else {
-			return undefined
-		}
+	static _Under_cash_allocate = function() {
+		cash = 0
+		cash = array_create(cash_size, undefined)
 	}
+
+	///@function 
+	static _Under_make_node = function() { return new value_type() }
 
 	///@function 
 	static _Under_clear = function(Node) {
@@ -324,8 +308,14 @@ function Binary_tree(): Binary_tree_trait() constructor {
 	}
 
 	inner_size = 0
+	cash_size = 64
+	cash = array_create(cash_size, undefined)
+
+	node_head = undefined
+	node_tail = undefined
 	node_inserter_parent = undefined
 	node_leftest = undefined
+	static value_type = Tree_node
 #endregion
 
 	// ** Contructor **
@@ -359,4 +349,3 @@ function Binary_tree(): Binary_tree_trait() constructor {
 		}
 	}
 }
-

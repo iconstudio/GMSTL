@@ -18,16 +18,16 @@ function Array(): Container() constructor {
 	static size = function() { return inner_size }
 
 	///@function empty()
-	static empty = function() { return bool(inner_size == 0) }
-
-	///@function valid(index)
-	static valid = function(Index) { return bool(0 <= Index and Index < inner_size) }
+	static empty = function() { return !modified }
 
 	///@function clear()
-	static clear = function() { raw = 0; inner_index = 0; raw = array_create(inner_size) }
+	static clear = function() { _Under_reserve(inner_size) }
 
 	///@function at(index)
 	static at = function(Index) {if !valid(Index) return undefined; return raw[Index] }
+
+	///@function valid(index)
+	static valid = function(Index) { return bool(0 <= Index and Index < inner_size) }
 
 	///@function front()
 	static front = function() { return at(0) }
@@ -42,13 +42,17 @@ function Array(): Container() constructor {
 	static last = function() { return Iterator(inner_size) }
 
 	//////@function set_at(index, value)
-	static set_at = function(Index, Value) { raw[Index] = Value; return self }
+	static set_at = function(Index, Value) {
+		modified = true
+		raw[Index] = Value
+		return self
+	}
 
 	///@function location(value)
 	static location = function(Value) { return find(first(), last(), Value) }
 
 	///@function contains(value)
-	static contains = function(Value) { return !is_undefined(location(Value)) }
+	static contains = function(Value) { return (modified and !is_undefined(location(Value))) }
 
 	///@function destroy()
 	static destroy = function() { raw = 0; gc_collect() }
@@ -58,13 +62,13 @@ function Array(): Container() constructor {
 #endregion
 
 #region private
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_set = set_at
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_get = at
 
-	///@function function(value)
+	///@function (value)
 	static _Under_iterator_add = function(Value) {
 		if inner_size <= inner_index
 			throw "Cannot add more values into the Array."
@@ -72,26 +76,28 @@ function Array(): Container() constructor {
 		inner_index++
 	}
 
-	///@function function(index, value)
+	///@function (index, value)
 	static _Under_iterator_insert = set_at
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_next = function(Index) { return Index + 1 }
 
-	///@function function(index)
+	///@function (index)
 	static _Under_iterator_prev = function(Index) { return Index - 1 }
 
-	///@function
+	///@function 
 	static _Under_reserve = function(Size) {
 		raw = 0
 		inner_index = 0
 		inner_size = Size
-		raw = array_create(Size)
+		modified = false
+		raw = array_create(Size, undefined)
 	}
 
 	raw = -1
 	inner_size = 0
 	inner_index = -1
+	modified = false
 #endregion
 
 	// ** Contructor **

@@ -6,8 +6,6 @@
 		new Grid(width, height)
 
 	Usage:
-		Recommend using internal functions to control the Grid.
-
 		To Iterate a sequence on all values: (slow)
 			for (var It = nbegin(); It != nend(); ++It) {
 				myfunc(get_on(It))

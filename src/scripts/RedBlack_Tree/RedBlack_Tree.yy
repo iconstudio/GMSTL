@@ -6,7 +6,7 @@
     "path": "folders/Scripts/Graph.yy",
   },
   "resourceVersion": "1.0",
-  "name": "RedBlack_Tree",
+  "name": "RedBlack_tree",
   "tags": [],
   "resourceType": "GMScript",
 }

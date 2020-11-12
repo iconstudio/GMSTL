@@ -349,15 +349,15 @@ namespace std {
 		}
 
 		template <class _Alloc, class... _Valty>
-		static node_pointer _Buynode(_Alloc& _Al, node_pointer Node_head, _Valty&&... _Val) {
+		static node_pointer _Buynode(_Alloc& _Al, node_pointer head, _Valty&&... _Val) {
 			// allocate a node with defaults and set links and value
 			static_assert(is_same_v<typename _Alloc::value_type, Tree_node>, "Bad _Buynode call");
 			_Alloc_construct_ptr<_Alloc> _Newnode(_Al);
 			_Newnode._Allocate();
 			allocator_traits<_Alloc>::construct(_Al, _STD addressof(_Newnode._Ptr->Value), _STD forward<_Valty>(_Val)...);
-			_Construct_in_place(_Newnode._Ptr->Node_left, Node_head);
-			_Construct_in_place(_Newnode._Ptr->Node_parent, Node_head);
-			_Construct_in_place(_Newnode._Ptr->Node_right, Node_head);
+			_Construct_in_place(_Newnode._Ptr->Node_left, head);
+			_Construct_in_place(_Newnode._Ptr->Node_parent, head);
+			_Construct_in_place(_Newnode._Ptr->Node_right, head);
 			_Newnode._Ptr->Color = Red;
 			_Newnode._Ptr->Is_nil = false;
 			return _Newnode._Release();

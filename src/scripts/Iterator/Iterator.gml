@@ -13,7 +13,11 @@ function Iterator_trait(Index) constructor {
 
 	///@function 
 	static _Under_iterator_next = function() {
-		index = storage._Under_iterator_next(index)
+		index_backward = index
+		if is_undefined(index)
+			index = index_forward
+		else
+			index = storage._Under_iterator_next(index)
 		index_modified = true
 		return self
 	}
@@ -25,6 +29,7 @@ function Iterator_trait(Index) constructor {
 		Other.storage = storage
 		Other.value = value
 		Other.index = index
+		
 		return Other
 	}
 
@@ -53,11 +58,14 @@ function Iterator_trait(Index) constructor {
 	is_pure = false
 	value = undefined
 	index = Index
+	index_forward = Index
+	index_backward = Index
 	index_modified = true
 	static type = undefined
 	static category = undefined
 }
 
+///@function Const_iterator(index)
 function Const_iterator(Index): Iterator_trait(Index) constructor {
 	///@function duplicate()
 	static duplicate = _Under_duplicate
@@ -145,6 +153,7 @@ function Const_iterator(Index): Iterator_trait(Index) constructor {
 	static category = tag_const_iterator
 }
 
+///@function Forward_iterator(index)
 function Forward_iterator(Index): Const_iterator(Index) constructor {
 	///@function 
 	static _Under_iterator_set = function(Index, Value) { return storage._Under_iterator_set(Index, Value) }
@@ -173,10 +182,15 @@ function Forward_iterator(Index): Const_iterator(Index) constructor {
 	static category = tag_forward_iterator
 }
 
+///@function Bidirectional_iterator(index)
 function Bidirectional_iterator(Index): Forward_iterator(Index) constructor {
 	///@function 
 	static _Under_iterator_prev = function() {
-		index = storage._Under_iterator_prev(index)
+		index_forward = index
+		if is_undefined(index)
+			index = index_backward
+		else
+			index = storage._Under_iterator_prev(index)
 		index_modified = true
 		return self
 	}
@@ -209,6 +223,7 @@ function Bidirectional_iterator(Index): Forward_iterator(Index) constructor {
 	static category = tag_bidirectional_iterator
 }
 
+///@function Random_iterator(index)
 function Random_iterator(Index): Bidirectional_iterator(Index) constructor {
 	///@function advance(other)
 	static advance = function(Other) {
@@ -266,6 +281,8 @@ function Random_iterator(Index): Bidirectional_iterator(Index) constructor {
 
 ///@function Iterator(index)
 function Iterator(Index) {
+	if is_undefined(Index)
+		return undefined
 	if !is_struct(self)
 		throw "Cannot make a iterator on outer scope!"
 
@@ -287,9 +304,11 @@ function iterator_distance(ItA, ItB) {
 			if TagA == TagB and TagA == tag_random_access_iterator {
 				return ItA.distance(ItB)
 			} else if TagA != tag_random_access_iterator or TagB != tag_random_access_iterator {
-				var Result = 0
-				while ItA.not_equals(ItB)
+				var Result = 0, Cursor = ItA.duplicate()
+				while Cursor.not_equals(ItB) {
 					Result++
+					Cursor.go_next()
+				}
 				return Result
 			}
 		}
@@ -317,7 +336,6 @@ function check_iterator(Param) {
 	}
 	return Param
 }
-
 
 ///@function is_iterator(iterator)
 function is_iterator(iterator) {

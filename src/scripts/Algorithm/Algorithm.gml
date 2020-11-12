@@ -150,7 +150,7 @@ function swap_range(First, Last, Output) {
 	Output = check_iterator(Output)
 
 	while First.not_equals(Last) {
-	  swap(First, Output)
+		swap(First, Output)
 		First.go_next()
 		Output.go_next()
 	}
@@ -897,7 +897,7 @@ function inplace_merge(First, Middle, Last) {
 	else
 		Compare = compare_less
 	var Temp = duplicate()
-	Temp.merge(self, First, Middle, self, Middle, Last, First, Compare)
+	Temp.merge(First, Middle, Middle, Last, First, Compare)
 	copy(Temp.first(), Temp.last(), First)
 	delete Temp
 }
