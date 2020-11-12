@@ -12,6 +12,7 @@ function BSTree_node(Storage): Tree_node() constructor {
 	static _Under_insert = function(NewKey) {
 		var MyKey = get_key()
 		if NewKey == MyKey and !is_multiple {
+			//throw "An error occured when inserting a duplicate key!"
 			return undefined
 		} else {
 			var Compare = storage.key_inquire_comparator
@@ -28,15 +29,15 @@ function BSTree_node(Storage): Tree_node() constructor {
 				} else {
 					return node_left._Under_insert(NewKey)
 				}
-			} else { // equal or greater
+			} else { // greater
 				if is_undefined(node_right) {
 					ValueNode = new type(storage).set_key(NewKey)
 					set_right(ValueNode)
 
-					var Promote = parent, ProValue, Upheal
+					var Checker = self, Promote = parent, ProValue, Upheal
 					while !is_undefined(Promote) {
 						ProValue = Promote.data
-						if Compare(NewKey, ProValue) {
+						if Checker == Promote.node_left { //if Compare(NewKey, ProValue) {
 							ValueNode.set_next(Promote)
 							break
 						} else {
@@ -44,6 +45,7 @@ function BSTree_node(Storage): Tree_node() constructor {
 							if is_undefined(Upheal)
 								break
 
+							Checker = Promote
 							Promote = Upheal
 						}
 					}

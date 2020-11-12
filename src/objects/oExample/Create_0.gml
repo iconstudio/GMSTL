@@ -69,7 +69,7 @@ function draw_rbtree_node(Dx, Dy, Node) {
 		draw_set_color($ffffff)
 	draw_circle(Dx, Dy, tree_indicator_node_radius, true)
 	draw_set_color($ffffff)
-	draw_text(Dx, Dy, Node.get_key())
+	draw_text(Dx, Dy, Node.get_data())
 }
 
 function draw_rbtree(Dx, Dy, Node, Height) {
@@ -139,8 +139,6 @@ function draw_rbtree(Dx, Dy, Node, Height) {
 	draw_rbtree_node(Dx, Dy, Node)
 }
 
-
-
 /*
 show_debug_message("")
 
@@ -201,7 +199,6 @@ test_mapped_list.push_back(["@", "2nd"])
 test_mapped_list.push_back(["@", "3rd"])
 test_mapped_list.push_back(["@", "4th"])
 test_mapped_list.push_back(["@", "5th"])
-//*
 test_mapped_list.push_back(["AA", "AA"])
 test_mapped_list.push_back(["AB", "AB"])
 test_mapped_list.push_back(["CT", "CT_1"])
@@ -212,7 +209,6 @@ test_mapped_list.push_back(["CT", "CT_5"])
 test_mapped_list.push_back(["CT", "CT_6"])
 test_mapped_list.push_back(["CZ", "CZ"])
 test_mapped_list.push_back(["AC", "AC"]) // 17
-//*/
 print(test_mapped_list)
 
 test_map = new Map(test_mapped_list)
@@ -236,7 +232,7 @@ test_multimap.insert([0, new Wrapper("0-3rd")])
 test_multimap.insert([1, new Wrapper("1-1st")])
 test_multimap.insert([1, new Wrapper("1-2nd")])
 test_multimap.insert([1, new Wrapper("1-3rd")])
-show_debug_message("\nMultimap" + string(test_multimap.size()))
+show_debug_message("\nMultimap: " + string(test_multimap.size()))
 print(test_multimap)
 
 tree_content = test_map

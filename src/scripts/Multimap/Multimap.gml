@@ -23,8 +23,9 @@ function Multimap(): Map() constructor {
 #region public
 	///@function insert(value)
 	static insert = function(Pair) {
-		var Node = _Under_try_insert(node_pointer_head, Pair[0])
-		Node.value = Pair[1]
+		var Key = Pair[0], Value = Pair[1]
+		var Node = _Under_try_insert(node_pointer_head, Key)
+		Node.set_value(Value)
 		return Iterator(Node)
 	}
 
