@@ -112,15 +112,6 @@ function Map(): RedBlack_tree() constructor {
 	///@function key_swap(key_1, key_2)
 	static key_swap = key_swap_first_of
 
-	///@function iter_swap(iterator_1, iterator_2)
-	static iter_swap = function(Iter1, Iter2) {
-		if Iter1.storage == self and Iter2.storage == self {
-			var Temp = Iter1.get_value()
-			Iter1.set_value(Iter2.get_value())
-			Iter2.set_value(Temp)
-		}
-	}
-
 	///@function read(data_string)
 	static read = function(Str) {
 		
