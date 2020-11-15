@@ -172,6 +172,148 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 				
 	*/
 	static _Under_erase_and_fix = function(Node) {
+		if is_undefined(Node)
+			return undefined
+		var Result = Node.go_next()
+		var _Erasednode = Node._Ptr // node to erase
+		Node++ // save successor iterator for return
+
+		var _Fixnode // the node to recolor as needed
+		var _Fixnodeparent // parent of _Fixnode (which may be nil)
+		var _Pnode = _Erasednode
+
+		if _Pnode.node_left.Is_nil {
+			_Fixnode = _Pnode.node_right // stitch up right subtree
+		} else if _Pnode.node_right.Is_nil {
+			_Fixnode = _Pnode.node_left // stitch up left subtree
+		} else { // two subtrees, must lift successor node to replace erased
+			_Pnode = Node._Ptr // _Pnode is successor node
+			_Fixnode = _Pnode.node_right // _Fixnode is only subtree
+		}
+
+		if _Pnode == _Erasednode { // at most one subtree, relink it
+			_Fixnodeparent = _Erasednode.parent
+			if !_Fixnode.Is_nil {
+				_Fixnode.parent = _Fixnodeparent // link up
+			}
+
+			if (Node_head.parent == _Erasednode) {
+				Node_head.parent = _Fixnode; // link down from root
+			} else if (_Fixnodeparent.node_left == _Erasednode) {
+				_Fixnodeparent.node_left = _Fixnode; // link down to left
+			} else {
+				_Fixnodeparent.node_right = _Fixnode; // link down to right
+			}
+
+			if (Node_head.node_left == _Erasednode) {
+				Node_head.node_left = _Fixnode.Is_nil ? _Fixnodeparent // smallest is parent of erased node
+					: find_leftest(_Fixnode); // smallest in relinked subtree
+			}
+
+			if (Node_head.node_right == _Erasednode) {
+				Node_head.node_right = _Fixnode.Is_nil ? _Fixnodeparent // largest is parent of erased node
+					: find_rightest(_Fixnode); // largest in relinked subtree
+			}
+		} else { // erased has two subtrees, _Pnode is successor to erased
+			_Erasednode.node_left.parent = _Pnode // link left up
+			_Pnode.node_left = _Erasednode.node_left // link successor down
+
+			if _Pnode == _Erasednode.node_right {
+				_Fixnodeparent = _Pnode // successor is next to erased
+			} else { // successor further down, link in place of erased
+				_Fixnodeparent = _Pnode.parent // parent is successor's
+				if !_Fixnode.Is_nil {
+					_Fixnode.parent = _Fixnodeparent // link fix up
+				}
+
+				_Fixnodeparent.node_left = _Fixnode; // link fix down
+				_Pnode.node_right = _Erasednode.node_right; // link next down
+				_Erasednode.node_right.parent = _Pnode; // right up
+			}
+
+			if Node_head.parent == _Erasednode {
+				Node_head.parent = _Pnode // link down from root
+			} else if (_Erasednode.parent.node_left == _Erasednode) {
+				_Erasednode.parent.node_left = _Pnode // link down to left
+			} else {
+				_Erasednode.parent.node_right = _Pnode // link down to right
+			}
+
+			_Pnode.parent = _Erasednode.parent // link successor up
+			swap(_Pnode.color, _Erasednode.color) // recolor it
+		}
+
+		if (_Erasednode.color == RBColor.Black) { // erasing black link, must recolor/rebalance tree
+			for (; _Fixnode != Node_head.parent && _Fixnode.color == RBColor.Black; _Fixnodeparent = _Fixnode.parent) {
+				if (_Fixnode == _Fixnodeparent.node_left) { // fixup left subtree
+					_Pnode = _Fixnodeparent.node_right;
+					if (_Pnode.color == RBColor.Red) { // rotate red up from right subtree
+						_Pnode.color = RBColor.Black;
+						_Fixnodeparent.color = RBColor.Red;
+						rotate_left(_Fixnodeparent);
+						_Pnode = _Fixnodeparent.node_right;
+					}
+
+					if (_Pnode.Is_nil) {
+						_Fixnode = _Fixnodeparent; // shouldn't happen
+					} else if (_Pnode.node_left.color == RBColor.Black
+								&& _Pnode.node_right.color == RBColor.Black) { // redden right subtree with black children
+						_Pnode.color = RBColor.Red;
+						_Fixnode = _Fixnodeparent;
+					} else { // must rearrange right subtree
+						if (_Pnode.node_right.color == RBColor.Black) { // rotate red up from left sub-subtree
+							_Pnode.node_left.color = RBColor.Black;
+							_Pnode.color = RBColor.Red;
+							rotate_right(_Pnode);
+							_Pnode = _Fixnodeparent.node_right;
+						}
+
+						_Pnode.color = _Fixnodeparent.color;
+						_Fixnodeparent.color = RBColor.Black;
+						_Pnode.node_right.color = RBColor.Black;
+						rotate_left(_Fixnodeparent);
+						break; // tree now recolored/rebalanced
+					}
+				} else { // fixup right subtree
+					_Pnode = _Fixnodeparent.node_left;
+					if (_Pnode.color == RBColor.Red) { // rotate red up from left subtree
+						_Pnode.color = RBColor.Black;
+						_Fixnodeparent.color = RBColor.Red;
+						rotate_right(_Fixnodeparent);
+						_Pnode = _Fixnodeparent.node_left;
+					}
+
+					if (_Pnode.Is_nil) {
+						_Fixnode = _Fixnodeparent; // shouldn't happen
+					} else if (_Pnode.node_right.color == RBColor.Black
+								&& _Pnode.node_left.color == RBColor.Black) { // redden left subtree with black children
+						_Pnode.color = RBColor.Red;
+						_Fixnode = _Fixnodeparent;
+					} else { // must rearrange left subtree
+						if (_Pnode.node_left.color == RBColor.Black) { // rotate red up from right sub-subtree
+							_Pnode.node_right.color = RBColor.Black;
+							_Pnode.color = RBColor.Red;
+							rotate_left(_Pnode);
+							_Pnode = _Fixnodeparent.node_left;
+						}
+
+						_Pnode.color = _Fixnodeparent.color;
+						_Fixnodeparent.color = RBColor.Black;
+						_Pnode.node_left.color = RBColor.Black;
+						rotate_right(_Fixnodeparent);
+						break; // tree now recolored/rebalanced
+					}
+				}
+			}
+
+			_Fixnode.color = RBColor.Black // stopping node is black
+		}
+
+		if 0 < inner_Size
+			inner_Size--
+
+		return Result
+		
 		if is_undefined(Node) {
 			return undefined
 		} else if Node.color == RBColor.Red {

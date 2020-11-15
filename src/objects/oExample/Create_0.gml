@@ -20,15 +20,17 @@ stable_sort(test2.first(), test2.last())
 merge(test1.first(), test1.last(), test2.first(), test2.last(), test_sum.first())
 random_shuffle(test_sum.first(), test_sum.last())
 
-//BinarySearch_tree
-test_tree = new RedBlack_tree(test_sum)
-test_tree.insert(5)
-test_tree.insert(12)
-test_tree.insert(7)
-test_tree.insert(16)
-
+test_sum.insert(5)
 repeat 60
-	test_tree.insert(irandom(80))
+	test_sum.insert(irandom(80))
+test_sum.insert(12)
+test_sum.insert(7)
+test_sum.insert(16)
+transform(test_sum.first(), test_sum.last(), test_sum.first(), function (Value) {
+	return [Value, irandom(5)]
+})
+test_tree = new Multimap(test_sum)
+
 print(test_tree)
 
 tree_head = test_tree.node_head
@@ -69,7 +71,7 @@ function draw_rbtree_node(Dx, Dy, Node) {
 		draw_set_color($ffffff)
 	draw_circle(Dx, Dy, tree_indicator_node_radius, true)
 	draw_set_color($ffffff)
-	draw_text(Dx, Dy, Node.get_data())
+	draw_text(Dx, Dy, Node.get_key())
 }
 
 function draw_rbtree(Dx, Dy, Node, Height) {
