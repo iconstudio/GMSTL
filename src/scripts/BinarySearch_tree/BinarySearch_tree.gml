@@ -267,6 +267,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 		var Successor = Node.destroy()
 		if inner_size == 1 {
 			node_head = undefined
+			Node = undefined
 		} else if Node == node_head {
 			node_head = Successor
 		} else if Node == node_leftest {
