@@ -149,10 +149,10 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static insert_at = function(Hint, Key) { return Iterator(_Under_try_insert(first_of(Hint), Key)) }
 
 	///@function erase_at(index)
-	static erase_at = function(Key) { _Under_erase_node(first_of(Key)) }
+	static erase_at = function(Key) { _Under_try_erase(first_of(Key)) }
 
 	///@function erase_iter(iterator)
-	static erase_iter = function(It) { if It.storage == self _Under_erase_node(It.index) }
+	static erase_iter = function(It) { if It.storage == self _Under_try_erase(It.index) }
 
 	///@function first_of(value)
 	static first_of = function(Key) {
@@ -261,28 +261,32 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	}
 
 	///@function 
-	static _Under_erase_node = function(Node) {
+	static _Under_try_erase = function(Node) {
 		if is_undefined(Node)
 			exit
-		var Successor = Node.destroy()
-		if inner_size == 1 {
-			node_head = undefined
-			Node = undefined
-		} else if Node == node_head {
-			node_head = Successor
-		} else if Node == node_leftest {
-			if is_undefined(Node.node_left)
-				node_leftest = node_head.find_leftest()
-			else
-				node_leftest = Node.node_left
-		} else if Node == node_rightest {
-			if is_undefined(Node.node_right)
-				node_rightest = node_head.find_rightest()
-			else
-				node_rightest = Node.node_right
-		}
+
+		var Result = _Under_erase_node(Node)
 		inner_size--
 		delete Node
+		return Result
+	}
+
+	///@function 
+	static _Under_erase_node = function(Node) {
+		var Successor = Node.destroy()
+		if Node == node_head {
+			if inner_size == 1 {
+				node_head = undefined
+				return undefined
+			} else {
+				node_head = Successor
+			}
+		} else if Node == node_leftest {
+			node_leftest = node_head.find_leftest()
+		} else if Node == node_rightest {
+			node_rightest = node_head.find_rightest()
+		}
+		return Successor
 	}
 
 	is_multiple = false
