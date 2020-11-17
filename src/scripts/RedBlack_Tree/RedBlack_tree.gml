@@ -160,33 +160,21 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 		if is_undefined(Node)
 			return undefined
 
-		var Succesor = undefined
-		if Node.color == RBColor.Red {
-			Succesor = _Under_erase_node(Node)
+		var NodeErased = Node.node_next
+		var Succesor = _Under_erase_node(Node)
+		if Node != Succesor
+			NodeErased = Node
+
+		if NodeErased.color == RBColor.Red {
 			Succesor.color = RBColor.Black
-			inner_size--
 			delete Node
-			return Succesor
-		} else {
-			var NodeErased = Node.node_next
-			Succesor = _Under_erase_node(Node)
+		} else { // erasing black link, must recolor/rebalance tree
 			if Node == Succesor {
 				var TempColor = NodePointer.color
 				NodePointer.color = NodeErased.color
 				NodeErased.color = TempColor
-			} else {
-				NodeErased = Node
 			}
-			
-		}
 
-		var Result = Node.node_next
-		var NodeErased = Node // node to erase
-		var NodePointer = NodeErased
-		var Fix_node // the node to recolor as needed
-		var Fix_nodeparent // parent of Fix_node (which may be nil)
-		
-		if (NodeErased.color == RBColor.Black) { // erasing black link, must recolor/rebalance tree
 			for (; Fix_node != node_head && Fix_node.color == RBColor.Black; Fix_nodeparent = Fix_node.parent) {
 				if (Fix_node == Fix_nodeparent.node_left) { // fixup left subtree
 					NodePointer = Fix_nodeparent.node_right;
@@ -252,6 +240,9 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 			Fix_node.color = RBColor.Black // stopping node is black
 		}
 
+		var NodePointer = NodeErased
+		var Fix_node // the node to recolor as needed
+		var Fix_nodeparent // parent of Fix_node (which may be nil)
 
 		/*
 		if is_undefined(NodePointer.node_left) {
@@ -314,7 +305,7 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 		if 0 < inner_Size
 			inner_Size--
 
-		return Result
+		return Succesor
 	}
 
 	///@function 
