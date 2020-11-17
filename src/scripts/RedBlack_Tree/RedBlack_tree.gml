@@ -170,8 +170,8 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 			delete Node
 		} else { // erasing black link, must recolor/rebalance tree
 			if Node == Succesor {
-				var TempColor = NodePointer.color
-				NodePointer.color = NodeErased.color
+				var TempColor = Succesor.color
+				Succesor.color = NodeErased.color
 				NodeErased.color = TempColor
 			}
 
