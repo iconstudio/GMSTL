@@ -112,7 +112,7 @@ function Array(): Container() constructor {
 				// (*) Built-in List
 				_Under_reserve(ds_list_size(Item))
 				for (var i = 0; i < inner_size; ++i) set_at(i, Item[| i])
-			} else if is_struct(Item) and is_iterable(Item) {
+			} else if Item.is_iterable {
 				// (*) Container
 				_Under_reserve(Item.size())
 				assign(Item.first(), Item.last())

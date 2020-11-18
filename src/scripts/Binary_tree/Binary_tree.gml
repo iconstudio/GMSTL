@@ -328,7 +328,7 @@ function Binary_tree(): Container() constructor {
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
 				for (var i = 0; i < inner_size; ++i) insert(Item[| i])
-			} else if is_struct(Item) and is_iterable(Item) {
+			} else if Item.is_iterable {
 				// (*) Container
 				foreach(Item.first(), Item.last(), insert)
 			} else {

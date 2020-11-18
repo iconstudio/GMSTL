@@ -37,6 +37,9 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 	static _Under_iterator_insert = insert_at
 
 	///@function 
+	static _Under_is_black = function(Node) { return (is_undefined(Node) or Node.color == RBColor.Black) }
+
+	///@function 
 	static _Under_try_insert = function(Location, Key) {
 		if is_undefined(Location) {
 			return undefined
@@ -162,6 +165,8 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 
 		var NodeErased = Node.node_next
 		var Succesor = _Under_erase_node(Node)
+		if is_undefined(Succesor)
+			throw "An error occured when erasing a node: " + string(Node)
 		if Node != Succesor
 			NodeErased = Node
 
@@ -169,69 +174,71 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 			Succesor.color = RBColor.Black
 			delete Node
 		} else { // erasing black link, must recolor/rebalance tree
+			var NodePointer = NodeErased
+			var Fix_node = Succesor // the node to recolor as needed
+			var Fix_nodeparent // parent of Fix_node (which may be nil)
+
 			if Node == Succesor {
 				var TempColor = Succesor.color
 				Succesor.color = NodeErased.color
 				NodeErased.color = TempColor
 			}
 
-			for (; Fix_node != node_head && Fix_node.color == RBColor.Black; Fix_nodeparent = Fix_node.parent) {
-				if (Fix_node == Fix_nodeparent.node_left) { // fixup left subtree
-					NodePointer = Fix_nodeparent.node_right;
-					if (NodePointer.color == RBColor.Red) { // rotate red up from right subtree
-						NodePointer.color = RBColor.Black;
-						Fix_nodeparent.color = RBColor.Red;
-						rotate_left(Fix_nodeparent);
-						NodePointer = Fix_nodeparent.node_right;
+			for (; Fix_node != node_head and Fix_node.color == RBColor.Black; Fix_nodeparent = Fix_node.parent) {
+				if Fix_node == Fix_nodeparent.node_left { // fixup left subtree
+					NodePointer = Fix_nodeparent.node_right
+					if NodePointer.color == RBColor.Red { // rotate red up from right subtree
+						NodePointer.color = RBColor.Black
+						Fix_nodeparent.color = RBColor.Red
+						rotate_left(Fix_nodeparent)
+						NodePointer = Fix_nodeparent.node_right
 					}
 
-					if (NodePointer.Is_nil) {
-						Fix_node = Fix_nodeparent; // shouldn't happen
-					} else if (NodePointer.node_left.color == RBColor.Black
-								&& NodePointer.node_right.color == RBColor.Black) { // redden right subtree with black children
-						NodePointer.color = RBColor.Red;
-						Fix_node = Fix_nodeparent;
+					if is_undefined(NodePointer) {
+						Fix_node = Fix_nodeparent // shouldn't happen
+					} else if _Under_is_black(NodePointer.node_left) and _Under_is_black(NodePointer.node_right) { // redden right subtree with black children
+						NodePointer.color = RBColor.Red
+						Fix_node = Fix_nodeparent
 					} else { // must rearrange right subtree
-						if (NodePointer.node_right.color == RBColor.Black) { // rotate red up from left sub-subtree
-							NodePointer.node_left.color = RBColor.Black;
-							NodePointer.color = RBColor.Red;
-							rotate_right(NodePointer);
-							NodePointer = Fix_nodeparent.node_right;
+						if _Under_is_black(NodePointer.node_right) { // rotate red up from left sub-subtree
+							NodePointer.node_left.color = RBColor.Black
+							NodePointer.color = RBColor.Red
+							rotate_right(NodePointer)
+							NodePointer = Fix_nodeparent.node_right
 						}
 
-						NodePointer.color = Fix_nodeparent.color;
-						Fix_nodeparent.color = RBColor.Black;
-						NodePointer.node_right.color = RBColor.Black;
-						rotate_left(Fix_nodeparent);
-						break; // tree now recolored/rebalanced
+						NodePointer.color = Fix_nodeparent.color
+						Fix_nodeparent.color = RBColor.Black
+						NodePointer.node_right.color = RBColor.Black
+						rotate_left(Fix_nodeparent)
+						break // tree now recolored/rebalanced
 					}
 				} else { // fixup right subtree
-					NodePointer = Fix_nodeparent.node_left;
-					if (NodePointer.color == RBColor.Red) { // rotate red up from left subtree
-						NodePointer.color = RBColor.Black;
-						Fix_nodeparent.color = RBColor.Red;
-						rotate_right(Fix_nodeparent);
-						NodePointer = Fix_nodeparent.node_left;
+					NodePointer = Fix_nodeparent.node_left
+					if NodePointer.color == RBColor.Red { // rotate red up from left subtree
+						NodePointer.color = RBColor.Black
+						Fix_nodeparent.color = RBColor.Red
+						rotate_right(Fix_nodeparent)
+						NodePointer = Fix_nodeparent.node_left
 					}
 
-					if (NodePointer.Is_nil) {
-						Fix_node = Fix_nodeparent; // shouldn't happen
-					} else if (NodePointer.node_right.color == RBColor.Black
-								&& NodePointer.node_left.color == RBColor.Black) { // redden left subtree with black children
-						NodePointer.color = RBColor.Red;
-						Fix_node = Fix_nodeparent;
+					if is_undefined(NodePointer) {
+						Fix_node = Fix_nodeparent // shouldn't happen
+					} else if _Under_is_black(NodePointer.node_right) and _Under_is_black(NodePointer.node_left) { // redden left subtree with black children
+						NodePointer.color = RBColor.Red
+						Fix_node = Fix_nodeparent
 					} else { // must rearrange left subtree
-						if (NodePointer.node_left.color == RBColor.Black) { // rotate red up from right sub-subtree
-							NodePointer.node_right.color = RBColor.Black;
-							NodePointer.color = RBColor.Red;
-							rotate_left(NodePointer);
-							NodePointer = Fix_nodeparent.node_left;
+						if _Under_is_black(NodePointer.node_left) { // rotate red up from right sub-subtree
+							NodePointer.node_right.color = RBColor.Black
+							NodePointer.color = RBColor.Red
+							rotate_left(NodePointer)
+							NodePointer = Fix_nodeparent.node_left
 						}
 
-						NodePointer.color = Fix_nodeparent.color;
-						Fix_nodeparent.color = RBColor.Black;
-						NodePointer.node_left.color = RBColor.Black;
-						rotate_right(Fix_nodeparent);
+						NodePointer.color = Fix_nodeparent.color
+						Fix_nodeparent.color = RBColor.Black
+						NodePointer.node_left.color = RBColor.Black
+						rotate_right(Fix_nodeparent)
 						break; // tree now recolored/rebalanced
 					}
 				}
@@ -239,10 +246,6 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 
 			Fix_node.color = RBColor.Black // stopping node is black
 		}
-
-		var NodePointer = NodeErased
-		var Fix_node // the node to recolor as needed
-		var Fix_nodeparent // parent of Fix_node (which may be nil)
 
 		/*
 		if is_undefined(NodePointer.node_left) {
@@ -322,7 +325,7 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
 				for (var i = 0; i < inner_size; ++i) insert(Item[| i])
-			} else if is_struct(Item) and is_iterable(Item) {
+			} else if Item.is_iterable {
 				// (*) Container
 				foreach(Item.first(), Item.last(), insert)
 			} else {

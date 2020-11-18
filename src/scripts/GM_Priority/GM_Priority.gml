@@ -75,6 +75,7 @@ function GM_Priority(): Container() constructor {
 	static destroy = function() { ds_priority_destroy(raw); gc_collect() }
 
 	static type = GM_Priority
+	static is_iterable = false
 #endregion
 
 #region private
@@ -128,7 +129,7 @@ function GM_Priority(): Container() constructor {
 				if instanceof(Item) == "GM_Priority" {
 					// (*) Copy Constructor
 					ds_priority_copy(raw, Item.data())
-				} else if is_iterable(Item) {
+				} else if Item.is_iterable {
 					// (*) Container
 					assign(Item.first(), Item.last())
 				}

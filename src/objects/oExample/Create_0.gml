@@ -214,6 +214,7 @@ test_mapped_list.push_back(["AC", "AC"]) // 17
 print(test_mapped_list)
 
 test_map = new Map(test_mapped_list)
+test_map.erase_at("@")
 show_debug_message("\nMap: " + string(test_map.size()))
 print(test_map)
 rbtree_print(test_map, test_map.node_head)

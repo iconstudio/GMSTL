@@ -52,6 +52,7 @@ function Stack(): Container() constructor {
 	static destroy = function() { ds_stack_destroy(raw); gc_collect() }
 
 	static type = Stack
+	static is_iterable = false
 #endregion
 
 #region private
@@ -93,7 +94,7 @@ function Stack(): Container() constructor {
 				if instanceof(Item) == "Stack" {
 					// (*) Copy Constructor
 					ds_queue_copy(raw, Item.data())
-				} else if is_iterable(Item) {
+				} else if Item.is_iterable {
 					// (*) Container
 					assign(Item.first(), Item.last())
 				}

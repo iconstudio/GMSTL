@@ -11,6 +11,7 @@ function Container() {
 
 	static type = Container
 	static iterator_type = undefined
+	static is_iterable = true
 #endregion
 
 #region private
@@ -41,11 +42,4 @@ function Container() {
 
 	raw = undefined
 #endregion
-}
-
-///@function is_iterable(container)
-function is_iterable(container) {
-	var meta = instanceof(container)
-	return bool(meta != "Stack" and meta != "Queue" and meta != "Deque"
-	and meta != "Priority_deque"and meta != "Priority_queue")
 }

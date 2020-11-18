@@ -109,6 +109,7 @@ function Priority_deque(): Container() constructor {
 	static set_key_compare = function(Func) { key_inquire_comparator = method(other, Func) }
 
 	static type = Priority_deque
+	static is_iterable = false
 #endregion
 
 #region private
@@ -152,7 +153,7 @@ function Priority_deque(): Container() constructor {
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
 				for (var i = 0; i < ds_list_size(Item); ++i) push(Item[| i])
-			} else if is_struct(Item) and is_iterable(Item) {
+			} else if Item.is_iterable {
 				// (*) Container
 				assign(Item.first(), Item.last())
 			} else {
