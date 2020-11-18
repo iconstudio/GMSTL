@@ -263,7 +263,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	///@function 
 	static _Under_try_erase = function(Node) {
 		if is_undefined(Node)
-			exit
+			return undefined
 
 		var Result = _Under_erase_node(Node)
 		inner_size--
@@ -312,7 +312,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
 				for (var i = 0; i < inner_size; ++i) insert(Item[| i])
-			} else if is_struct(Item) and is_iterable(Item) {
+			} else if Item.is_iterable {
 				// (*) Container
 				foreach(Item.first(), Item.last(), insert)
 			} else {

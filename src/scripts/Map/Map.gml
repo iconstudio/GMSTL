@@ -94,7 +94,7 @@ function Map(): RedBlack_tree() constructor {
 		var Result = undefined, Where = first_of(Key)
 		if !is_undefined(Where) {
 			Result = Iterator(Where.node_next)
-			_Under_erase_and_fix(Where)
+			_Under_try_erase(Where)
 		}
 		return Result
 	}
@@ -163,7 +163,7 @@ function Map(): RedBlack_tree() constructor {
 							break
 					}
 				}
-			} else if is_struct(Item) and is_iterable(Item) {
+			} else if Item.is_iterable {
 				// (*) Paired-Container
 				foreach(Item.first(), Item.last(), insert)
 			} else {
