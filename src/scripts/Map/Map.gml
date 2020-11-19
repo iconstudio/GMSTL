@@ -66,7 +66,7 @@ function Map(): RedBlack_tree() constructor {
 		var Key = Pair[0], Value = Pair[1]
 		var Where = first_of(Key)
 		if !is_undefined(Where) {
-			if is_undefined(Value) throw "The value of " + string(Key) + " is undefined!\nNode: " + string(Where)
+			//if is_undefined(Value) throw "The value of " + string(Key) + " is undefined!\nNode: " + string(Where)
 			Where.set_value(Value)
 			return Iterator(Where)
 		} else {
