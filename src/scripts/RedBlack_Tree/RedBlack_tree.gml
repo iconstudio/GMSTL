@@ -159,14 +159,14 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 	}
 
 	///@function 
-	static _Under_try_erase = function(Node) {
+	static _2Under_try_erase = function(Node) {
 		if is_undefined(Node)
 			return undefined
 
 		var NodeErased = Node.node_next
 		var Succesor = _Under_erase_node(Node)
-		if is_undefined(Succesor)
-			throw "An error occured when erasing a node: " + string(Node)
+		//if is_undefined(Succesor)
+		//	throw "An error occured when erasing a node: " + string(Node)
 		if Node != Succesor
 			NodeErased = Node
 
@@ -184,7 +184,8 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 				NodeErased.color = TempColor
 			}
 
-			for (; Fix_node != node_head and Fix_node.color == RBColor.Black; Fix_nodeparent = Fix_node.parent) {
+			for (; !is_undefined(Fix_node) and Fix_node != node_head and Fix_node.color == RBColor.Black;
+			Fix_nodeparent = Fix_node.parent) {
 				if Fix_node == Fix_nodeparent.node_left { // fixup left subtree
 					NodePointer = Fix_nodeparent.node_right
 					if NodePointer.color == RBColor.Red { // rotate red up from right subtree

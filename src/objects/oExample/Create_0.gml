@@ -143,15 +143,6 @@ function draw_rbtree(Dx, Dy, Node, Height) {
 
 /*
 show_debug_message("")
-
-test_tree.erase_at(2)
-test_tree.erase_at(11)
-test_tree.erase_at(8)
-test_tree.erase_at(26)
-node_tree_print(test_tree, test_tree.node_head)
-show_debug_message(test_tree.front())
-show_debug_message(test_tree.back())
-
 //var Loc = test_tree.location(26)
 //show_debug_message("Loc: " + string(Loc.get()))
 
@@ -238,7 +229,7 @@ test_multimap.insert([1, new Wrapper("1-3rd")])
 show_debug_message("\nMultimap: " + string(test_multimap.size()))
 print(test_multimap)
 
-tree_content = test_tree
+tree_content = test_map
 function draw_rbtree_init() {
 	draw_rbtree(tree_indicator_start_pos[0], tree_indicator_start_pos[1], tree_content.node_head, 0)
 }
