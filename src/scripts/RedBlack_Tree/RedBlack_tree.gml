@@ -163,27 +163,35 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 		if is_undefined(Node)
 			return undefined
 
-		var NodeErased = Node.node_next
+		var Result = Node.node_next, NodeErased = Node
+		var Fix_node = Succesor // the node to recolor as needed
+		var Fix_nodeparent // parent of Fix_node (which may be nil)
+		var NodePointer = Node
+
+		var LeftNode = Node.node_left, RightNode = Node.node_right
+		if is_undefined(LeftNode) {
+			Fix_node = RightNode
+		} else if is_undefined(RightNode) {
+			Fix_node = LeftNode
+		} else {
+			NodePointer = Node.node_next
+			Fix_node = RightNode
+		}
+
+		if NodePointer != NodeErased {
+			var TempColor = NodePointer.color
+			NodePointer.color = NodeErased.color
+			NodeErased.color = TempColor
+		}
+
 		var Succesor = _Under_erase_node(Node)
 		//if is_undefined(Succesor)
 		//	throw "An error occured when erasing a node: " + string(Node)
-		if Node != Succesor
-			NodeErased = Node
 
 		if NodeErased.color == RBColor.Red {
-			Succesor.color = RBColor.Black
+			//Succesor.color = RBColor.Black
 			delete Node
 		} else { // erasing black link, must recolor/rebalance tree
-			var NodePointer = NodeErased
-			var Fix_node = Succesor // the node to recolor as needed
-			var Fix_nodeparent // parent of Fix_node (which may be nil)
-
-			if Node == Succesor {
-				var TempColor = Succesor.color
-				Succesor.color = NodeErased.color
-				NodeErased.color = TempColor
-			}
-
 			for (; !is_undefined(Fix_node) and Fix_node != node_head and Fix_node.color == RBColor.Black;
 			Fix_nodeparent = Fix_node.parent) {
 				if Fix_node == Fix_nodeparent.node_left { // fixup left subtree
