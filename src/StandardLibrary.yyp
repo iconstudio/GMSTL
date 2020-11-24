@@ -18,6 +18,7 @@
     {"id":{"name":"Container","path":"scripts/Container/Container.yy",},"order":2,},
     {"id":{"name":"fontExample","path":"fonts/fontExample/fontExample.yy",},"order":1,},
     {"id":{"name":"Multimap","path":"scripts/Multimap/Multimap.yy",},"order":2,},
+    {"id":{"name":"Vector","path":"scripts/Vector/Vector.yy",},"order":0,},
     {"id":{"name":"Priority_deque","path":"scripts/Priority_deque/Priority_deque.yy",},"order":4,},
     {"id":{"name":"Grid","path":"scripts/Grid/Grid.yy",},"order":3,},
     {"id":{"name":"GM_Priority","path":"scripts/GM_Priority/GM_Priority.yy",},"order":2,},

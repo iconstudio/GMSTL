@@ -159,7 +159,7 @@ function RedBlack_tree(): BinarySearch_tree() constructor {
 	}
 
 	///@function 
-	static _2Under_try_erase = function(Node) {
+	static _Under_try_erase = function(Node) {
 		if is_undefined(Node)
 			return undefined
 
