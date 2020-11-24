@@ -23,6 +23,9 @@ function Vector(): Container() constructor {
 	///@function clear()
 	static clear = function() { _Under_reserve(inner_size) }
 
+	///@function resize(size)
+	static resize = function(Size) { array_resize(raw, Size); inner_size = Size }
+
 	///@function at(index)
 	static at = function(Index) {if !valid(Index) return undefined; return raw[Index] }
 
