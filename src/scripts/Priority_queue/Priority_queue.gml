@@ -23,12 +23,13 @@
 function Priority_queue(): Heap_tree() constructor {
 #region public
 	///@function push(value)
-	static push = function(Value) { return insert(Value) }
+	static push = insert
 
 	///@function push_back(value)
-	static push_back = function(Value) { return insert(Value) }
+	static push_back = insert
 
 	static type = Priority_queue
+	static is_iterable = false
 #endregion
 
 #region private
@@ -61,7 +62,7 @@ function Priority_queue(): Heap_tree() constructor {
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
 				for (var i = 0; i < ds_list_size(Item); ++i) push_back(Item[| i])
-			} else if is_struct(Item) and is_iterable(Item) {
+			} else if Item.is_iterable {
 				// (*) Container
 				assign(Item.first(), Item.last())
 			} else {

@@ -137,7 +137,7 @@ function Unordered_map(): Container() constructor {
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_map) {
 				// (*) Built-in Map
 				ds_map_copy(raw, Item)
-			} else if is_struct(Item) and is_iterable(Item) {
+			} else if Item.is_iterable {
 				// (*) Paired-Container
 				assign(Item.first(), Item.last())
 			} else {

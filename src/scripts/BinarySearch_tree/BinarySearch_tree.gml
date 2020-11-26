@@ -34,19 +34,14 @@ function BSTree_node(Storage): Tree_node() constructor {
 					ValueNode = new type(storage).set_key(NewKey)
 					set_right(ValueNode)
 
-					var Checker = self, Promote = parent, ProValue, Upheal
+					var Checker = self, Promote = parent
 					while !is_undefined(Promote) {
-						ProValue = Promote.data
-						if Checker == Promote.node_left { //if Compare(NewKey, ProValue) {
+						if Checker == Promote.node_left {
 							ValueNode.set_next(Promote)
 							break
 						} else {
-							Upheal = Promote.parent
-							if is_undefined(Upheal)
-								break
-
 							Checker = Promote
-							Promote = Upheal
+							Promote = Promote.parent
 						}
 					}
 					set_next(ValueNode)
@@ -154,10 +149,10 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	static insert_at = function(Hint, Key) { return Iterator(_Under_try_insert(first_of(Hint), Key)) }
 
 	///@function erase_at(index)
-	static erase_at = function(Key) { _Under_erase_node(first_of(Key)) }
+	static erase_at = function(Key) { _Under_try_erase(first_of(Key)) }
 
 	///@function erase_iter(iterator)
-	static erase_iter = function(It) { if It.storage == self _Under_erase_node(It.index) }
+	static erase_iter = function(It) { if It.storage == self _Under_try_erase(It.index) }
 
 	///@function first_of(value)
 	static first_of = function(Key) {
@@ -266,27 +261,32 @@ function BinarySearch_tree(): Binary_tree() constructor {
 	}
 
 	///@function 
-	static _Under_erase_node = function(Node) {
+	static _Under_try_erase = function(Node) {
 		if is_undefined(Node)
-			exit
-		var Successor = Node.destroy()
-		if inner_size == 1 {
-			node_head = undefined
-		} else if Node == node_head {
-			node_head = Successor
-		} else if Node == node_leftest {
-			if is_undefined(Node.node_left)
-				node_leftest = node_head.find_leftest()
-			else
-				node_leftest = Node.node_left
-		} else if Node == node_rightest {
-			if is_undefined(Node.node_right)
-				node_rightest = node_head.find_rightest()
-			else
-				node_rightest = Node.node_right
-		}
+			return undefined
+
+		var Result = _Under_erase_node(Node)
 		inner_size--
 		delete Node
+		return Result
+	}
+
+	///@function 
+	static _Under_erase_node = function(Node) {
+		var Successor = Node.destroy()
+		if Node == node_head {
+			if inner_size == 1 {
+				node_head = undefined
+				return undefined
+			} else {
+				node_head = Successor
+			}
+		} else if Node == node_leftest {
+			node_leftest = node_head.find_leftest()
+		} else if Node == node_rightest {
+			node_rightest = node_head.find_rightest()
+		}
+		return Successor
 	}
 
 	is_multiple = false
@@ -312,7 +312,7 @@ function BinarySearch_tree(): Binary_tree() constructor {
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
 				for (var i = 0; i < inner_size; ++i) insert(Item[| i])
-			} else if is_struct(Item) and is_iterable(Item) {
+			} else if Item.is_iterable {
 				// (*) Container
 				foreach(Item.first(), Item.last(), insert)
 			} else {

@@ -39,11 +39,11 @@ namespace std {
 			this->_Adopt(_Plist);
 		}
 
-		_NODISCARD reference operator*() const {
+		[[nodiscard]] reference operator*() const {
 			return _Ptr->Value;
 		}
 
-		_NODISCARD pointer operator->() const {
+		[[nodiscard]] pointer operator->() const {
 			return pointer_traits<pointer>::pointer_to(**this);
 		}
 
@@ -93,20 +93,20 @@ namespace std {
 			return _Tmp;
 		}
 
-		_NODISCARD bool operator==(const Tree_unchecked_const_iterator& Node_right) const {
+		[[nodiscard]] bool operator==(const Tree_unchecked_const_iterator& Node_right) const {
 			return _Ptr == Node_right._Ptr;
 		}
 
-		_NODISCARD bool operator!=(const Tree_unchecked_const_iterator& Node_right) const {
+		[[nodiscard]] bool operator!=(const Tree_unchecked_const_iterator& Node_right) const {
 			return !(*this == Node_right);
 		}
 
-		_NODISCARD bool operator==(_Default_sentinel) const noexcept {
+		[[nodiscard]] bool operator==(_Default_sentinel) const noexcept {
 			return !!_Ptr->Is_nil; // TRANSITION, avoid warning C4800:
 									// "Implicit conversion from 'char' to bool. Possible information loss" (/Wall)
 		}
 
-		_NODISCARD bool operator!=(_Default_sentinel) const noexcept {
+		[[nodiscard]] bool operator!=(_Default_sentinel) const noexcept {
 			return !_Ptr->Is_nil;
 		}
 
@@ -223,7 +223,7 @@ namespace std {
 			return _Tmp;
 		}
 
-		_NODISCARD bool operator==(const Tree_const_iterator& Node_right) const {
+		[[nodiscard]] bool operator==(const Tree_const_iterator& Node_right) const {
 	#if _ITERATOR_DEBUG_LEVEL == 2
 			_STL_VERIFY(this->_Getcont() == Node_right._Getcont(), "map/set iterators incompatible");
 	#endif // _ITERATOR_DEBUG_LEVEL == 2
@@ -231,7 +231,7 @@ namespace std {
 			return this->_Ptr == Node_right._Ptr;
 		}
 
-		_NODISCARD bool operator!=(const Tree_const_iterator& Node_right) const {
+		[[nodiscard]] bool operator!=(const Tree_const_iterator& Node_right) const {
 			return !(*this == Node_right);
 		}
 
@@ -243,7 +243,7 @@ namespace std {
 
 		using _Prevent_inheriting_unwrap = Tree_const_iterator;
 
-		_NODISCARD Tree_unchecked_const_iterator<_Mytree> _Unwrapped() const {
+		[[nodiscard]] Tree_unchecked_const_iterator<_Mytree> _Unwrapped() const {
 			return Tree_unchecked_const_iterator<_Mytree>(this->_Ptr, static_cast<const _Mytree*>(this->_Getcont()));
 		}
 
@@ -268,11 +268,11 @@ namespace std {
 
 		using _Mybase::_Mybase;
 
-		_NODISCARD reference operator*() const {
+		[[nodiscard]] reference operator*() const {
 			return const_cast<reference>(_Mybase::operator*());
 		}
 
-		_NODISCARD pointer operator->() const {
+		[[nodiscard]] pointer operator->() const {
 			return pointer_traits<pointer>::pointer_to(**this);
 		}
 
@@ -300,7 +300,7 @@ namespace std {
 
 		using _Prevent_inheriting_unwrap = Tree_iterator;
 
-		_NODISCARD Tree_unchecked_iterator<_Mytree> _Unwrapped() const {
+		[[nodiscard]] Tree_unchecked_iterator<_Mytree> _Unwrapped() const {
 			return Tree_unchecked_iterator<_Mytree>(this->_Ptr, static_cast<const _Mytree*>(this->_Getcont()));
 		}
 	};
@@ -1234,22 +1234,22 @@ namespace std {
 			return *this;
 		}
 
-		_NODISCARD iterator begin() noexcept {
+		[[nodiscard]] iterator begin() noexcept {
 			const auto _Scary = _Get_scary();
 			return iterator(_Scary->Node_head->Node_left, _Scary);
 		}
 
-		_NODISCARD const_iterator begin() const noexcept {
+		[[nodiscard]] const_iterator begin() const noexcept {
 			const auto _Scary = _Get_scary();
 			return const_iterator(_Scary->Node_head->Node_left, _Scary);
 		}
 
-		_NODISCARD iterator end() noexcept {
+		[[nodiscard]] iterator end() noexcept {
 			const auto _Scary = _Get_scary();
 			return iterator(_Scary->Node_head, _Scary);
 		}
 
-		_NODISCARD const_iterator end() const noexcept {
+		[[nodiscard]] const_iterator end() const noexcept {
 			const auto _Scary = _Get_scary();
 			return const_iterator(_Scary->Node_head, _Scary);
 		}
@@ -1270,60 +1270,60 @@ namespace std {
 			return _Unchecked_const_iterator(_Get_scary()->Node_head, nullptr);
 		}
 
-		_NODISCARD reverse_iterator rbegin() noexcept {
+		[[nodiscard]] reverse_iterator rbegin() noexcept {
 			return reverse_iterator(end());
 		}
 
-		_NODISCARD const_reverse_iterator rbegin() const noexcept {
+		[[nodiscard]] const_reverse_iterator rbegin() const noexcept {
 			return const_reverse_iterator(end());
 		}
 
-		_NODISCARD reverse_iterator rend() noexcept {
+		[[nodiscard]] reverse_iterator rend() noexcept {
 			return reverse_iterator(begin());
 		}
 
-		_NODISCARD const_reverse_iterator rend() const noexcept {
+		[[nodiscard]] const_reverse_iterator rend() const noexcept {
 			return const_reverse_iterator(begin());
 		}
 
-		_NODISCARD const_iterator cbegin() const noexcept {
+		[[nodiscard]] const_iterator cbegin() const noexcept {
 			return begin();
 		}
 
-		_NODISCARD const_iterator cend() const noexcept {
+		[[nodiscard]] const_iterator cend() const noexcept {
 			return end();
 		}
 
-		_NODISCARD const_reverse_iterator crbegin() const noexcept {
+		[[nodiscard]] const_reverse_iterator crbegin() const noexcept {
 			return rbegin();
 		}
 
-		_NODISCARD const_reverse_iterator crend() const noexcept {
+		[[nodiscard]] const_reverse_iterator crend() const noexcept {
 			return rend();
 		}
 
-		_NODISCARD size_type size() const noexcept {
+		[[nodiscard]] size_type size() const noexcept {
 			return _Get_scary()->inner_Size;
 		}
 
-		_NODISCARD size_type max_size() const noexcept {
+		[[nodiscard]] size_type max_size() const noexcept {
 			return (_STD min)(
 				static_cast<size_type>((numeric_limits<difference_type>::max)()), _Alnode_traits::max_size(_Getal()));
 		}
 
-		_NODISCARD bool empty() const noexcept {
+		[[nodiscard]] bool empty() const noexcept {
 			return size() == 0;
 		}
 
-		_NODISCARD allocator_type get_allocator() const noexcept {
+		[[nodiscard]] allocator_type get_allocator() const noexcept {
 			return static_cast<allocator_type>(_Getal());
 		}
 
-		_NODISCARD key_compare key_comp() const {
+		[[nodiscard]] key_compare key_comp() const {
 			return _Getcomp();
 		}
 
-		_NODISCARD value_compare value_comp() const {
+		[[nodiscard]] value_compare value_comp() const {
 			return value_compare(key_comp());
 		}
 
@@ -1453,7 +1453,7 @@ namespace std {
 
 	private:
 		template <class _Other>
-		_NODISCARD node_pointer _Find(const _Other& _Keyval) const {
+		[[nodiscard]] node_pointer _Find(const _Other& _Keyval) const {
 			const _Tree_find_result<node_pointer> _Loc = _Find_lower_bound(_Keyval);
 			if (_Lower_bound_duplicate(_Loc._Bound, _Keyval)) {
 				return _Loc._Bound;
@@ -1463,36 +1463,36 @@ namespace std {
 		}
 
 	public:
-		_NODISCARD iterator find(const key_type& _Keyval) {
+		[[nodiscard]] iterator find(const key_type& _Keyval) {
 			return iterator(_Find(_Keyval), _Get_scary());
 		}
 
-		_NODISCARD const_iterator find(const key_type& _Keyval) const {
+		[[nodiscard]] const_iterator find(const key_type& _Keyval) const {
 			return const_iterator(_Find(_Keyval), _Get_scary());
 		}
 
 		template <class _Other, class _Mycomp = key_compare, class = typename _Mycomp::is_transparent>
-		_NODISCARD iterator find(const _Other& _Keyval) {
+		[[nodiscard]] iterator find(const _Other& _Keyval) {
 			return iterator(_Find(_Keyval), _Get_scary());
 		}
 
 		template <class _Other, class _Mycomp = key_compare, class = typename _Mycomp::is_transparent>
-		_NODISCARD const_iterator find(const _Other& _Keyval) const {
+		[[nodiscard]] const_iterator find(const _Other& _Keyval) const {
 			return const_iterator(_Find(_Keyval), _Get_scary());
 		}
 
 	#if _HAS_CXX20
-		_NODISCARD bool contains(const key_type& _Keyval) const {
+		[[nodiscard]] bool contains(const key_type& _Keyval) const {
 			return _Lower_bound_duplicate(_Find_lower_bound(_Keyval)._Bound, _Keyval);
 		}
 
 		template <class _Other, class _Mycomp = key_compare, class = typename _Mycomp::is_transparent>
-		_NODISCARD bool contains(const _Other& _Keyval) const {
+		[[nodiscard]] bool contains(const _Other& _Keyval) const {
 			return _Lower_bound_duplicate(_Find_lower_bound(_Keyval)._Bound, _Keyval);
 		}
 	#endif // _HAS_CXX20
 
-		_NODISCARD size_type count(const key_type& _Keyval) const {
+		[[nodiscard]] size_type count(const key_type& _Keyval) const {
 			if _CONSTEXPR_IF(_Multi) {
 				const auto _Ans = _Eqrange(_Keyval);
 				return static_cast<size_type>(_STD distance(
@@ -1503,69 +1503,69 @@ namespace std {
 		}
 
 		template <class _Other, class _Mycomp = key_compare, class = typename _Mycomp::is_transparent>
-		_NODISCARD size_type count(const _Other& _Keyval) const {
+		[[nodiscard]] size_type count(const _Other& _Keyval) const {
 			const auto _Ans = _Eqrange(_Keyval);
 			return static_cast<size_type>(_STD distance(
 				_Unchecked_const_iterator(_Ans.first, nullptr), _Unchecked_const_iterator(_Ans.second, nullptr)));
 		}
 
-		_NODISCARD iterator lower_bound(const key_type& _Keyval) {
+		[[nodiscard]] iterator lower_bound(const key_type& _Keyval) {
 			return iterator(_Find_lower_bound(_Keyval)._Bound, _Get_scary());
 		}
 
-		_NODISCARD const_iterator lower_bound(const key_type& _Keyval) const {
+		[[nodiscard]] const_iterator lower_bound(const key_type& _Keyval) const {
 			return const_iterator(_Find_lower_bound(_Keyval)._Bound, _Get_scary());
 		}
 
 		template <class _Other, class _Mycomp = key_compare, class = typename _Mycomp::is_transparent>
-		_NODISCARD iterator lower_bound(const _Other& _Keyval) {
+		[[nodiscard]] iterator lower_bound(const _Other& _Keyval) {
 			return iterator(_Find_lower_bound(_Keyval)._Bound, _Get_scary());
 		}
 
 		template <class _Other, class _Mycomp = key_compare, class = typename _Mycomp::is_transparent>
-		_NODISCARD const_iterator lower_bound(const _Other& _Keyval) const {
+		[[nodiscard]] const_iterator lower_bound(const _Other& _Keyval) const {
 			return const_iterator(_Find_lower_bound(_Keyval)._Bound, _Get_scary());
 		}
 
-		_NODISCARD iterator upper_bound(const key_type& _Keyval) {
+		[[nodiscard]] iterator upper_bound(const key_type& _Keyval) {
 			return iterator(_Find_upper_bound(_Keyval)._Bound, _Get_scary());
 		}
 
-		_NODISCARD const_iterator upper_bound(const key_type& _Keyval) const {
+		[[nodiscard]] const_iterator upper_bound(const key_type& _Keyval) const {
 			return const_iterator(_Find_upper_bound(_Keyval)._Bound, _Get_scary());
 		}
 
 		template <class _Other, class _Mycomp = key_compare, class = typename _Mycomp::is_transparent>
-		_NODISCARD iterator upper_bound(const _Other& _Keyval) {
+		[[nodiscard]] iterator upper_bound(const _Other& _Keyval) {
 			return iterator(_Find_upper_bound(_Keyval)._Bound, _Get_scary());
 		}
 
 		template <class _Other, class _Mycomp = key_compare, class = typename _Mycomp::is_transparent>
-		_NODISCARD const_iterator upper_bound(const _Other& _Keyval) const {
+		[[nodiscard]] const_iterator upper_bound(const _Other& _Keyval) const {
 			return const_iterator(_Find_upper_bound(_Keyval)._Bound, _Get_scary());
 		}
 
-		_NODISCARD pair<iterator, iterator> equal_range(const key_type& _Keyval) {
+		[[nodiscard]] pair<iterator, iterator> equal_range(const key_type& _Keyval) {
 			const auto _Result = _Eqrange(_Keyval);
 			const auto _Scary = _Get_scary();
 			return {iterator(_Result.first, _Scary), iterator(_Result.second, _Scary)};
 		}
 
-		_NODISCARD pair<const_iterator, const_iterator> equal_range(const key_type& _Keyval) const {
+		[[nodiscard]] pair<const_iterator, const_iterator> equal_range(const key_type& _Keyval) const {
 			const auto _Result = _Eqrange(_Keyval);
 			const auto _Scary = _Get_scary();
 			return {const_iterator(_Result.first, _Scary), const_iterator(_Result.second, _Scary)};
 		}
 
 		template <class _Other, class _Mycomp = key_compare, class = typename _Mycomp::is_transparent>
-		_NODISCARD pair<iterator, iterator> equal_range(const _Other& _Keyval) {
+		[[nodiscard]] pair<iterator, iterator> equal_range(const _Other& _Keyval) {
 			const auto _Result = _Eqrange(_Keyval);
 			const auto _Scary = _Get_scary();
 			return {iterator(_Result.first, _Scary), iterator(_Result.second, _Scary)};
 		}
 
 		template <class _Other, class _Mycomp = key_compare, class = typename _Mycomp::is_transparent>
-		_NODISCARD pair<const_iterator, const_iterator> equal_range(const _Other& _Keyval) const {
+		[[nodiscard]] pair<const_iterator, const_iterator> equal_range(const _Other& _Keyval) const {
 			const auto _Result = _Eqrange(_Keyval);
 			const auto _Scary = _Get_scary();
 			return {const_iterator(_Result.first, _Scary), const_iterator(_Result.second, _Scary)};
@@ -2055,34 +2055,34 @@ namespace std {
 	};
 
 	template <class _Traits>
-	_NODISCARD bool operator==(const Tree<_Traits>& Node_left, const Tree<_Traits>& Node_right) {
+	[[nodiscard]] bool operator==(const Tree<_Traits>& Node_left, const Tree<_Traits>& Node_right) {
 		return Node_left.size() == Node_right.size()
 			&& _STD equal(Node_left._Unchecked_begin(), Node_left._Unchecked_end_iter(), Node_right._Unchecked_begin());
 	}
 
 	template <class _Traits>
-	_NODISCARD bool operator!=(const Tree<_Traits>& Node_left, const Tree<_Traits>& Node_right) {
+	[[nodiscard]] bool operator!=(const Tree<_Traits>& Node_left, const Tree<_Traits>& Node_right) {
 		return !(Node_left == Node_right);
 	}
 
 	template <class _Traits>
-	_NODISCARD bool operator<(const Tree<_Traits>& Node_left, const Tree<_Traits>& Node_right) {
+	[[nodiscard]] bool operator<(const Tree<_Traits>& Node_left, const Tree<_Traits>& Node_right) {
 		return _STD lexicographical_compare(
 			Node_left._Unchecked_begin(), Node_left._Unchecked_end_iter(), Node_right._Unchecked_begin(), Node_right._Unchecked_end_iter());
 	}
 
 	template <class _Traits>
-	_NODISCARD bool operator>(const Tree<_Traits>& Node_left, const Tree<_Traits>& Node_right) {
+	[[nodiscard]] bool operator>(const Tree<_Traits>& Node_left, const Tree<_Traits>& Node_right) {
 		return Node_right < Node_left;
 	}
 
 	template <class _Traits>
-	_NODISCARD bool operator<=(const Tree<_Traits>& Node_left, const Tree<_Traits>& Node_right) {
+	[[nodiscard]] bool operator<=(const Tree<_Traits>& Node_left, const Tree<_Traits>& Node_right) {
 		return !(Node_right < Node_left);
 	}
 
 	template <class _Traits>
-	_NODISCARD bool operator>=(const Tree<_Traits>& Node_left, const Tree<_Traits>& Node_right) {
+	[[nodiscard]] bool operator>=(const Tree<_Traits>& Node_left, const Tree<_Traits>& Node_right) {
 		return !(Node_left < Node_right);
 	}
 }

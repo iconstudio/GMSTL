@@ -20,15 +20,17 @@ stable_sort(test2.first(), test2.last())
 merge(test1.first(), test1.last(), test2.first(), test2.last(), test_sum.first())
 random_shuffle(test_sum.first(), test_sum.last())
 
-//BinarySearch_tree
-test_tree = new RedBlack_tree(test_sum)
-test_tree.insert(5)
-test_tree.insert(12)
-test_tree.insert(7)
-test_tree.insert(16)
-
+test_sum.insert(5)
 repeat 60
-	test_tree.insert(irandom(80))
+	test_sum.insert(irandom(80))
+test_sum.insert(12)
+test_sum.insert(7)
+test_sum.insert(16)
+transform(test_sum.first(), test_sum.last(), test_sum.first(), function (Value) {
+	return [Value, irandom(5)]
+})
+test_tree = new Multimap(test_sum)
+
 print(test_tree)
 
 tree_head = test_tree.node_head
@@ -69,7 +71,7 @@ function draw_rbtree_node(Dx, Dy, Node) {
 		draw_set_color($ffffff)
 	draw_circle(Dx, Dy, tree_indicator_node_radius, true)
 	draw_set_color($ffffff)
-	draw_text(Dx, Dy, Node.get_data())
+	draw_text(Dx, Dy, Node.get_key())
 }
 
 function draw_rbtree(Dx, Dy, Node, Height) {
@@ -141,15 +143,6 @@ function draw_rbtree(Dx, Dy, Node, Height) {
 
 /*
 show_debug_message("")
-
-test_tree.erase_at(2)
-test_tree.erase_at(11)
-test_tree.erase_at(8)
-test_tree.erase_at(26)
-node_tree_print(test_tree, test_tree.node_head)
-show_debug_message(test_tree.front())
-show_debug_message(test_tree.back())
-
 //var Loc = test_tree.location(26)
 //show_debug_message("Loc: " + string(Loc.get()))
 
@@ -212,6 +205,7 @@ test_mapped_list.push_back(["AC", "AC"]) // 17
 print(test_mapped_list)
 
 test_map = new Map(test_mapped_list)
+test_map.erase_at("@")
 show_debug_message("\nMap: " + string(test_map.size()))
 print(test_map)
 rbtree_print(test_map, test_map.node_head)

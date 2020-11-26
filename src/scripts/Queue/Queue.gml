@@ -58,6 +58,7 @@ function Queue(): Container() constructor {
 	static destroy = function() { ds_queue_destroy(raw); gc_collect() }
 
 	static type = Queue
+	static is_iterable = false
 #endregion
 
 #region private
@@ -99,7 +100,7 @@ function Queue(): Container() constructor {
 				if instanceof(Item) == "Queue" {
 					// (*) Copy Constructor
 					ds_queue_copy(raw, Item.data())
-				} else if is_iterable(Item) {
+				} else if Item.is_iterable {
 					// (*) Container
 					assign(Item.first(), Item.last())
 				}

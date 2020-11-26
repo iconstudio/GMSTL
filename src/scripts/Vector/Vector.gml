@@ -1,18 +1,18 @@
 /*
 	Constructors:
-		Array()
-		Array(Arg)
-		Array(Arg0, Arg1, ...)
-		Array(Builtin-Array)
-		Array(Builtin-List)
-		Array(Container)
-		Array(Iterator-Begin, Iterator-End)
+		Vector()
+		Vector(Arg)
+		Vector(Arg0, Arg1, ...)
+		Vector(Builtin-Array)
+		Vector(Builtin-List)
+		Vector(Container)
+		Vector(Iterator-Begin, Iterator-End)
 
 	Initialize:
-		new Array()
+		new Vector()
 	
 */
-function Array(): Container() constructor {
+function Vector(): Container() constructor {
 #region public
 	///@function size()
 	static size = function() { return inner_size }
@@ -22,6 +22,9 @@ function Array(): Container() constructor {
 
 	///@function clear()
 	static clear = function() { _Under_reserve(inner_size) }
+
+	///@function resize(size)
+	static resize = function(Size) { array_resize(raw, Size); inner_size = Size }
 
 	///@function at(index)
 	static at = function(Index) {if !valid(Index) return undefined; return raw[Index] }
@@ -48,6 +51,18 @@ function Array(): Container() constructor {
 		return self
 	}
 
+	//////@function insert_at(index, value)
+	static insert_at = function(Index, Value) { array_insert(raw, Index, Value); inner_size++; return self }
+
+	///@function push_back(value)
+	static push_back = function(Value) { array_push(raw, Value); return self }
+
+	///@function erase_n(index, number)
+	static erase_n = function(Index, Num) { array_delete(raw, Index, Num); inner_size = array_length(raw) }
+
+	///@function pop_back()
+	static pop_back = function() { return array_pop(raw) }
+
 	///@function location(value)
 	static location = function(Value) { return find(first(), last(), Value) }
 
@@ -60,7 +75,7 @@ function Array(): Container() constructor {
 	///@function destroy()
 	static destroy = function() { raw = 0; gc_collect() }
 
-	static type = Array
+	static type = Vector
 	static iterator_type = Random_iterator
 #endregion
 

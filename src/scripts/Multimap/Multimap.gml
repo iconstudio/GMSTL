@@ -64,7 +64,7 @@ function Multimap(): Map() constructor {
 							break
 					}
 				}
-			} else if is_struct(Item) and is_iterable(Item) {
+			} else if Item.is_iterable {
 				// (*) Paired-Container
 				foreach(Item.first(), Item.last(), insert)
 			} else {

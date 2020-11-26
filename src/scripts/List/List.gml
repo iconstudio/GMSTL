@@ -141,7 +141,7 @@ function List(): Container() constructor {
 			} else if !is_nan(Item) and ds_exists(Item, ds_type_list) {
 				// (*) Built-in List
 				for (var i = 0; i < ds_list_size(Item); ++i) push_back(Item[| i])
-			} else if is_struct(Item) and is_iterable(Item) {
+			} else if Item.is_iterable {
 				// (*) Container
 				assign(Item.first(), Item.last())
 			} else {

@@ -66,7 +66,7 @@ function Map(): RedBlack_tree() constructor {
 		var Key = Pair[0], Value = Pair[1]
 		var Where = first_of(Key)
 		if !is_undefined(Where) {
-			if is_undefined(Value) throw "The value of " + string(Key) + " is undefined!\nNode: " + string(Where)
+			//if is_undefined(Value) throw "The value of " + string(Key) + " is undefined!\nNode: " + string(Where)
 			Where.set_value(Value)
 			return Iterator(Where)
 		} else {
@@ -94,7 +94,7 @@ function Map(): RedBlack_tree() constructor {
 		var Result = undefined, Where = first_of(Key)
 		if !is_undefined(Where) {
 			Result = Iterator(Where.node_next)
-			_Under_erase_and_fix(Where)
+			_Under_try_erase(Where)
 		}
 		return Result
 	}
@@ -111,15 +111,6 @@ function Map(): RedBlack_tree() constructor {
 
 	///@function key_swap(key_1, key_2)
 	static key_swap = key_swap_first_of
-
-	///@function iter_swap(iterator_1, iterator_2)
-	static iter_swap = function(Iter1, Iter2) {
-		if Iter1.storage == self and Iter2.storage == self {
-			var Temp = Iter1.get_value()
-			Iter1.set_value(Iter2.get_value())
-			Iter2.set_value(Temp)
-		}
-	}
 
 	///@function read(data_string)
 	static read = function(Str) {
@@ -172,7 +163,7 @@ function Map(): RedBlack_tree() constructor {
 							break
 					}
 				}
-			} else if is_struct(Item) and is_iterable(Item) {
+			} else if Item.is_iterable {
 				// (*) Paired-Container
 				foreach(Item.first(), Item.last(), insert)
 			} else {
