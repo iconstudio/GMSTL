@@ -20,6 +20,7 @@ stable_sort(test2.first(), test2.last())
 merge(test1.first(), test1.last(), test2.first(), test2.last(), test_sum.first())
 random_shuffle(test_sum.first(), test_sum.last())
 
+
 test_sum.insert(5)
 repeat 60
 	test_sum.insert(irandom(80))
